@@ -473,6 +473,99 @@ html[data-theme="dark"] #tab-registrar::before{background:#30291b;color:#ffd66c;
 .title-association-help strong{color:var(--text)}
 .module-link{display:inline-flex;align-items:center;gap:8px;text-decoration:none}
 
+
+/* =========================================================
+   RATIO SPORTS V6 — PRODUCT REDESIGN
+   Conserva la lógica, datos y seguimiento semanal del dashboard.
+   ========================================================= */
+:root{
+  --sidebar-w:164px;
+  --app-bg:#f4f6f8;
+  --nav:#0c2339;
+  --nav-2:#102d49;
+  --gold:#f5b800;
+  --glass:rgba(255,255,255,.92);
+}
+body{background:var(--app-bg);}
+.bg-photo-layer{background-position:center 12%;filter:saturate(.82) contrast(1.05);}
+.bg-photo-layer.active{opacity:.26!important;}
+html[data-theme="dark"] .bg-photo-layer.active{opacity:.30!important;}
+.wrap{margin-left:var(--sidebar-w);padding:20px 28px 54px;min-height:100vh;}
+.masthead{top:10px;min-height:72px;padding:12px 16px;background:rgba(255,255,255,.88);border:1px solid rgba(255,255,255,.68);box-shadow:0 10px 36px rgba(15,23,42,.08);backdrop-filter:blur(18px) saturate(1.12);}
+html[data-theme="dark"] .masthead{background:rgba(20,25,32,.88);border-color:rgba(255,255,255,.08)}
+.brand-mark{background:linear-gradient(145deg,#f7c400,#0b2035);}
+.brand h1{font-size:23px;}
+.brand p{font-size:11px;}
+.tabbar{width:var(--sidebar-w);padding:112px 12px 86px;background:linear-gradient(180deg,var(--nav),#0a1d30);border:0;box-shadow:8px 0 30px rgba(5,18,31,.12);}
+.tabbar::before{content:'RATIO\A SPORTS';top:27px;left:28px;color:#fff;font-size:18px;letter-spacing:.2px;}
+.tabbar::after{content:'●  Datos guardados';left:20px;bottom:25px;color:#76d9a4;}
+.tab-btn{color:#d9e4ee;padding:12px 12px;font-size:12px;border-radius:9px;}
+.tab-btn:hover{background:rgba(255,255,255,.08);color:#fff;}
+.tab-btn.active{background:linear-gradient(90deg,rgba(38,155,222,.26),rgba(255,255,255,.06));color:#fff;box-shadow:inset 4px 0 #20a9e6;}
+.panel{background:var(--glass);backdrop-filter:blur(14px);box-shadow:0 8px 28px rgba(15,23,42,.055);}
+html[data-theme="dark"] .panel{background:rgba(23,27,34,.90);}
+.section-title{font-size:19px;margin:22px 0 12px;}
+#tab-seguimiento{display:grid;grid-template-columns:minmax(0,1.12fr) minmax(390px,.88fr);gap:16px;align-items:start;}
+#tab-seguimiento>.chipbar,#tab-seguimiento>#equiposTitle,#tab-seguimiento>#teamGrid{grid-column:1/-1;}
+#tab-seguimiento>.section-title{display:none;}
+#titlesPanel{grid-column:1;}
+#weeklyPanel{grid-column:2;}
+#matchesPanel{grid-column:1;}
+#nflPanel{grid-column:2;}
+.team-grid{grid-template-columns:repeat(4,minmax(230px,1fr));gap:16px;overflow:visible;}
+.team-card{min-height:248px;padding:18px 17px;border:1px solid rgba(226,230,235,.9);background:rgba(255,255,255,.94);box-shadow:0 8px 26px rgba(15,23,42,.065);}
+html[data-theme="dark"] .team-card{background:rgba(23,27,34,.94)}
+.team-card::before{left:0;right:auto;top:0;bottom:0;width:6px;height:auto;border-radius:14px 0 0 14px;}
+.team-card .watermark{right:-3px!important;bottom:-7px!important;width:126px!important;height:126px!important;opacity:.17!important;filter:saturate(.75) drop-shadow(0 2px 2px rgba(255,255,255,.5));z-index:1;}
+.team-card-top{margin-bottom:12px;}
+.team-name{font-size:16px!important;line-height:1.15;}
+.team-flag{width:39px!important;height:27px!important;margin-left:7px;vertical-align:middle!important;border-radius:3px!important;box-shadow:0 0 0 1px rgba(15,23,42,.12)!important;}
+.team-flag svg{width:100%!important;height:100%!important;display:block!important;}
+.team-stat-row{margin-top:16px!important;display:block!important;}
+.team-record:first-child{display:block;margin-bottom:12px;}
+.team-record:first-child b{font-size:27px!important;}
+.team-record:nth-child(2){display:flex;justify-content:space-between;gap:6px;max-width:270px;}
+.pct-track{height:7px!important;margin:10px 0 13px!important;}
+.team-card .team-meta[style*="margin-top:2px"]{display:block!important;margin-top:5px!important;}
+.form-strip{display:flex!important;gap:7px;margin-top:8px;}
+.form-pip{width:25px;height:25px;border-radius:6px;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;}
+.gf-gc-row{padding-right:105px!important;bottom:14px;}
+/* individual title cards */
+#titlesPanel .sub{margin-bottom:12px;}
+.title-grid{display:grid;grid-template-columns:repeat(3,minmax(175px,1fr));gap:11px;}
+.achievement-card{position:relative;min-height:252px;padding:14px 14px 15px;border-radius:12px;border:1px solid var(--border);background:linear-gradient(180deg,rgba(255,255,255,.98),rgba(249,250,252,.94));text-align:center;overflow:hidden;}
+html[data-theme="dark"] .achievement-card{background:linear-gradient(180deg,#1b2028,#171b22)}
+.achievement-card.won{border-color:#a9d7b8;box-shadow:inset 0 -3px #23a65c;}
+.achievement-card.lost{border-color:#f0b8bd;box-shadow:inset 0 -3px #e43f49;}
+.achievement-status{display:inline-flex;padding:3px 9px;border-radius:999px;font-size:9px;font-weight:900;letter-spacing:.3px;background:#e5f6ec;color:#157b42;}
+.achievement-card.lost .achievement-status{background:#fde7e9;color:#c72b35;}
+.achievement-name{font-size:12px;font-weight:850;line-height:1.25;min-height:31px;margin:9px 0 5px;color:var(--text);}
+.achievement-logo{width:72px;height:72px;margin:4px auto 5px;display:flex;align-items:center;justify-content:center;}
+.achievement-logo img{max-width:100%;max-height:100%;object-fit:contain;}
+.achievement-team{font-size:13px;font-weight:850;color:var(--text);}
+.achievement-meta{font-size:9.5px;color:var(--text-faint);margin-top:3px;}
+.achievement-final{margin-top:10px;padding-top:9px;border-top:1px solid var(--border-soft);font-size:10px;color:var(--text-dim);}
+.achievement-score{font-size:20px;font-weight:900;color:var(--text);margin:3px 0;}
+.achievement-card::after{content:'⚽';position:absolute;left:-18px;bottom:-35px;font-size:110px;opacity:.035;filter:grayscale(1);}
+.title-total{margin-top:12px!important;}
+/* weekly is the best part of previous dashboard, preserve and elevate it */
+#weeklyPanel{position:sticky;top:108px;}
+#weeklyPanel .chart-scroll{background:linear-gradient(180deg,rgba(248,250,252,.95),rgba(255,255,255,.75));min-height:190px;}
+html[data-theme="dark"] #weeklyPanel .chart-scroll{background:#151a21;}
+.legend-row{gap:12px;}
+/* compact match log like product UI */
+#matchesPanel table{min-width:760px;}
+.match-team-dot{width:10px;height:10px;flex-basis:10px;box-shadow:0 0 0 2px rgba(255,255,255,.9),0 0 0 3px rgba(15,23,42,.09)}
+.table-wrap{background:rgba(255,255,255,.62);}
+html[data-theme="dark"] .table-wrap{background:rgba(18,22,28,.55)}
+/* header scores become general-stat cards */
+.scoreboard{display:grid;grid-template-columns:repeat(3,74px);gap:7px;}
+.scoreboard div{background:rgba(248,249,251,.92);}
+/* mobile */
+@media(max-width:1220px){#tab-seguimiento{grid-template-columns:1fr}.team-grid{grid-template-columns:repeat(2,1fr)}#titlesPanel,#weeklyPanel,#matchesPanel,#nflPanel{grid-column:1}#weeklyPanel{position:relative;top:auto}.title-grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:760px){.wrap{padding:12px 12px 90px}.tabbar{width:auto}.team-grid{grid-template-columns:1fr}.title-grid{grid-template-columns:repeat(2,1fr)}.bg-photo-layer.active{opacity:.18!important}.masthead{position:relative;top:0}.team-card{min-height:242px}}
+@media(max-width:480px){.title-grid{grid-template-columns:1fr}.achievement-card{min-height:235px}}
+
 </style>
 </head>
 <body>
@@ -501,7 +594,7 @@ html[data-theme="dark"] #tab-registrar::before{background:#30291b;color:#ffd66c;
       <div class="brand-mark"><svg viewBox="0 0 100 100"><use href="#ballShape"/></svg></div>
       <div>
         <h1>Ratio Sports</h1>
-        <p>Dashboard de rendimiento · temporada 2026</p>
+        <p>Vista general de tu rendimiento · datos reales del Excel</p>
       </div>
     </div>
     <div class="header-actions">
@@ -512,7 +605,12 @@ html[data-theme="dark"] #tab-registrar::before{background:#30291b;color:#ffd66c;
 
   <div class="tabbar">
     <a class="tab-btn module-link" href="index.html">⌂ Resumen</a>
-    <a class="tab-btn active module-link" href="partidos.html">⚙ Gestión de partidos</a>
+    <a class="tab-btn module-link" href="#teamGrid">♟ Mis equipos</a>
+    <a class="tab-btn module-link" href="#titlesPanel">♜ Títulos</a>
+    <a class="tab-btn module-link" href="#weeklyPanel">⌁ Seguimiento</a>
+    <a class="tab-btn module-link" href="#matchesPanel">▤ Bitácora</a>
+    <a class="tab-btn module-link" href="#scoreboard">▥ Estadísticas</a>
+    <a class="tab-btn active module-link" href="partidos.html">⚙ Gestión</a>
   </div>
 
   <!-- ============ TAB: SEGUIMIENTO ============ -->
@@ -520,20 +618,20 @@ html[data-theme="dark"] #tab-registrar::before{background:#30291b;color:#ffd66c;
 
     <div class="chipbar" id="chipbar"></div>
 
-    <div class="section-title">Mis equipos</div>
+    <div class="section-title" id="equiposTitle">Mis equipos</div>
     <div class="team-grid" id="teamGrid"></div>
 
     <div class="section-title">Tus títulos</div>
-    <div class="panel">
-      <h2>Palmarés por equipo</h2>
+    <div class="panel" id="titlesPanel">
+      <h2>Títulos y finales</h2>
       <p class="sub">Torneos ganados, perdidos y vinculados con sus finales</p>
       <div class="title-grid" id="titleGrid"></div>
       <div class="title-total" id="titleTotal"></div>
     </div>
 
     <div class="section-title">Seguimiento semanal</div>
-    <div class="panel">
-      <h2>Forma por semana</h2>
+    <div class="panel" id="weeklyPanel">
+      <h2>Seguimiento semanal</h2>
       <p class="sub">La gráfica muestra todas las semanas. El detalle inferior se despliega de cinco en cinco.</p>
       <div class="legend-row">
         <div class="legend-item"><span class="legend-swatch" style="background:var(--win)"></span>Ganados</div>
@@ -553,7 +651,7 @@ html[data-theme="dark"] #tab-registrar::before{background:#30291b;color:#ffd66c;
     </div>
 
     <div class="section-title">Bitácora de fútbol</div>
-    <div class="panel">
+    <div class="panel" id="matchesPanel">
       <h2>Bitácora de partidos</h2>
       <p class="sub">Historial de fútbol, filtrable por equipo</p>
       <div class="table-controls">
@@ -576,7 +674,7 @@ html[data-theme="dark"] #tab-registrar::before{background:#30291b;color:#ffd66c;
     </div>
 
     <div class="section-title">🏈 NFL</div>
-    <div class="panel">
+    <div class="panel" id="nflPanel">
       <h2>Dallas Cowboys<span class="nfl-flag">NFL</span></h2>
       <p class="sub">Resultados de fútbol americano, separados del resto</p>
       <div class="table-wrap"><table>
@@ -1073,44 +1171,30 @@ function titleTeamLogoHtml(id, icon){
 
 function renderTitles(){
   const grid = document.getElementById('titleGrid');
-  let totalComp = 0, totalWon = 0;
-  grid.innerHTML = Object.keys(TEAMS).map(id=>{
-    const t = TEAMS[id];
-    const icon = TEAM_ICON[id] || '🏆';
-    const tournaments = getTeamTournaments(id).map(tt=>({...tt,status:effectiveTournamentStatus(id,tt)}));
-    const ganados = tournaments.filter(tt=>tt.status==='ganado').length;
-    const competidos = tournaments.length;
-    totalComp += competidos; totalWon += ganados;
-
-    const slotsHtml = tournaments.map(tt=>{
-      const cls = tt.status==='ganado' ? 'slot-won' : tt.status==='perdido' ? 'slot-lost' : '';
-      const finalMatch=findTitleMatch(id,tt);
-      const linkText=finalMatch ? `${finalMatch.dia} ${MONTHS[finalMatch.mes]} · ${finalMatch.gf}-${finalMatch.gc} vs ${finalMatch.rival}` : 'Sin final vinculada';
-      const title = `${tt.name}${tt.status==='ganado'?' · Ganado 🏆':tt.status==='perdido'?' · Perdido':' · En curso'} · ${linkText}`;
-      return tt.logo
-        ? `<div class="title-logo-slot ${cls}" title="${title}"><img src="${tt.logo}" alt="${tt.name}" onerror="this.parentElement.innerHTML='<span class=\\'slot-placeholder\\'>+</span>';"></div>`
-        : `<div class="title-logo-slot ${cls}" title="${title}"><span class="slot-placeholder">🏆</span></div>`;
-    }).join('');
-
-    const linked=tournaments.map(tt=>({tt,m:findTitleMatch(id,tt)})).filter(x=>x.m).sort((a,b)=>(b.m.mes*100+b.m.dia)-(a.m.mes*100+a.m.dia))[0];
-    const linkNote=linked ? `<div class="title-link-note"><strong>${linked.tt.name}:</strong> ${linked.m.resultado==='Ganado'?'ganado':'perdido'} ${linked.m.gf}-${linked.m.gc} vs ${linked.m.rival}</div>` : `<div class="title-link-note">Los títulos se ligan a partidos cuya fase contiene “Final”.</div>`;
-
-    return `
-      <div class="title-card">
-        ${titleTeamLogoHtml(id,icon)}
-        <div class="t-name">${t.name}</div>
-        <div class="t-nums">
-          <div><div class="t-num won">${ganados}</div><div class="t-lbl">Ganados</div></div>
-          <div><div class="t-num contested">${competidos}</div><div class="t-lbl">Disputados</div></div>
-        </div>
-        ${competidos ? `<div class="title-logos">${slotsHtml}</div>` : ''}
-        ${competidos ? linkNote : ''}
-      </div>`;
-  }).join('');
-  document.getElementById('titleTotal').innerHTML = `
-    <div><div class="t-num">${totalWon}</div><div class="t-lbl">Títulos ganados</div></div>
-    <div><div class="t-num" style="color:var(--text-dim)">${totalComp}</div><div class="t-lbl">Torneos disputados</div></div>
-  `;
+  let cards=[]; let totalComp=0,totalWon=0;
+  Object.keys(TEAMS).forEach(id=>{
+    const t=TEAMS[id];
+    getTeamTournaments(id).forEach(tt=>{
+      const status=effectiveTournamentStatus(id,tt);
+      const m=findTitleMatch(id,tt);
+      if(status==='en_curso' && !m) return;
+      totalComp++; if(status==='ganado') totalWon++;
+      const logo=TEAM_LOGOS[id]||'';
+      const state=status==='ganado'?'GANADO':status==='perdido'?'PERDIDO':'EN DISPUTA';
+      const cls=status==='ganado'?'won':status==='perdido'?'lost':'';
+      const finalHtml=m?`<div class="achievement-final">${m.fase||'Final'} vs ${m.rival}<div class="achievement-score">${m.gf} - ${m.gc}</div>${m.dia} ${MONTHS[m.mes]}</div>`:`<div class="achievement-final">Torneo en disputa</div>`;
+      cards.push(`<article class="achievement-card ${cls}" title="Vinculado por torneo + fase final">
+        <span class="achievement-status">${state}</span>
+        <div class="achievement-name">${tt.name}</div>
+        <div class="achievement-logo">${logo?`<img src="${logo}" alt="${t.name}">`:`<span style="font-size:44px">🏆</span>`}</div>
+        <div class="achievement-team">${t.name}</div>
+        <div class="achievement-meta">${t.type} · ${t.country}</div>
+        ${finalHtml}
+      </article>`);
+    });
+  });
+  grid.innerHTML=cards.length?cards.join(''):`<div class="muted">No hay finales vinculadas todavía.</div>`;
+  document.getElementById('titleTotal').innerHTML=`<div><div class="t-num">${totalWon}</div><div class="t-lbl">Títulos ganados</div></div><div><div class="t-num" style="color:var(--text-dim)">${totalComp}</div><div class="t-lbl">Finales / torneos</div></div>`;
 }
 
 function renderWeekly(){
@@ -1414,6 +1498,7 @@ async function init(){
   });
 }
 init();
+window.addEventListener("DOMContentLoaded",()=>{setTimeout(()=>{document.getElementById("tab-seguimiento")?.classList.add("hidden");document.getElementById("tab-registrar")?.classList.remove("hidden");},0)});
 </script>
 </body>
 </html>
