@@ -566,6 +566,27 @@ html[data-theme="dark"] .table-wrap{background:rgba(18,22,28,.55)}
 @media(max-width:760px){.wrap{padding:12px 12px 90px}.tabbar{width:auto}.team-grid{grid-template-columns:1fr}.title-grid{grid-template-columns:repeat(2,1fr)}.bg-photo-layer.active{opacity:.18!important}.masthead{position:relative;top:0}.team-card{min-height:242px}}
 @media(max-width:480px){.title-grid{grid-template-columns:1fr}.achievement-card{min-height:235px}}
 
+
+/* ===== RATIO SPORTS V7 — compact navigation + title/ledger refinement ===== */
+:root{--sidebar-w:138px;--sidebar-collapsed:62px;}
+body.sidebar-collapsed{--sidebar-w:var(--sidebar-collapsed);}
+.wrap{transition:margin-left .25s ease;padding-top:14px;}
+.bg-photo-layer.active{opacity:.36!important;}
+html[data-theme="dark"] .bg-photo-layer.active{opacity:.34!important;}
+.masthead{position:relative!important;top:auto!important;min-height:56px!important;padding:8px 12px!important;margin-bottom:14px!important;border-radius:13px!important;flex-wrap:nowrap!important;}
+.brand{gap:9px!important;min-width:180px}.brand-mark{width:36px!important;height:36px!important}.brand-mark svg{width:23px!important;height:23px!important}.brand h1{font-size:20px!important}.brand p{font-size:9px!important;margin-top:1px!important;white-space:nowrap}
+.header-actions{margin-left:auto!important;flex-wrap:nowrap!important}.theme-toggle{padding:7px 9px!important}.scoreboard{display:flex!important;grid-template-columns:none!important;gap:0!important;white-space:nowrap}.scoreboard div{padding:5px 10px!important;min-width:65px!important}.scoreboard .sb-num{font-size:20px!important;display:inline!important}.scoreboard .sb-label{font-size:8px!important;display:inline!important;margin-left:4px!important}.scoreboard .sb-pct{font-size:8px!important;display:inline!important;margin-left:3px!important}
+.tabbar{width:var(--sidebar-w)!important;padding:82px 8px 68px!important;transition:width .25s ease!important;overflow:hidden!important}.tabbar::before{top:20px!important;left:18px!important;font-size:15px!important}.tabbar::after{left:14px!important;font-size:8px!important}.tab-btn{white-space:nowrap!important;overflow:hidden!important;text-overflow:clip!important;padding:10px 9px!important}.nav-icon{display:inline-flex;width:22px;justify-content:center;font-size:15px}.nav-label{transition:opacity .15s ease}.sidebar-collapsed .nav-label,.sidebar-collapsed .tabbar::before,.sidebar-collapsed .tabbar::after{opacity:0;pointer-events:none}.sidebar-toggle{position:fixed;z-index:80;left:calc(var(--sidebar-w) - 14px);top:18px;width:28px;height:28px;border-radius:50%;border:1px solid rgba(255,255,255,.34);background:#fff;color:#0c2339;box-shadow:0 4px 12px rgba(0,0,0,.2);cursor:pointer;transition:left .25s ease;font-weight:900}.sidebar-collapsed .sidebar-toggle{transform:rotate(180deg)}
+#weeklyPanel{position:relative!important;top:auto!important;}
+/* Smaller title cards: four newest + expandable */
+.title-grid{grid-template-columns:repeat(4,minmax(135px,1fr))!important;gap:9px!important}.achievement-card{min-height:205px!important;padding:10px!important;background-size:105px auto!important;background-repeat:no-repeat!important;background-position:center 58%!important}.achievement-card::before{content:"";position:absolute;inset:0;background:rgba(255,255,255,.86);z-index:0}.achievement-card>*{position:relative;z-index:1}.achievement-card::after{display:none!important}.achievement-name{font-size:10.5px!important;min-height:26px!important;margin:7px 0 3px!important}.achievement-logo{width:52px!important;height:52px!important}.achievement-team{font-size:11.5px!important}.achievement-meta{font-size:8.5px!important}.achievement-final{margin-top:7px!important;padding-top:6px!important;font-size:9px!important}.achievement-score{font-size:17px!important}.titles-more-row{display:flex;justify-content:center;margin-top:12px}
+/* ledger */
+#matchesPanel table{min-width:1120px!important}.club-circle{width:24px;height:24px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;background:#fff;border:1px solid var(--border);overflow:hidden}.club-circle img{width:20px;height:20px;object-fit:contain}.club-circle.fallback{font-size:8px;font-weight:900;color:#fff}.match-name-cell{display:flex;align-items:center;gap:7px;white-space:nowrap}.score-cell{font:900 13px var(--font-mono);white-space:nowrap}.status-tag{display:inline-flex;padding:4px 8px;border-radius:999px;font-size:8.5px;font-weight:900;letter-spacing:.25px}.status-tag.g{background:var(--win-dim);color:var(--win)}.status-tag.e{background:var(--draw-dim);color:var(--draw)}.status-tag.p{background:var(--loss-dim);color:var(--loss)}
+/* extra stats strip */
+.extra-stats{grid-column:1/-1;display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.extra-stat{background:rgba(255,255,255,.9);border:1px solid var(--border);border-radius:12px;padding:12px 14px}.extra-stat strong{display:block;font-size:21px}.extra-stat span{font-size:9px;text-transform:uppercase;letter-spacing:.5px;color:var(--text-faint)}
+@media(max-width:900px){.title-grid{grid-template-columns:repeat(2,1fr)!important}.extra-stats{grid-template-columns:repeat(2,1fr)}.scoreboard div{padding:5px 7px!important;min-width:auto!important}.brand p{display:none!important}}
+@media(max-width:760px){.sidebar-toggle{display:none}.bg-photo-layer.active{opacity:.24!important}.masthead{flex-wrap:wrap!important}.header-actions{width:100%;justify-content:space-between}.scoreboard{overflow-x:auto;max-width:100%}}
+
 </style>
 </head>
 <body>
@@ -603,14 +624,15 @@ html[data-theme="dark"] .table-wrap{background:rgba(18,22,28,.55)}
     </div>
   </div>
 
+  <button class="sidebar-toggle" id="sidebarToggle" type="button" title="Colapsar menú">‹</button>
   <div class="tabbar">
-    <a class="tab-btn module-link" href="index.html">⌂ Resumen</a>
-    <a class="tab-btn module-link" href="#teamGrid">♟ Mis equipos</a>
-    <a class="tab-btn module-link" href="#titlesPanel">♜ Títulos</a>
-    <a class="tab-btn module-link" href="#weeklyPanel">⌁ Seguimiento</a>
-    <a class="tab-btn module-link" href="#matchesPanel">▤ Bitácora</a>
-    <a class="tab-btn module-link" href="#scoreboard">▥ Estadísticas</a>
-    <a class="tab-btn active module-link" href="partidos.html">⚙ Gestión</a>
+    <a class="tab-btn module-link" href="index.html"><span class="nav-icon">⌂</span><span class="nav-label">Resumen</span></a>
+    <a class="tab-btn module-link" href="#teamGrid"><span class="nav-icon">♟</span><span class="nav-label">Mis equipos</span></a>
+    <a class="tab-btn module-link" href="#titlesPanel"><span class="nav-icon">♜</span><span class="nav-label">Títulos</span></a>
+    <a class="tab-btn module-link" href="#weeklyPanel"><span class="nav-icon">⌁</span><span class="nav-label">Seguimiento</span></a>
+    <a class="tab-btn module-link" href="#matchesPanel"><span class="nav-icon">▤</span><span class="nav-label">Bitácora</span></a>
+    <a class="tab-btn module-link" href="#scoreboard"><span class="nav-icon">▥</span><span class="nav-label">Estadísticas</span></a>
+    <a class="tab-btn active module-link" href="partidos.html"><span class="nav-icon">⚙</span><span class="nav-label">Gestión</span></a>
   </div>
 
   <!-- ============ TAB: SEGUIMIENTO ============ -->
@@ -700,6 +722,10 @@ html[data-theme="dark"] .table-wrap{background:rgba(18,22,28,.55)}
           <input type="text" id="f_rival" placeholder="Ej. FC Barcelona">
         </div>
         <div class="field">
+          <label>Condición del equipo seguido</label>
+          <select id="f_venueSide"><option value="home">Local</option><option value="away">Visitante</option></select>
+        </div>
+        <div class="field">
           <label>Día</label>
           <input type="number" id="f_dia" min="1" max="31" placeholder="14">
         </div>
@@ -768,7 +794,7 @@ html[data-theme="dark"] .table-wrap{background:rgba(18,22,28,.55)}
       <h2>Agregados recientemente</h2>
       <p class="sub">Últimos partidos capturados en esta bitácora</p>
       <table>
-        <thead><tr><th>Fecha</th><th>Equipo</th><th>Rival</th><th>Marcador</th><th>Resultado</th><th></th></tr></thead>
+        <thead><tr><th>Mi equipo</th><th>Fecha</th><th>Local</th><th>Marcador</th><th>Visitante</th><th>Estadio / Ciudad</th><th>Torneo</th><th>Fase</th><th>Status</th><th></th></tr></thead>
         <tbody id="recentTableBody"></tbody>
       </table>
     </div>
@@ -1383,31 +1409,24 @@ function updateResultPreview(){
 }
 
 function renderRecentTable(){
-  const body = document.getElementById('recentTableBody');
-  const recent = matches.filter(m=>m.userAdded).slice().reverse().slice(0,12);
-  if(!recent.length){
-    body.innerHTML = `<tr class="empty-row"><td colspan="6">Todavía no agregas marcadores nuevos.</td></tr>`;
-    return;
-  }
-  body.innerHTML = recent.map(m=>{
-    const t = TEAMS[m.team];
+  const body=document.getElementById('recentTableBody');
+  const recent=matches.filter(m=>m.userAdded).slice().reverse().slice(0,12);
+  if(!recent.length){body.innerHTML=`<tr class="empty-row"><td colspan="10">Todavía no agregas marcadores nuevos.</td></tr>`;return;}
+  body.innerHTML=recent.map(m=>{
+    const t=TEAMS[m.team],isAway=m.venueSide==='away';
+    const localName=isAway?m.rival:t.name, visitName=isAway?t.name:m.rival;
     return `<tr>
+      <td><span class="club-circle fallback" style="background:${t.accent||t.color}">${initials(t.name)}</span></td>
       <td class="mono">${m.dia} ${MONTHS[m.mes]}</td>
-      <td><span class="match-team-name"><span class="match-team-dot" style="background:${t.accent||t.color}"></span><span>${t.name}</span></span></td>
-      <td>${rivalLogoHtml(m.rival)}</td>
+      <td>${isAway?rivalLogoHtml(m.rival):miniLogoHtml(m.team)} ${localName}</td>
       <td class="mono">${m.gf} - ${m.gc}</td>
+      <td>${isAway?miniLogoHtml(m.team):rivalLogoHtml(m.rival)} ${visitName}</td>
+      <td>${venueLabel(m)}</td><td>${m.torneo||'—'}</td><td>${m.fase||'—'}</td>
       <td><span class="res-tag ${resClass(m.resultado)}">${resLabel(m.resultado)}</span></td>
-      <td><button class="del-btn" data-id="${m.id}">Eliminar</button></td>
-    </tr>`;
+      <td><button class="del-btn" data-id="${m.id}">Eliminar</button></td></tr>`;
   }).join('');
-  body.querySelectorAll('.del-btn').forEach(btn=>{
-    btn.addEventListener('click', async ()=>{
-      matches = matches.filter(m=>m.id!==btn.dataset.id);
-      await persist(); renderAll(); toast('Marcador eliminado');
-    });
-  });
+  body.querySelectorAll('.del-btn').forEach(btn=>btn.addEventListener('click',async()=>{matches=matches.filter(m=>m.id!==btn.dataset.id);await persist();renderAll();toast('Marcador eliminado');}));
 }
-
 async function handleAdd(){
   const team = document.getElementById('f_team').value;
   const rival = document.getElementById('f_rival').value.trim();
@@ -1425,8 +1444,9 @@ async function handleAdd(){
   const id = 'u_' + Date.now() + '_' + Math.random().toString(36).slice(2,7);
   const esTitulo = document.getElementById('f_esTitulo').checked;
   const tituloResultado = document.getElementById('f_tituloResultado').value;
+  const venueSide = document.getElementById('f_venueSide')?.value || 'home';
   matches.push({id, team, dia, mes, rival, torneo, fase, estadio, ciudad, sede:'', gf:Number(gf), gc:Number(gc), resultado, userAdded:true,
-    titleDecision:esTitulo, titleStatus:esTitulo?tituloResultado:null, tournamentId:esTitulo?normalizeKey(torneo):null});
+    titleDecision:esTitulo, titleStatus:esTitulo?tituloResultado:null, tournamentId:esTitulo?normalizeKey(torneo):null, venueSide});
   await persist();
 
   if(esTitulo && torneo){
@@ -1487,6 +1507,13 @@ async function init(){
   document.getElementById('competitionFilter').addEventListener('change', ()=>{ matchTableVisible = PAGE_SIZE; renderMatchTable(); });
   document.getElementById('clearFiltersBtn').addEventListener('click', ()=>{ document.getElementById('searchInput').value=''; document.getElementById('competitionFilter').value='all'; activeTeamFilter='all'; matchTableVisible=PAGE_SIZE; renderAll(); });
   document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+  const sidebarToggle=document.getElementById('sidebarToggle');
+  if(sidebarToggle){
+    const collapsed=localStorage.getItem('ratiosports_sidebar_collapsed')==='1';
+    document.body.classList.toggle('sidebar-collapsed',collapsed);
+    sidebarToggle.addEventListener('click',()=>{const next=!document.body.classList.contains('sidebar-collapsed');document.body.classList.toggle('sidebar-collapsed',next);localStorage.setItem('ratiosports_sidebar_collapsed',next?'1':'0');});
+  }
+  document.querySelectorAll('.tabbar a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const target=document.querySelector(a.getAttribute('href'));if(target) target.scrollIntoView({behavior:'smooth',block:'start'});}));
   document.getElementById('verMasBtn').addEventListener('click', ()=>{ matchTableVisible += PAGE_SIZE; renderMatchTable(); });
   document.getElementById('weeklyMoreBtn').addEventListener('click', ()=>{ weeklyVisible += WEEK_PAGE_SIZE; renderWeekly(); });
   document.getElementById('f_gf').addEventListener('input', updateResultPreview);
