@@ -1736,3 +1736,90 @@ init();
 </script>
 </body>
 </html>
+
+<style id="v15-priority-fixes">
+/* v15 priority fixes: full-width stats, compact left-aligned team data, intact USA flag, visible collapsed nav icons */
+.general-stats{
+  width:100%!important;
+  display:grid!important;
+  grid-template-columns:repeat(12,minmax(0,1fr))!important;
+  gap:8px!important;
+  overflow:visible!important;
+  padding:0!important;
+  margin:0 0 22px!important;
+}
+.general-stat{
+  min-width:0!important;
+  width:auto!important;
+  flex:none!important;
+  min-height:72px!important;
+  padding:10px 9px!important;
+}
+.general-stat>strong{font-size:20px!important;white-space:nowrap!important}
+.general-stat>small{font-size:8px!important;line-height:1.15!important}
+
+/* Keep all team metrics compact and anchored to the left */
+.team-card{overflow:hidden!important;min-height:236px!important;padding:13px 12px 12px!important}
+.team-card-top,.pj-left,.team-stat-row,.pct-track,.team-honours,.team-card .team-meta,.form-strip,.gf-gc-row{
+  width:calc(100% - 76px)!important;
+  max-width:calc(100% - 76px)!important;
+  margin-left:0!important;
+  margin-right:auto!important;
+  box-sizing:border-box!important;
+}
+.team-card-top{padding-right:0!important}
+.pj-left{justify-content:flex-start!important;gap:4px!important;margin-top:0!important}
+.pj-left b{font-size:20px!important}
+.team-stat-row{justify-content:flex-start!important}
+.team-record{display:flex!important;align-items:baseline!important;justify-content:flex-start!important;gap:4px!important;flex-wrap:nowrap!important;font-size:9px!important}
+.team-record b{font-size:17px!important}
+.team-record .muted{font-size:8px!important;margin-right:3px!important}
+.form-strip{gap:3px!important;flex-wrap:nowrap!important;overflow:visible!important}
+.form-pip{width:18px!important;height:18px!important;flex:0 0 18px!important;font-size:8px!important}
+.team-honours{font-size:9px!important;gap:8px!important;white-space:nowrap!important}
+.gf-gc-row{font-size:8px!important;gap:4px!important;white-space:nowrap!important}
+.team-card .watermark{width:92px!important;height:92px!important;right:-8px!important;bottom:-10px!important;opacity:.16!important}
+
+/* USA flag must be fully visible, never cropped */
+.team-card[data-team="cowboys"] .team-flag{
+  width:40px!important;height:28px!important;padding:0!important;overflow:hidden!important;background:transparent!important;
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+}
+.team-card[data-team="cowboys"] .team-flag svg,
+.team-card[data-team="cowboys"] .team-flag img{
+  width:100%!important;height:100%!important;max-width:100%!important;max-height:100%!important;
+  transform:none!important;object-fit:contain!important;display:block!important;
+}
+
+/* Collapsed sidebar: keep every icon centered and visible */
+body.sidebar-collapsed .tabbar{
+  width:var(--sidebar-collapsed)!important;
+  padding-left:6px!important;padding-right:6px!important;
+  overflow-x:hidden!important;
+}
+body.sidebar-collapsed .tab-btn{
+  width:100%!important;min-width:0!important;box-sizing:border-box!important;
+  display:flex!important;justify-content:center!important;align-items:center!important;
+  padding:10px 0!important;margin:0!important;overflow:visible!important;
+}
+body.sidebar-collapsed .nav-icon{
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  width:32px!important;min-width:32px!important;height:28px!important;
+  margin:0!important;padding:0!important;overflow:visible!important;
+  color:#fff!important;font-size:17px!important;line-height:1!important;
+}
+body.sidebar-collapsed .sidebar-theme-wrap{padding-left:0!important;padding-right:0!important}
+body.sidebar-collapsed .sidebar-theme-toggle{width:100%!important;padding:9px 0!important;justify-content:center!important}
+body.sidebar-collapsed .sidebar-theme-toggle #themeIcon{display:block!important;margin:0!important}
+
+@media(max-width:1350px){.general-stats{grid-template-columns:repeat(6,minmax(0,1fr))!important}}
+@media(max-width:900px){
+  .general-stats{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+  .team-card-top,.pj-left,.team-stat-row,.pct-track,.team-honours,.team-card .team-meta,.form-strip,.gf-gc-row{width:calc(100% - 66px)!important;max-width:calc(100% - 66px)!important}
+}
+@media(max-width:620px){
+  .general-stats{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;overflow:visible!important}
+  .general-stat{min-width:0!important}
+  .team-card-top,.pj-left,.team-stat-row,.pct-track,.team-honours,.team-card .team-meta,.form-strip,.gf-gc-row{width:calc(100% - 58px)!important;max-width:calc(100% - 58px)!important}
+}
+</style>
