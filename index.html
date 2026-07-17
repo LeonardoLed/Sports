@@ -642,6 +642,28 @@ html[data-theme="dark"] .achievement-card::before{background:rgba(23,27,34,.78)!
   .team-flag{width:36px!important;height:25px!important;}
 }
 
+
+/* ===== RATIO SPORTS V9 — compact cards, responsive fit and visible tournament branding ===== */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,#tab-seguimiento,.panel,.team-grid,.team-card,.masthead,.header-actions{min-width:0;}
+.panel,.team-card,.masthead,.extra-stat{background:rgba(255,255,255,.70)!important;backdrop-filter:blur(9px) saturate(1.04)!important;}
+html[data-theme="dark"] .panel,html[data-theme="dark"] .team-card,html[data-theme="dark"] .masthead,html[data-theme="dark"] .extra-stat{background:rgba(23,27,34,.74)!important;}
+.bg-photo-layer.active{opacity:.43!important;}html[data-theme="dark"] .bg-photo-layer.active{opacity:.39!important;}
+.team-grid{grid-template-columns:repeat(4,minmax(205px,1fr))!important;gap:12px!important;}
+.team-card{min-height:205px!important;height:auto!important;padding:14px 14px 13px!important;border-radius:12px!important;}
+.team-card-top{margin-bottom:7px!important}.team-card .team-name{font-size:15px!important;line-height:1.12!important}.team-card .team-meta{font-size:10px!important}.team-stat-row{margin-top:5px!important;margin-bottom:7px!important}.team-record b{font-size:15px!important}.pct-track{margin:6px 0!important}.form-strip{margin-top:5px!important;margin-bottom:7px!important}.form-pip{width:25px!important;height:25px!important;font-size:10px!important}.gf-gc-row{padding-top:7px!important;font-size:10.5px!important;gap:6px!important}.team-card .watermark{width:102px!important;height:102px!important;right:-4px!important;bottom:-5px!important;opacity:.22!important}.team-card::before{width:5px!important}
+.team-flag{width:39px!important;height:27px!important;display:inline-flex!important;overflow:hidden!important;background:#fff!important;line-height:0!important}.team-flag svg{width:100%!important;height:100%!important;min-width:100%!important;min-height:100%!important;display:block!important;transform:scale(1.03)!important}.team-card[data-team="cowboys"] .team-flag svg{transform:scale(1.36)!important;transform-origin:center!important}.team-card[data-team="cowboys"] .team-flag{background:#fff!important}
+.mini-logo-slot{width:38px!important;height:38px!important;min-width:38px!important;border-radius:50%!important}.mini-logo-slot img{width:34px!important;height:34px!important;padding:2px!important}.rival-logo{width:40px!important;height:40px!important;min-width:40px!important}.rival-logo img{padding:3px!important}
+.competition-logo{position:absolute!important;top:8px!important;right:8px!important;width:30px!important;height:30px!important;object-fit:contain!important;opacity:.88!important;z-index:3!important;filter:drop-shadow(0 1px 2px rgba(0,0,0,.16));}
+.achievement-card{background-size:86px auto!important}.achievement-card::before{background:rgba(255,255,255,.70)!important}html[data-theme="dark"] .achievement-card::before{background:rgba(23,27,34,.72)!important}
+.chip{cursor:pointer!important}.chip:hover{transform:translateY(-1px)}
+.table-wrap{width:100%;max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}.table-wrap table{min-width:1080px}
+.sidebar-toggle{display:flex!important;align-items:center;justify-content:center}.tabbar{overflow-y:auto!important;overflow-x:hidden!important}.tab-btn{display:flex!important;align-items:center!important;gap:7px!important;text-decoration:none!important}.sidebar-collapsed .tab-btn{justify-content:center!important}.sidebar-collapsed .nav-icon{width:auto!important}.sidebar-collapsed .wrap{margin-left:var(--sidebar-collapsed)!important}
+@media(max-width:1320px){.team-grid{grid-template-columns:repeat(2,minmax(230px,1fr))!important}#tab-seguimiento{grid-template-columns:1fr!important}.scoreboard{max-width:58vw;overflow-x:auto}}
+@media(max-width:900px){:root{--sidebar-w:72px!important}.tabbar{width:72px!important}.tabbar::before,.tabbar::after,.nav-label,.sidebar-toggle{display:none!important}.wrap{margin-left:72px!important;padding:14px 14px 42px!important}.tab-btn{justify-content:center!important}.team-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}.masthead{position:relative!important;top:0!important;flex-wrap:wrap!important}.header-actions{width:100%!important;justify-content:space-between!important}.scoreboard{max-width:100%!important}.title-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+@media(max-width:620px){:root{--sidebar-w:0px!important}.wrap{margin-left:0!important;padding:10px 10px 82px!important}.tabbar{position:fixed!important;left:0!important;right:0!important;bottom:0!important;top:auto!important;width:100%!important;height:66px!important;padding:7px 5px!important;display:flex!important;flex-direction:row!important;justify-content:space-around!important;overflow:hidden!important}.tab-btn{flex:1!important;padding:7px 3px!important}.nav-icon{font-size:17px!important}.team-grid{grid-template-columns:1fr!important}.team-card{min-height:198px!important}.team-card .watermark{width:95px!important;height:95px!important}.scoreboard{display:none!important}.brand h1{font-size:20px!important}.panel{padding:12px!important}.title-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}.achievement-card{min-height:136px!important}.table-controls{display:grid!important;grid-template-columns:1fr!important}.bg-photo-layer.active{opacity:.34!important}}
+@media(max-width:390px){.title-grid{grid-template-columns:1fr!important}.team-card{padding:13px 12px!important}.gf-gc-row{font-size:10px!important}.form-pip{width:23px!important;height:23px!important}}
+
 </style>
 </head>
 <body>
@@ -1120,7 +1142,7 @@ function renderChips(){
   });
   el.innerHTML = html;
   el.querySelectorAll('.chip').forEach(chip=>{
-    chip.addEventListener('click', ()=>{ activeTeamFilter = chip.dataset.team; matchTableVisible = PAGE_SIZE; renderChips(); renderMatchTable(); });
+    chip.addEventListener('click', ()=>{ activeTeamFilter = chip.dataset.team; matchTableVisible = PAGE_SIZE; renderChips(); renderMatchTable(); document.getElementById('matchesPanel').scrollIntoView({behavior:'smooth',block:'start'}); });
   });
 }
 
@@ -1277,7 +1299,7 @@ function renderTitles(){
       const dateValue=m?(m.mes*100+m.dia):0;
       const finalHtml=m?`<div class="achievement-final">${m.fase||'Final'} vs ${m.rival}<div class="achievement-score">${m.gf} - ${m.gc}</div>${m.dia} ${MONTHS[m.mes]}</div>`:`<div class="achievement-final">Torneo en disputa</div>`;
       cards.push({dateValue,html:`<article class="achievement-card ${cls}" style="${bg?`background-image:url('${bg}')`:''}" title="Vinculado por torneo + fase final">
-        <span class="achievement-status">${state}</span><div class="achievement-name">${tt.name}</div>
+        <span class="achievement-status">${state}</span>${bg?`<img class="competition-logo" src="${bg}" alt="${tt.name}">`:''}<div class="achievement-name">${tt.name}</div>
         <div class="achievement-logo">${logo?`<img src="${logo}" alt="${t.name}">`:`<span style="font-size:38px">🏆</span>`}</div>
         <div class="achievement-team">${t.name}</div><div class="achievement-meta">${t.type} · ${t.country}</div>${finalHtml}</article>`});
     });
@@ -1439,7 +1461,7 @@ function renderNflTable(){
     body.innerHTML = `<tr class="empty-row"><td colspan="7">No hay partidos de NFL registrados todavía.</td></tr>`;
     return;
   }
-  body.innerHTML = rows.map(m=>`
+  body.innerHTML = rows.map(m=>{ const isAway=m.venueSide==='away'; return `
     <tr>
       <td>${miniLogoHtml(m.team)}</td>
       <td class="mono">${m.dia} ${MONTHS[m.mes]}</td>
@@ -1448,7 +1470,7 @@ function renderNflTable(){
       <td>${m.torneo}${m.fase?' · '+m.fase:''}</td>
       <td class="mono">${isAway?m.gc:m.gf} - ${isAway?m.gf:m.gc}</td>
       <td><span class="res-tag ${resClass(m.resultado)}">${resLabel(m.resultado)}</span></td>
-    </tr>`).join('');
+    </tr>`; }).join('');
 }
 
 function fillTeamSelect(){
@@ -1606,6 +1628,18 @@ async function init(){
   document.querySelectorAll('.tabbar a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const target=document.querySelector(a.getAttribute('href'));if(target) target.scrollIntoView({behavior:'smooth',block:'start'});}));
   document.querySelectorAll('.tabbar a').forEach(a=>a.addEventListener('click',()=>{document.querySelectorAll('.tabbar a').forEach(x=>x.classList.remove('active'));a.classList.add('active');}));
   document.getElementById('verMasBtn').addEventListener('click', ()=>{ matchTableVisible += PAGE_SIZE; renderMatchTable(); });
+  
+  document.querySelectorAll('.tabbar a[href^="#"]').forEach(link=>{
+    link.addEventListener('click',ev=>{
+      const target=document.querySelector(link.getAttribute('href'));
+      if(!target)return;
+      ev.preventDefault();
+      target.scrollIntoView({behavior:'smooth',block:'start'});
+      document.querySelectorAll('.tabbar .tab-btn').forEach(x=>x.classList.remove('active'));
+      link.classList.add('active');
+    });
+  });
+
   document.getElementById('weeklyMoreBtn').addEventListener('click', ()=>{ weeklyVisible += WEEK_PAGE_SIZE; renderWeekly(); });
   document.getElementById('titlesMoreBtn').addEventListener('click',()=>{titlesExpanded=!titlesExpanded;renderTitles();});
   document.getElementById('f_gf').addEventListener('input', updateResultPreview);
