@@ -645,7 +645,7 @@ html[data-theme="dark"] .achievement-card::before{background:rgba(23,27,34,.78)!
 
 /* V9 responsive management module */
 html,body{max-width:100%;overflow-x:hidden}.wrap,.panel,.form-grid{min-width:0}.panel{background:rgba(255,255,255,.74)!important;backdrop-filter:blur(9px)}html[data-theme="dark"] .panel{background:rgba(23,27,34,.76)!important}.bg-photo-layer.active{opacity:.42!important}.table-wrap{max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}.table-wrap table{min-width:980px}@media(max-width:760px){.wrap{padding:12px!important}.form-grid{grid-template-columns:1fr!important}.masthead{flex-wrap:wrap!important}.header-actions{width:100%!important}.panel{padding:14px!important}}
-</style>
+ .penalty-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.hint-pen{font-size:11px;color:var(--text-faint)} </style>
 </head>
 <body>
 
@@ -841,7 +841,9 @@ html,body{max-width:100%;overflow-x:hidden}.wrap,.panel,.form-grid{min-width:0}.
           </select>
         </div>
 
-        <div class="form-actions">
+        <div class="field"><label>Penales local (opcional)</label><input id="f_penLocal" type="number" min="0" placeholder="Ej. 4"><span class="hint-pen">Solo si la serie se decidió por penales.</span></div>
+<div class="field"><label>Penales visitante (opcional)</label><input id="f_penVisit" type="number" min="0" placeholder="Ej. 2"></div>
+<div class="form-actions">
           <button class="btn btn-ghost" id="clearBtn">Limpiar</button>
           <button class="btn btn-primary" id="addBtn">Agregar marcador</button>
         </div>
