@@ -1281,39 +1281,55 @@ function teamCardHtml(id){
   const t = TEAMS[id];
   const s = statsForTeam(id);
   const last8 = s.rows.slice(-8).reverse();
+  const pctG = s.pj ? Math.round(s.pg / s.pj * 100) : 0;
+  const pctE = s.pj ? Math.round(s.pe / s.pj * 100) : 0;
+  const pctP = s.pj ? Math.round(s.pp / s.pj * 100) : 0;
+  const honours = titleCountsForTeam(id);
   return `
-    <div class="team-card" style="--team-color:${t.color}" data-team="${id}">
+    <div class="team-card team-card-v16" style="--team-color:${t.color}" data-team="${id}">
       ${TEAM_LOGOS[id] ? `<img class="watermark" src="${TEAM_LOGOS[id]}" alt="" onerror="this.style.display='none'">` : ``}
-      <div class="team-card-top">
+
+      <div class="team-card-v16-head">
         <div class="team-card-identity">
-          <span class="team-monogram" aria-hidden="true"></span>
-          <div>
-            <div class="team-name">${t.name} <span class="team-flag" style="display:inline-block; vertical-align:middle; border-radius:2px; overflow:hidden; box-shadow:0 0 0 1px rgba(33,29,24,0.15);">${TEAM_FLAG[id]||''}</span>${t.sport==='nfl'?'<span class="nfl-flag">NFL</span>':''}</div>
+          ${badgeHtml(id)}
+          <div class="team-v16-title">
+            <div class="team-name">${t.name} <span class="team-flag">${TEAM_FLAG[id]||''}</span>${t.sport==='nfl'?'<span class="nfl-flag">NFL</span>':''}</div>
             <div class="team-meta">${t.type} · ${t.country}</div>
           </div>
         </div>
+
+        <div class="team-v16-record" aria-label="Resumen de resultados">
+          <div class="record-pj"><strong>${s.pj}</strong><span>PJ</span></div>
+          <div class="record-line win"><strong>${s.pg}</strong><span>G</span><small>${pctG}%</small></div>
+          <div class="record-line draw"><strong>${s.pe}</strong><span>E</span><small>${pctE}%</small></div>
+          <div class="record-line loss"><strong>${s.pp}</strong><span>P</span><small>${pctP}%</small></div>
+        </div>
       </div>
-      <div class="pj-left"><b>${s.pj}</b><span>PJ</span></div>
-      <div class="team-stat-row">
-        <span class="team-record">
-          <b style="color:var(--win)">${s.pg}G</b> <span class="muted" style="font-size:10.5px;">${s.pj?Math.round(s.pg/s.pj*100):0}%</span>
-          &nbsp;<b style="color:var(--draw)">${s.pe}E</b> <span class="muted" style="font-size:10.5px;">${s.pj?Math.round(s.pe/s.pj*100):0}%</span>
-          &nbsp;<b style="color:var(--loss)">${s.pp}P</b> <span class="muted" style="font-size:10.5px;">${s.pj?Math.round(s.pp/s.pj*100):0}%</span>
-        </span>
-      </div>
-      <div class="pct-track">
-        <span style="width:${s.pj?s.pg/s.pj*100:0}%; background:var(--win)"></span>
-        <span style="width:${s.pj?s.pe/s.pj*100:0}%; background:var(--draw)"></span>
-        <span style="width:${s.pj?s.pp/s.pj*100:0}%; background:var(--loss)"></span>
-      </div>
-      <div class="team-honours">${(()=>{const h=titleCountsForTeam(id);return `<span>🏆 <b>${h.titles}</b> títulos</span><span>🥈 <b>${h.runners}</b> subcampeonatos</span>`})()}</div>
-      <div class="team-meta" style="margin-top:2px;">Forma reciente · últimos 8</div>
-      <div class="form-strip">
-        ${last8.length ? last8.map(m=>`<span class="form-pip ${resClass(m.resultado)}" title="${m.rival} · ${resLabel(m.resultado)}">${m.resultado==='Ganado'?'G':m.resultado==='Perdido'?'P':'E'}</span>`).join('') : '<span class="muted" style="font-size:11px;">Sin partidos aún</span>'}
-      </div>
-      <div class="gf-gc-row">
-        <span>Efectividad: <b>${s.pct}%</b></span>
-        <span>${t.sport==='nfl'?'PF':'GF'} <b>${s.gf}</b> · ${t.sport==='nfl'?'PC':'GC'} <b>${s.gc}</b> · Dif <b>${s.diff>=0?'+':''}${s.diff}</b></span>
+
+      <div class="team-v16-core">
+        <div class="gf-gc-row team-v16-goals">
+          <span>${t.sport==='nfl'?'PF':'GF'} <b>${s.gf}</b></span>
+          <span>${t.sport==='nfl'?'PC':'GC'} <b>${s.gc}</b></span>
+          <span>DG <b>${s.diff>=0?'+':''}${s.diff}</b></span>
+        </div>
+
+        <div class="pct-track" aria-label="Distribución de resultados">
+          <span title="Ganados ${pctG}%" style="width:${pctG}%; background:var(--win)"></span>
+          <span title="Empatados ${pctE}%" style="width:${pctE}%; background:var(--draw)"></span>
+          <span title="Perdidos ${pctP}%" style="width:${pctP}%; background:var(--loss)"></span>
+        </div>
+
+        <div class="team-honours">
+          <span>🏆 <b>${honours.titles}</b><small>Títulos</small></span>
+          <span>🥈 <b>${honours.runners}</b><small>Subcampeonatos</small></span>
+        </div>
+
+        <div class="team-v16-form-label">Forma reciente · últimos 8</div>
+        <div class="form-strip">
+          ${last8.length ? last8.map(m=>`<span class="form-pip ${resClass(m.resultado)}" title="${m.rival} · ${resLabel(m.resultado)}">${m.resultado==='Ganado'?'G':m.resultado==='Perdido'?'P':'E'}</span>`).join('') : '<span class="muted" style="font-size:11px;">Sin partidos aún</span>'}
+        </div>
+
+        <div class="team-v16-eff">Efectividad <b>${s.pct}%</b></div>
       </div>
     </div>
   `;
@@ -1734,6 +1750,68 @@ async function init(){
 }
 init();
 </script>
+
+<style id="v16-team-card-redesign">
+/* v16: professional club cards with the record aligned at the upper-right */
+.team-card-v16{
+  min-height:264px!important;
+  padding:15px 16px 14px!important;
+  overflow:hidden!important;
+}
+.team-card-v16 .team-card-v16-head{
+  position:relative;z-index:4;
+  display:flex;align-items:flex-start;justify-content:space-between;
+  gap:12px;width:100%!important;max-width:none!important;margin:0 0 10px!important;
+}
+.team-card-v16 .team-card-identity{display:flex;align-items:center!important;gap:9px;min-width:0;flex:1}
+.team-card-v16 .team-badge{width:48px;height:48px;flex:0 0 48px;border-radius:13px}
+.team-card-v16 .team-badge img{width:100%;height:100%;object-fit:contain}
+.team-card-v16 .team-v16-title{min-width:0}
+.team-card-v16 .team-name{font-size:15px!important;line-height:1.15!important;display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.team-card-v16 .team-meta{font-size:9px!important;margin-top:4px;color:var(--text-faint)}
+.team-card-v16 .team-flag{width:34px!important;height:23px!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;overflow:hidden!important;background:transparent!important;line-height:0!important}
+.team-card-v16 .team-flag svg,.team-card-v16 .team-flag img{width:100%!important;height:100%!important;display:block!important;object-fit:contain!important;transform:none!important}
+
+.team-v16-record{flex:0 0 86px;display:grid;grid-template-columns:1fr;gap:2px;padding:0 1px 0 8px;border-left:1px solid rgba(255,255,255,.16)}
+html:not([data-theme="dark"]) .team-v16-record{border-left-color:rgba(33,29,24,.13)}
+.record-pj,.record-line{display:grid;grid-template-columns:30px 16px 1fr;align-items:baseline;column-gap:2px;white-space:nowrap}
+.record-pj strong{font:900 21px/1 var(--font-mono);color:var(--text)}
+.record-pj span{font-size:8px;font-weight:900;color:var(--text-faint)}
+.record-line strong{font:900 16px/1.08 var(--font-mono)}
+.record-line span{font-size:9px;font-weight:900}
+.record-line small{font-size:8px;font-weight:800;color:var(--text-faint);text-align:right}
+.record-line.win strong,.record-line.win span{color:var(--win)}
+.record-line.draw strong,.record-line.draw span{color:var(--draw)}
+.record-line.loss strong,.record-line.loss span{color:var(--loss)}
+
+.team-card-v16 .team-v16-core{position:relative;z-index:4;width:calc(100% - 68px);max-width:calc(100% - 68px)}
+.team-card-v16 .team-v16-goals{width:100%!important;max-width:none!important;margin:0 0 8px!important;padding:0 0 8px!important;display:flex!important;justify-content:space-between!important;font-size:9px!important;border-bottom:1px solid rgba(255,255,255,.13)}
+html:not([data-theme="dark"]) .team-card-v16 .team-v16-goals{border-bottom-color:rgba(33,29,24,.10)}
+.team-card-v16 .pct-track{width:100%!important;max-width:none!important;margin:0 0 9px!important;height:5px!important;border-radius:99px;overflow:hidden}
+.team-card-v16 .team-honours{width:100%!important;max-width:none!important;margin:0 0 9px!important;display:grid!important;grid-template-columns:1fr 1fr;gap:7px!important;font-size:10px!important;white-space:normal!important}
+.team-card-v16 .team-honours>span{display:grid;grid-template-columns:auto auto 1fr;align-items:center;gap:3px;min-width:0}
+.team-card-v16 .team-honours small{font-size:8px;color:var(--text-faint);overflow:hidden;text-overflow:ellipsis}
+.team-v16-form-label{font-size:9px;color:var(--text-faint);margin-bottom:6px}
+.team-card-v16 .form-strip{width:100%!important;max-width:none!important;margin:0!important;gap:4px!important;display:flex!important;flex-wrap:nowrap!important;overflow:visible!important}
+.team-card-v16 .form-pip{width:20px!important;height:20px!important;flex:0 0 20px!important;font-size:9px!important}
+.team-v16-eff{margin-top:7px;font-size:8px;color:var(--text-faint)}
+.team-v16-eff b{color:var(--text);font-size:9px}
+.team-card-v16 .watermark{width:104px!important;height:104px!important;right:-10px!important;bottom:-11px!important;opacity:.17!important;z-index:1!important}
+
+@media(max-width:1180px){
+  .team-v16-record{flex-basis:80px}
+  .team-card-v16 .team-v16-core{width:calc(100% - 58px);max-width:calc(100% - 58px)}
+  .record-pj strong{font-size:19px}.record-line strong{font-size:15px}
+}
+@media(max-width:620px){
+  .team-card-v16{min-height:254px!important}
+  .team-card-v16 .team-v16-core{width:calc(100% - 52px);max-width:calc(100% - 52px)}
+  .team-card-v16 .team-badge{width:43px;height:43px;flex-basis:43px}
+  .team-v16-record{flex-basis:76px;padding-left:6px}
+  .record-pj,.record-line{grid-template-columns:27px 14px 1fr}
+}
+</style>
+
 </body>
 </html>
 
