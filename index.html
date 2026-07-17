@@ -1258,6 +1258,15 @@ function rivalLogoHtml(name){
   }
   return `<span class="rival-cell"><span class="rival-logo"><span class="rival-fallback">${initials(name)}</span></span><span>${name}</span></span>`;
 }
+
+function rivalLogoOnlyHtml(name){
+  const key=normalizeKey(name);
+  const logo=RIVAL_LOGOS[name] || RIVAL_LOGOS[key];
+  if(logo){
+    return `<span class="rival-logo"><img src="${logo}" alt="${name}" onerror="this.parentElement.innerHTML='<span class=\'rival-fallback\'>${initials(name)}</span>';"></span>`;
+  }
+  return `<span class="rival-logo"><span class="rival-fallback">${initials(name)}</span></span>`;
+}
 function tournamentSimilarity(a,b){
   const clean=v=>String(v||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase()
     .replace(/professional/g,'pro').replace(/uefa|fifa|bbva|2025|2026|clausura|apertura/g,' ')
@@ -1569,7 +1578,8 @@ function isDomesticMatch(m){
 }
 function originHtml(origin,m){ return isDomesticMatch(m)?'':`<small>${origin||'—'}</small>`; }
 function teamCellHtml(name,origin,m,teamId){
-  const logo=(name===TEAMS[teamId]?.name)?miniLogoHtml(teamId):rivalLogoHtml(name);
+  const isFollowed=name===TEAMS[teamId]?.name;
+  const logo=isFollowed?miniLogoHtml(teamId):rivalLogoOnlyHtml(name);
   return `<div class="ledger-team">${logo}<div><strong>${name||'—'}</strong>${originHtml(origin,m)}</div></div>`;
 }
 
@@ -1862,6 +1872,58 @@ html:not([data-theme="dark"]) .team-card-v16 .team-v16-goals{border-bottom-color
   .team-card-v16 .team-badge{width:43px;height:43px;flex-basis:43px}
   .team-v16-record{flex-basis:76px;padding-left:6px}
   .record-pj,.record-line{grid-template-columns:27px 14px 1fr}
+}
+
+</style>
+
+<style id="v202-final-card-fixes">
+/* Ratio Sports 2.0.2: remove duplicate rival names and refine team-card spacing */
+.team-card-v16 .team-v16-goals{
+  border-bottom:0!important;
+  padding-bottom:0!important;
+  margin-bottom:10px!important;
+}
+.team-card-v16 .team-v16-core{
+  display:flex!important;
+  flex-direction:column!important;
+}
+.team-card-v16 .team-v16-form-label{
+  margin-top:12px!important;
+  margin-bottom:7px!important;
+  line-height:1.2!important;
+}
+.team-card-v16 .form-strip{
+  margin-top:0!important;
+  margin-bottom:7px!important;
+  min-height:22px!important;
+}
+.team-card-v16 .team-v16-eff{
+  margin-top:2px!important;
+  line-height:1.2!important;
+}
+.team-card-v16{
+  min-height:272px!important;
+  padding-bottom:18px!important;
+}
+html:not([data-theme="dark"]) .team-card-v16,
+html:not([data-theme="dark"]) .team-card-v16 *:not(.form-pip){
+  color:#111318!important;
+}
+html:not([data-theme="dark"]) .team-card-v16 .team-meta,
+html:not([data-theme="dark"]) .team-card-v16 .team-v16-form-label{
+  color:#30343b!important;
+}
+.ledger-team>.rival-logo,
+.ledger-team>.mini-logo-slot{
+  flex:0 0 34px!important;
+  width:34px!important;
+  height:34px!important;
+}
+.ledger-team>div{min-width:0!important;}
+.ledger-team strong{display:block!important;white-space:normal!important;line-height:1.15!important;}
+@media(max-width:620px){
+  .team-card-v16{min-height:266px!important;}
+  .team-card-v16 .team-v16-form-label{margin-top:10px!important;}
 }
 </style>
 
