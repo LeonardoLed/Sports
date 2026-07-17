@@ -706,6 +706,19 @@ html[data-theme="dark"] .scoreboard>div{background:rgba(17,22,29,.62)!important;
 
 /* v13 corrections */
 .pj-left{display:flex;align-items:baseline;gap:6px;margin:1px 0 2px;position:relative;z-index:3}.pj-left b{font:900 28px/1 var(--font-mono);color:var(--text)}.pj-left span{font-size:10px;font-weight:800;color:var(--text-dim);letter-spacing:.6px}.team-stat-row{justify-content:flex-start!important;margin-top:0!important;position:relative;z-index:3}.team-stat-row>.team-record{width:100%;white-space:nowrap}.form-strip{padding-right:0!important;position:relative;z-index:4;overflow:visible!important}.form-pip{width:22px!important;height:22px!important;flex:0 0 22px!important}.team-card .watermark{z-index:1!important;right:-12px!important;bottom:-14px!important;opacity:.20!important}.team-card>*:not(.watermark){position:relative;z-index:2}.club-info{display:flex;flex-direction:column;gap:2px;min-width:112px}.club-info strong{font-size:11px;white-space:nowrap}.club-info small,.nfl-rival .origin-note{font-size:9px;color:var(--text-faint);font-weight:600}.nfl-rival{display:flex;flex-direction:column;gap:3px}.general-stats{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px;margin-bottom:20px}.general-stat{min-height:88px;padding:13px 12px;border:1px solid var(--border);border-radius:12px;background:rgba(255,255,255,.62);backdrop-filter:blur(8px);display:grid;grid-template-columns:auto 1fr;grid-template-rows:auto auto;column-gap:9px;align-items:center}.general-stat>span{grid-row:1/3;font-weight:900;color:var(--text-dim)}.general-stat>strong{font:900 23px/1 var(--font-mono);color:var(--text)}.general-stat>small{font-size:9px;color:var(--text-faint);text-transform:uppercase;letter-spacing:.4px}html[data-theme="dark"] .general-stat{background:rgba(18,23,29,.72)}#matchesPanel table{min-width:1180px!important}@media(max-width:1100px){.general-stats{grid-template-columns:repeat(4,1fr)}}@media(max-width:700px){.general-stats{grid-template-columns:repeat(2,1fr)}.team-card{min-height:228px!important}}
+
+/* v14 corrections */
+.header-actions,.scoreboard{display:none!important}
+.general-stats{display:flex!important;flex-wrap:nowrap!important;gap:8px!important;overflow-x:auto!important;padding:2px 2px 10px!important;margin:0 0 20px!important;scrollbar-width:thin}
+.general-stat{flex:1 0 108px!important;min-width:108px!important;min-height:70px!important;padding:9px 10px!important;grid-template-columns:auto 1fr!important;column-gap:7px!important}
+.general-stat>strong{font-size:19px!important}.general-stat>small{font-size:7.5px!important}.general-stat>span{font-size:12px!important}
+.team-card{min-height:248px!important;padding:14px 13px 14px!important}.pj-left b{font-size:22px!important}.team-record{font-size:10.5px!important}.team-record:first-child b{font-size:22px!important}.form-pip{width:19px!important;height:19px!important;flex-basis:19px!important;font-size:9px!important}.form-strip{gap:3px!important;margin-top:6px!important}.team-card .watermark{width:105px!important;height:105px!important;right:-12px!important;bottom:-16px!important;opacity:.17!important}.gf-gc-row{font-size:8.5px!important}
+.achievement-card{position:relative!important}.achievement-card::before{content:""!important;position:absolute!important;inset:0!important;background:linear-gradient(180deg,rgba(255,255,255,.78),rgba(255,255,255,.72))!important;z-index:0!important}html[data-theme="dark"] .achievement-card::before{background:linear-gradient(180deg,rgba(23,27,34,.78),rgba(23,27,34,.72))!important}.achievement-card>*{position:relative;z-index:2}.ball-watermark{position:absolute!important;left:-8px!important;bottom:-18px!important;font-size:78px!important;opacity:.10!important;filter:grayscale(1)!important;z-index:1!important}.competition-logo-corner{position:absolute!important;right:7px!important;bottom:7px!important;width:34px!important;height:34px!important;object-fit:contain!important;opacity:.55!important;z-index:3!important}.achievement-opponent{font-size:8px!important;color:var(--text-dim)!important;font-weight:700!important;margin-top:2px!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+.weekly-toggles{display:flex!important;flex-wrap:wrap!important;gap:7px!important}.weekly-toggles .legend-item{appearance:none;border:1px solid var(--border);background:var(--panel-2);color:var(--text-dim);border-radius:999px;padding:6px 9px;cursor:pointer;opacity:.42}.weekly-toggles .legend-item.active{opacity:1;box-shadow:0 0 0 2px rgba(255,255,255,.04) inset}
+.sidebar-collapsed .nav-icon{display:inline-flex!important;visibility:visible!important;opacity:1!important;color:#fff!important;font-size:17px!important;min-width:24px!important}.sidebar-collapsed .tab-btn{display:flex!important;width:100%!important;min-height:40px!important;overflow:visible!important}.sidebar-collapsed .tabbar{overflow-y:auto!important;overflow-x:visible!important}
+#matchesPanel th,#matchesPanel td{vertical-align:middle!important}.club-info strong{white-space:normal!important;line-height:1.15!important}
+@media(max-width:900px){.general-stats{width:100%!important}.general-stat{flex-basis:102px!important}.team-card{min-height:238px!important}}
+@media(max-width:620px){.general-stats{display:flex!important;overflow-x:auto!important;grid-template-columns:none!important}.general-stat{flex:0 0 100px!important;min-width:100px!important}.team-card{min-height:230px!important}.form-strip{overflow:visible!important}.title-grid{grid-template-columns:1fr!important}.achievement-card{min-height:145px!important}}
 </style>
 </head>
 <body>
@@ -737,9 +750,7 @@ html[data-theme="dark"] .scoreboard>div{background:rgba(17,22,29,.62)!important;
         <p>Vista general de tu rendimiento · datos reales del Excel</p>
       </div>
     </div>
-    <div class="header-actions">
-      <div class="scoreboard" id="scoreboard" aria-label="Estadísticas generales"></div>
-    </div>
+    <div class="header-actions"></div>
   </div>
 
   <button class="sidebar-toggle" id="sidebarToggle" type="button" title="Colapsar menú">‹</button>
@@ -749,7 +760,7 @@ html[data-theme="dark"] .scoreboard>div{background:rgba(17,22,29,.62)!important;
     <a class="tab-btn module-link" href="#titlesPanel"><span class="nav-icon">♜</span><span class="nav-label">Títulos</span></a>
     <a class="tab-btn module-link" href="#weeklyPanel"><span class="nav-icon">⌁</span><span class="nav-label">Seguimiento</span></a>
     <a class="tab-btn module-link" href="#matchesPanel"><span class="nav-icon">▤</span><span class="nav-label">Bitácora</span></a>
-    <a class="tab-btn module-link" href="#scoreboard"><span class="nav-icon">▥</span><span class="nav-label">Estadísticas</span></a>
+    <a class="tab-btn module-link" href="#generalStats"><span class="nav-icon">▥</span><span class="nav-label">Estadísticas</span></a>
     <a class="tab-btn module-link" href="partidos.html"><span class="nav-icon">⚙</span><span class="nav-label">Gestión</span></a>
     <div class="sidebar-theme-wrap">
       <button class="theme-toggle sidebar-theme-toggle" id="themeToggle" type="button" aria-label="Cambiar tema">
@@ -782,11 +793,11 @@ html[data-theme="dark"] .scoreboard>div{background:rgba(17,22,29,.62)!important;
     <div class="panel" id="weeklyPanel">
       <h2>Seguimiento semanal</h2>
       <p class="sub">La gráfica muestra todas las semanas. El detalle inferior se despliega de cinco en cinco.</p>
-      <div class="legend-row">
-        <div class="legend-item"><span class="legend-swatch" style="background:var(--win)"></span>Ganados</div>
-        <div class="legend-item"><span class="legend-swatch" style="background:var(--draw)"></span>Empatados</div>
-        <div class="legend-item"><span class="legend-swatch" style="background:var(--loss)"></span>Perdidos</div>
-        <div class="legend-item"><span class="legend-line"></span>% Efectividad</div>
+      <div class="legend-row weekly-toggles" id="weeklyToggles">
+        <button type="button" class="legend-item active" data-series="g"><span class="legend-swatch" style="background:var(--win)"></span>Ganados</button>
+        <button type="button" class="legend-item active" data-series="e"><span class="legend-swatch" style="background:var(--draw)"></span>Empatados</button>
+        <button type="button" class="legend-item active" data-series="p"><span class="legend-swatch" style="background:var(--loss)"></span>Perdidos</button>
+        <button type="button" class="legend-item active" data-series="pct"><span class="legend-line"></span>% Efectividad</button>
       </div>
       <div class="chart-scroll"><div class="chart-wrap" id="weeklyChartWrap"></div></div>
       <div class="table-wrap"><table style="margin-top:18px;">
@@ -1013,13 +1024,15 @@ function normalizedMatch(raw, seed){
   const m={...(seed||{}),...(raw||{})};
   const teamName=TEAMS[m.team]?.name||m.team||'Equipo';
   const away=m.venueSide==='away';
-  m.rival=m.rival|| (away?m.localName:m.visitName) || 'Rival';
-  m.localName=m.localName|| (away?m.rival:teamName);
-  m.visitName=m.visitName|| (away?teamName:m.rival);
-  m.localScore=Number.isFinite(Number(m.localScore))?Number(m.localScore):Number(away?m.gc:m.gf)||0;
-  m.visitScore=Number.isFinite(Number(m.visitScore))?Number(m.visitScore):Number(away?m.gf:m.gc)||0;
-  m.gf=Number.isFinite(Number(m.gf))?Number(m.gf):Number(away?m.visitScore:m.localScore)||0;
-  m.gc=Number.isFinite(Number(m.gc))?Number(m.gc):Number(away?m.localScore:m.visitScore)||0;
+  m.rival=m.rival || (away?m.localName:m.visitName) || 'Rival';
+  // El Excel guarda GF/GC desde la perspectiva del equipo seguido.
+  // Por ello, el orden visual LOCAL–VISITANTE se reconstruye siempre con venueSide.
+  m.localName=away?(m.localName||m.rival):(m.localName||teamName);
+  m.visitName=away?(m.visitName||teamName):(m.visitName||m.rival);
+  m.gf=Number.isFinite(Number(m.gf))?Number(m.gf):0;
+  m.gc=Number.isFinite(Number(m.gc))?Number(m.gc):0;
+  m.localScore=away?m.gc:m.gf;
+  m.visitScore=away?m.gf:m.gc;
   m.resultado=m.resultado||computeResult(m.gf,m.gc);
   m.originLocal=m.originLocal||'—'; m.originVisit=m.originVisit||'—';
   m.torneo=m.torneo||'Sin competición'; m.fase=m.fase||'—';
@@ -1174,7 +1187,9 @@ function renderScoreboard(){
     s.pj++;
     if(m.resultado==='Ganado') s.pg++; else if(m.resultado==='Perdido') s.pp++; else s.pe++;
   });
-  document.getElementById('scoreboard').innerHTML = `
+  const scoreboardEl=document.getElementById('scoreboard');
+  if(!scoreboardEl) return;
+  scoreboardEl.innerHTML = `
     <div><div class="sb-num">${s.pj}</div><div class="sb-label">Jugados</div></div>
     <div><div class="sb-num">${s.pg}</div><div class="sb-label">Ganados</div><div class="sb-pct">${s.pj?Math.round(s.pg/s.pj*100):0}%</div></div>
     <div><div class="sb-num draw">${s.pe}</div><div class="sb-label">Empatados</div><div class="sb-pct">${s.pj?Math.round(s.pe/s.pj*100):0}%</div></div>
@@ -1347,19 +1362,33 @@ function tournamentLogoFor(name){
   const map=window.TOURNAMENT_LOGOS||{};
   return map[name] || (/^UEFA Champions League/i.test(name)?'logos/torneos/champions_league.png':'');
 }
-function titleStatusText(m){ return isWonTitle(m)?'TÍTULO':isRunnerUp(m)?'SUBCAMPEÓN':'ELIMINADO'; }
+function isLeagueTournament(m){ return /la liga|saudi professional league/i.test(m.torneo||'') || /^jornada\s+\d+/i.test(m.fase||''); }
+function titleStatusText(m){
+  if(isWonTitle(m)) return 'TÍTULO';
+  if(isRunnerUp(m)) return 'SUBCAMPEÓN';
+  if(m.resultado==='Perdido' && isLeagueTournament(m)) return 'TORNEO PERDIDO';
+  return 'ELIMINADO';
+}
+function opponentForTitle(m){
+  const followed=TEAMS[m.team]?.name||'';
+  return m.localName===followed ? m.visitName : m.localName;
+}
 function renderTitles(){
   const grid=document.getElementById('titleGrid');
   const sorted=matches.filter(isTitleMatchRecord).slice().sort((a,b)=>(b.mes*100+b.dia)-(a.mes*100+a.dia));
   const shown=titlesExpanded?sorted:sorted.slice(0,4);
   grid.innerHTML=shown.map(m=>{
     const t=TEAMS[m.team], teamLogo=TEAM_LOGOS[m.team]||'', comp=tournamentLogoFor(m.torneo);
+    const rival=opponentForTitle(m)||m.rival||'Rival';
+    const outcome=isWonTitle(m)?`Ganó ante ${rival}`:`Perdió ante ${rival}`;
     return `<article class="achievement-card ${isWonTitle(m)?'won':'lost'}">
       <span class="achievement-status">${titleStatusText(m)}</span>
       <div class="achievement-name">${m.torneo}</div>
       <div class="achievement-logo">${teamLogo?`<img src="${teamLogo}" alt="${t.name}">`:'🏆'}</div>
       <div class="achievement-team">${t.name}</div>
+      <div class="achievement-opponent">${outcome}</div>
       <div class="achievement-final">${m.fase||'—'}<div class="achievement-score">${formatMatchScore(m)}</div>${m.dia} ${MONTHS[m.mes]}</div>
+      <span class="ball-watermark" aria-hidden="true">⚽</span>
       ${comp?`<img class="competition-logo-corner" src="${comp}" alt="${m.torneo}" onerror="this.style.display='none'">`:''}
     </article>`;
   }).join('');
@@ -1371,6 +1400,7 @@ function renderTitles(){
   document.getElementById('titleTotal').innerHTML=`<div><div class="t-num">${won}</div><div class="t-lbl">Títulos ganados</div></div><div><div class="t-num loss">${runners}</div><div class="t-lbl">Subcampeonatos</div></div>`;
 }
 
+const weeklySeriesState={g:true,e:true,p:true,pct:true};
 function renderWeekly(){
   const allWeeks = buildWeeklyData();
   const chartWeeks = allWeeks;
@@ -1402,9 +1432,9 @@ function renderWeekly(){
     const x = padL + i*(barW+gap);
     let yCursor = padT + chartH;
     const segs = [
-      {n:wk.g, color:'var(--win)'},
-      {n:wk.e, color:'var(--draw)'},
-      {n:wk.p, color:'var(--loss)'},
+      {n:weeklySeriesState.g?wk.g:0, color:'var(--win)'},
+      {n:weeklySeriesState.e?wk.e:0, color:'var(--draw)'},
+      {n:weeklySeriesState.p?wk.p:0, color:'var(--loss)'},
     ];
     segs.forEach(seg=>{
       const segH = seg.n * unitH;
@@ -1421,13 +1451,13 @@ function renderWeekly(){
     return `<line x1="${padL-8}" y1="${y}" x2="${w-padR}" y2="${y}" stroke="#ece6d8" stroke-width="1"/>`;
   }).join('');
 
-  const linePath = smoothPath(linePts);
-  const lineDots = linePts.map(p=>`<circle cx="${p[0]}" cy="${p[1]}" r="3.5" fill="var(--accent-3)" stroke="#fff" stroke-width="1.4"/>`).join('');
+  const linePath = weeklySeriesState.pct?smoothPath(linePts):'';
+  const lineDots = weeklySeriesState.pct?linePts.map(p=>`<circle cx="${p[0]}" cy="${p[1]}" r="3.5" fill="var(--accent-3)" stroke="#fff" stroke-width="1.4"/>`).join(''):'';
 
   wrap.innerHTML = `<svg viewBox="0 0 ${w} ${h}" width="${w}" height="${h}" xmlns="http://www.w3.org/2000/svg">
     ${gridLines}
     ${bars}
-    <path d="${linePath}" fill="none" stroke="var(--accent-3)" stroke-width="2.4"/>
+    ${weeklySeriesState.pct?`<path d="${linePath}" fill="none" stroke="var(--accent-3)" stroke-width="2.4"/>`:''}
     ${lineDots}
   </svg>`;
 
@@ -1611,7 +1641,8 @@ function renderGeneralStats(){
   const titleRows=matches.filter(isTitleMatchRecord), titles=titleRows.filter(isWonTitle).length, runners=titleRows.filter(isRunnerUp).length;
   const finals=titles+runners;
   const el=document.getElementById('generalStats'); if(!el)return;
-  const items=[['🏆','Títulos',titles],['🥈','Subcampeonatos',runners],['🏟','Finales disputadas',finals],['⚽','PJ',pj],['G','PG',pg],['E','PE',pe],['P','PP',pp],['GF','Goles a favor',gf],['GC','Goles en contra',gc],['DG','Diferencia',`${gf-gc>=0?'+':''}${gf-gc}`],['%','Victorias',`${pj?(pg/pj*100).toFixed(1):'0.0'}%`],['Ø','Goles/partido',pj?(gf/pj).toFixed(2):'0.00']];
+  const tournaments=new Set(titleRows.map(m=>m.tournamentId||normalizeKey(m.torneo))).size;
+  const items=[['🏆','Títulos',titles],['🥈','Subcampeonatos',runners],['◉','Torneos competidos',tournaments],['🏟','Finales disputadas',finals],['⚽','PJ',pj],['G','PG',pg],['E','PE',pe],['P','PP',pp],['GF','Goles a favor',gf],['GC','Goles en contra',gc],['DG','Diferencia',`${gf-gc>=0?'+':''}${gf-gc}`],['%','Victorias',`${pj?(pg/pj*100).toFixed(1):'0.0'}%`],['Ø','Goles/partido',pj?(gf/pj).toFixed(2):'0.00']];
   el.innerHTML=items.map(([i,l,v])=>`<div class="general-stat"><span>${i}</span><strong>${v}</strong><small>${l}</small></div>`).join('');
 }
 function renderExtraStats(){
@@ -1688,6 +1719,10 @@ async function init(){
   });
 
   document.getElementById('weeklyMoreBtn').addEventListener('click', ()=>{ weeklyVisible += WEEK_PAGE_SIZE; renderWeekly(); });
+  document.querySelectorAll('#weeklyToggles [data-series]').forEach(btn=>btn.addEventListener('click',()=>{
+    const key=btn.dataset.series; weeklySeriesState[key]=!weeklySeriesState[key];
+    btn.classList.toggle('active',weeklySeriesState[key]); renderWeekly();
+  }));
   document.getElementById('titlesMoreBtn').addEventListener('click',()=>{titlesExpanded=!titlesExpanded;renderTitles();});
   document.getElementById('f_gf').addEventListener('input', updateResultPreview);
   document.getElementById('f_gc').addEventListener('input', updateResultPreview);
