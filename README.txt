@@ -1,16 +1,18 @@
-Ratio Sports v13 corregido
+RATIO SPORTS — VERSION 2.0
 
-- Bitácora reconstruida con los 106 partidos del Excel.
-- Se eliminan valores undefined mediante normalización de datos.
-- 1 título (Al Nassr) y 3 subcampeonatos.
-- PJ a la izquierda y forma reciente completa.
-- Conferencia del rival NFL bajo el nombre.
-- Estadísticas generales visibles en el dashboard.
+Archivos principales:
+- index.html: dashboard y bitácora visual.
+- partidos.html: administración independiente de partidos.
+- logos-config.js: rutas de logos.
+- /logos y /images: recursos gráficos.
 
-v14 corrections:
-- Títulos y finales se generan desde la bitácora y muestran rival, balón de fondo y logo del torneo.
-- Las ligas perdidas usan “Torneo perdido”, no “Eliminado”.
-- Estadísticas generales en una sola fila responsiva, incluyendo 9 torneos competidos.
-- Seguimiento semanal permite activar/desactivar G, E, P y efectividad.
-- Bitácora reconstruye marcador en orden local–visitante a partir de GF/GC y venueSide.
-- Los iconos de la barra lateral permanecen visibles al colapsarla.
+Cambios 2.0:
+- Bitácora compacta: logo y nombre están en la misma celda; se eliminaron columnas de logo vacías.
+- El país/origen solo se muestra en competiciones internacionales.
+- La marca LOCAL del origen de datos se interpreta como competición doméstica y no como condición de local/visitante.
+- Buscador y filtros por competición, alcance doméstico/internacional, partidos de título y orden.
+- Tabla modernizada con hover, marcador destacado y diseño más compacto.
+- Estadísticas generales en una sola fila de 12 indicadores, texto negro y tooltips accesibles.
+- Microanimaciones en estadísticas, tarjetas, bitácora y navegación.
+- Iconos de navegación monocromáticos.
+- Se conserva el diseño aprobado de las tarjetas de títulos.
