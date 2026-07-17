@@ -66,6 +66,22 @@ window.TOURNAMENTS = {
   cowboys: [],
 };
 
+
+// Mapa directo para las tarjetas derivadas de la bitácora. Agrega aquí
+// los PNG/SVG que coloques dentro de logos/torneos/. Un torneo sin archivo
+// simplemente no muestra marca de agua; nunca reutiliza el logo de otro.
+window.TOURNAMENT_LOGOS = {
+  'Supercopa de España': 'logos/torneos/supercopa_espana.png',
+  'Copa del Rey': 'logos/torneos/copa_del_rey.png',
+  'CONCACAF Champions Cup': 'logos/torneos/concachampions.png',
+  'UEFA Champions League 2025-2026': 'logos/torneos/champions_league.png',
+  'La Liga': 'logos/torneos/la_liga.png',
+  'AFC Champions League Two': 'logos/torneos/afc_champions_league_2.png',
+  'Saudi Professional League': 'logos/torneos/saudi_pro_league.png',
+  'Liga BBVA MX Clausura 2026': 'logos/torneos/liga_mx.png',
+  'Copa Mundial FIFA USA-MEX-CAN 2026': 'logos/torneos/copa_mundial_2026.png',
+};
+
 // Foto de fondo para toda la página (tu foto de Cristiano Ronaldo).
 // Ya está apuntando al archivo que subiste: colócalo en una carpeta
 // "images/" junto al .html y a este archivo para que cargue.
