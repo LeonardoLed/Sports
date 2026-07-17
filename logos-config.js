@@ -92,6 +92,15 @@ window.BACKGROUND_IMAGE = 'images/cristiano-fondo.jpg';
 // coloca este logo circular pegado al nombre del rival; si no existe,
 // muestra automáticamente sus iniciales.
 window.RIVAL_LOGOS = {
+  'Cruz Azul': 'logos/rivales/cruz_azul.png',
+  cruz_azul: 'logos/rivales/cruz_azul.png',
+  'FC Bayern München': 'logos/rivales/fc_bayern_munich.png',
+  'Bayern Munich': 'logos/rivales/fc_bayern_munich.png',
+  'Bayern Múnich': 'logos/rivales/fc_bayern_munich.png',
+  fc_bayern_munchen: 'logos/rivales/fc_bayern_munich.png',
+  bayern_munich: 'logos/rivales/fc_bayern_munich.png',
+  'Damac': 'logos/rivales/damac.png',
+  damac: 'logos/rivales/damac.png',
   // fc_barcelona: 'logos/rivales/fc_barcelona.png',
   // atletico_de_madrid: 'logos/rivales/atletico_de_madrid.png',
   // manchester_city: 'logos/rivales/manchester_city.png',

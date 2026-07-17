@@ -719,6 +719,34 @@ html[data-theme="dark"] .scoreboard>div{background:rgba(17,22,29,.62)!important;
 #matchesPanel th,#matchesPanel td{vertical-align:middle!important}.club-info strong{white-space:normal!important;line-height:1.15!important}
 @media(max-width:900px){.general-stats{width:100%!important}.general-stat{flex-basis:102px!important}.team-card{min-height:238px!important}}
 @media(max-width:620px){.general-stats{display:flex!important;overflow-x:auto!important;grid-template-columns:none!important}.general-stat{flex:0 0 100px!important;min-width:100px!important}.team-card{min-height:230px!important}.form-strip{overflow:visible!important}.title-grid{grid-template-columns:1fr!important}.achievement-card{min-height:145px!important}}
+
+
+/* ===== Ratio Sports 2.0.1 — ajuste de legibilidad y logos de rivales ===== */
+html:not([data-theme="dark"]) .team-card-v16,
+html:not([data-theme="dark"]) .team-card-v16 .team-name,
+html:not([data-theme="dark"]) .team-card-v16 .team-meta,
+html:not([data-theme="dark"]) .team-card-v16 .team-v16-record,
+html:not([data-theme="dark"]) .team-card-v16 .team-v16-record b,
+html:not([data-theme="dark"]) .team-card-v16 .team-v16-goals,
+html:not([data-theme="dark"]) .team-card-v16 .team-honours,
+html:not([data-theme="dark"]) .team-card-v16 .team-honours b,
+html:not([data-theme="dark"]) .team-card-v16 .team-honours small,
+html:not([data-theme="dark"]) .team-card-v16 .team-v16-form-label,
+html:not([data-theme="dark"]) .team-card-v16 .team-v16-eff,
+html:not([data-theme="dark"]) .team-card-v16 .team-v16-eff b{color:#111318!important;}
+.team-card-v16 .team-v16-goals{border-bottom:none!important;padding-bottom:2px!important;margin-bottom:7px!important;}
+.achievement-opponent{display:flex!important;align-items:center!important;justify-content:center!important;gap:6px!important;white-space:normal!important;overflow:visible!important;text-overflow:clip!important;}
+.achievement-rival-logo{display:inline-flex;align-items:center;justify-content:center;flex:0 0 22px;width:22px;height:22px;}
+.achievement-rival-logo .rival-cell{gap:0!important;}
+.achievement-rival-logo .rival-cell>span:not(.rival-logo){display:none!important;}
+.achievement-rival-logo .rival-logo{width:22px!important;height:22px!important;background:#fff!important;border:1px solid rgba(17,19,24,.14)!important;}
+.achievement-rival-logo .rival-logo img{padding:2px!important;}
+html:not([data-theme="dark"]) .achievement-card .achievement-name,
+html:not([data-theme="dark"]) .achievement-card .achievement-team,
+html:not([data-theme="dark"]) .achievement-card .achievement-opponent,
+html:not([data-theme="dark"]) .achievement-card .achievement-final,
+html:not([data-theme="dark"]) .achievement-card .achievement-score{color:#111318!important;}
+
 </style>
 </head>
 <body>
@@ -1407,7 +1435,7 @@ function renderTitles(){
       <div class="achievement-name">${m.torneo}</div>
       <div class="achievement-logo">${teamLogo?`<img src="${teamLogo}" alt="${t.name}">`:'🏆'}</div>
       <div class="achievement-team">${t.name}</div>
-      <div class="achievement-opponent">${outcome}</div>
+      <div class="achievement-opponent"><span class="achievement-rival-logo">${rivalLogoHtml(rival)}</span><span>${outcome}</span></div>
       <div class="achievement-final">${m.fase||'—'}<div class="achievement-score">${formatMatchScore(m)}</div>${m.dia} ${MONTHS[m.mes]}</div>
       <span class="ball-watermark" aria-hidden="true">⚽</span>
       ${comp?`<img class="competition-logo-corner" src="${comp}" alt="${m.torneo}" onerror="this.style.display='none'">`:''}
