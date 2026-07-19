@@ -16,3 +16,28 @@ Cambios 2.0:
 - Microanimaciones en estadísticas, tarjetas, bitácora y navegación.
 - Iconos de navegación monocromáticos.
 - Se conserva el diseño aprobado de las tarjetas de títulos.
+
+
+========================================
+AGREGAR LOGOS SIN MODIFICAR CÓDIGO
+========================================
+
+El proyecto ahora busca automáticamente los logos mediante el nombre normalizado.
+
+1. Guarda el archivo PNG en la carpeta correspondiente:
+   - Rivales: logos/rivales/
+   - Equipos seguidos: logos/equipos/
+   - Torneos: logos/torneos/
+
+2. Nombra el archivo en minúsculas, sin acentos y sustituyendo espacios por guiones bajos.
+
+Ejemplos:
+   Manchester City        -> logos/rivales/manchester_city.png
+   Atlético de Madrid     -> logos/rivales/atletico_de_madrid.png
+   Inter Miami CF         -> logos/rivales/inter_miami_cf.png
+   Copa Libertadores      -> logos/torneos/copa_libertadores.png
+
+3. Recarga la página con Ctrl+F5.
+
+EXCEPCIONES:
+Si el nombre del archivo no puede coincidir con el nombre mostrado en la bitácora, agrega una sola entrada en logos-config.js dentro de RIVAL_LOGOS, TOURNAMENT_LOGOS o TEAM_LOGOS. Los mapas manuales tienen prioridad sobre la búsqueda automática.

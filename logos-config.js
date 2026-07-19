@@ -107,3 +107,49 @@ window.RIVAL_LOGOS = {
   // cruz_azul: 'logos/rivales/cruz_azul.png',
   // al_hilal: 'logos/rivales/al_hilal.png',
 };
+
+
+/* =====================================================================
+   RESOLUCIÓN AUTOMÁTICA DE LOGOS
+
+   Convención de nombres:
+   - Rival:   logos/rivales/<nombre_normalizado>.png
+   - Torneo:  logos/torneos/<nombre_normalizado>.png
+   - Equipo:  logos/equipos/<nombre_normalizado>.png
+
+   Ejemplos:
+   "Manchester City"       -> logos/rivales/manchester_city.png
+   "Atlético de Madrid"    -> logos/rivales/atletico_de_madrid.png
+   "Copa Libertadores"     -> logos/torneos/copa_libertadores.png
+
+   Los mapas manuales de arriba siguen funcionando como EXCEPCIONES y
+   tienen prioridad. Así puedes resolver abreviaturas o nombres que no
+   coincidan con el archivo sin modificar el HTML.
+   ===================================================================== */
+window.logoSlug = function(value){
+  return String(value || '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/&/g, ' y ')
+    .replace(/[^a-z0-9]+/g, '_')
+    .replace(/^_+|_+$/g, '');
+};
+
+window.resolveRivalLogo = function(name){
+  const slug = window.logoSlug(name);
+  return window.RIVAL_LOGOS[name] || window.RIVAL_LOGOS[slug] ||
+         `logos/rivales/${slug}.png`;
+};
+
+window.resolveTournamentLogo = function(name){
+  const slug = window.logoSlug(name);
+  return window.TOURNAMENT_LOGOS[name] || window.TOURNAMENT_LOGOS[slug] ||
+         `logos/torneos/${slug}.png`;
+};
+
+window.resolveTeamLogo = function(id, displayName){
+  const slug = window.logoSlug(displayName || id);
+  return window.TEAM_LOGOS[id] || window.TEAM_LOGOS[slug] ||
+         `logos/equipos/${slug}.png`;
+};

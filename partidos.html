@@ -1005,6 +1005,9 @@ const TEAM_ICON = {"real_madrid":"🛡️","pumas":"🛡️","al_nassr":"🛡️
    caemos en objetos vacíos y el dashboard usa los respaldos normales. */
 const TEAM_LOGOS = window.TEAM_LOGOS || {};
 const RIVAL_LOGOS = window.RIVAL_LOGOS || {};
+const resolveRivalLogo = window.resolveRivalLogo || ((name)=>RIVAL_LOGOS[name] || RIVAL_LOGOS[normalizeKey(name)] || `logos/rivales/${normalizeKey(name)}.png`);
+const resolveTournamentLogo = window.resolveTournamentLogo || ((name)=>`logos/torneos/${normalizeKey(name)}.png`);
+const resolveTeamLogo = window.resolveTeamLogo || ((id,name)=>TEAM_LOGOS[id] || `logos/equipos/${normalizeKey(name||id)}.png`);
 const TOURNAMENTS_CONFIG = window.TOURNAMENTS || {};
 const BACKGROUND_IMAGE = window.BACKGROUND_IMAGE || '';
 
@@ -1268,7 +1271,7 @@ function initials(value){
 }
 function rivalLogoHtml(name){
   const key=normalizeKey(name);
-  const logo=RIVAL_LOGOS[name] || RIVAL_LOGOS[key];
+  const logo=resolveRivalLogo(name);
   if(logo){
     return `<span class="rival-cell"><span class="rival-logo"><img src="${logo}" alt="${name}" onerror="this.parentElement.innerHTML='<span class=\\'rival-fallback\\'>${initials(name)}</span>';"></span><span>${name}</span></span>`;
   }
@@ -1302,7 +1305,7 @@ function effectiveTournamentStatus(team,tournament){
 }
 
 function miniLogoHtml(id){
-  const logo = TEAM_LOGOS[id];
+  const logo = resolveTeamLogo(id, TEAMS[id]?.name);
   const fallback = initials(TEAMS[id]?.name || id);
   if(logo){
     return `<div class="mini-logo-slot"><img src="${logo}" alt="${TEAMS[id]?.name||''}" onerror="this.parentElement.innerHTML='<span class=\'slot-placeholder\'>${fallback}</span>';"></div>`;
@@ -1312,7 +1315,7 @@ function miniLogoHtml(id){
 
 function badgeHtml(id){
   const t = TEAMS[id];
-  const logo = TEAM_LOGOS[id];
+  const logo = resolveTeamLogo(id, TEAMS[id]?.name);
   if(logo){
     return `<div class="team-badge" style="--team-color:${t.color}; --team-fg:${t.accent}">
       <img src="${logo}" alt="${t.name}" onload="this.parentElement.querySelector('.add-logo-hint').style.display='none';" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'; this.parentElement.querySelector('.add-logo-hint').style.display='flex';">
@@ -1332,7 +1335,7 @@ function teamCardHtml(id){
   const last5 = s.rows.slice(-5).reverse();
   return `
     <div class="team-card" style="--team-color:${t.color}" data-team="${id}">
-      ${TEAM_LOGOS[id] ? `<img class="watermark" src="${TEAM_LOGOS[id]}" alt="" onerror="this.style.display='none'">` : ``}
+      ${resolveTeamLogo(id, TEAMS[id]?.name) ? `<img class="watermark" src="${resolveTeamLogo(id, TEAMS[id]?.name)}" alt="" onerror="this.style.display='none'">` : ``}
       <div class="team-card-top">
         <div class="team-card-identity">
           <span class="team-monogram" aria-hidden="true"></span>
@@ -1385,7 +1388,7 @@ function renderTeamCards(){
 
 function titleTeamLogoHtml(id, icon){
   const t=TEAMS[id];
-  const logo=TEAM_LOGOS[id];
+  const logo=resolveTeamLogo(id, TEAMS[id]?.name);
   if(logo){
     return `<div class="title-team-logo" style="--team-color:${t.color};--team-fg:${t.accent}"><img src="${logo}" alt="${t.name}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"><span class="logo-fallback" style="display:none">${t.name.slice(0,1)}</span><span class="trophy-mini">${icon}</span></div>`;
   }
@@ -1402,7 +1405,7 @@ function renderTitles(){
       const m=findTitleMatch(id,tt);
       if(status==='en_curso' && !m) return;
       totalComp++; if(status==='ganado') totalWon++;
-      const logo=TEAM_LOGOS[id]||'';
+      const logo=resolveTeamLogo(id, TEAMS[id]?.name);
       const state=status==='ganado'?'GANADO':status==='perdido'?'PERDIDO':'EN DISPUTA';
       const cls=status==='ganado'?'won':status==='perdido'?'lost':'';
       const finalHtml=m?`<div class="achievement-final">${m.fase||'Final'} vs ${m.rival}<div class="achievement-score">${m.gf} - ${m.gc}</div>${m.dia} ${MONTHS[m.mes]}</div>`:`<div class="achievement-final">Torneo en disputa</div>`;

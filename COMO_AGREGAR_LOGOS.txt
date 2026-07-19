@@ -1,0 +1,28 @@
+RATIO SPORTS — GUÍA RÁPIDA DE LOGOS
+
+YA NO ES NECESARIO EDITAR EL HTML.
+
+RIVALES
+Nombre mostrado: Manchester City
+Archivo: logos/rivales/manchester_city.png
+
+Nombre mostrado: Atlético de Madrid
+Archivo: logos/rivales/atletico_de_madrid.png
+
+TORNEOS
+Nombre mostrado: Copa Libertadores
+Archivo: logos/torneos/copa_libertadores.png
+
+EQUIPOS SEGUIDOS
+Nombre mostrado: Inter Miami CF
+Archivo: logos/equipos/inter_miami_cf.png
+
+REGLAS DEL NOMBRE
+- minúsculas
+- sin acentos
+- espacios y símbolos se convierten en _
+- formato recomendado: PNG con fondo transparente
+- tamaño recomendado: 256x256 o 512x512
+
+Si un nombre especial no coincide, usa logos-config.js como excepción manual.
+Después de agregar o sustituir un logo, usa Ctrl+F5 en el navegador.
