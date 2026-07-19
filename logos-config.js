@@ -44,7 +44,7 @@ window.TEAM_LOGOS = {
 // formulario siguen intactos).
 window.TOURNAMENTS = {
   real_madrid: [
-    {name:'La Liga',              logo:'logos/torneos/la_liga.png',             status:'en_curso'},
+    {name:'La Liga',              logo:'logos/torneos/la_liga.png',             status:'perdido'},
     {name:'Champions League',     logo:'logos/torneos/champions_league.png',    status:'en_curso', matchTerms:['UEFA Champions League']},
     {name:'Copa del Rey',         logo:'logos/torneos/copa_del_rey.png',        status:'en_curso'},
     {name:'Supercopa de España',  logo:'logos/torneos/supercopa_espana.png',    status:'en_curso'},
@@ -92,22 +92,69 @@ window.BACKGROUND_IMAGE = 'images/cristiano-fondo.jpg';
 // coloca este logo circular pegado al nombre del rival; si no existe,
 // muestra automáticamente sus iniciales.
 window.RIVAL_LOGOS = {
+  // Cruz Azul
   'Cruz Azul': 'logos/rivales/cruz_azul.png',
   cruz_azul: 'logos/rivales/cruz_azul.png',
+
+  // Bayern
   'FC Bayern München': 'logos/rivales/fc_bayern_munich.png',
   'Bayern Munich': 'logos/rivales/fc_bayern_munich.png',
   'Bayern Múnich': 'logos/rivales/fc_bayern_munich.png',
   fc_bayern_munchen: 'logos/rivales/fc_bayern_munich.png',
   bayern_munich: 'logos/rivales/fc_bayern_munich.png',
-  'Damac': 'logos/rivales/damac.png',
-  damac: 'logos/rivales/damac.png',
-  // fc_barcelona: 'logos/rivales/fc_barcelona.png',
-  // atletico_de_madrid: 'logos/rivales/atletico_de_madrid.png',
-  // manchester_city: 'logos/rivales/manchester_city.png',
-  // cruz_azul: 'logos/rivales/cruz_azul.png',
-  // al_hilal: 'logos/rivales/al_hilal.png',
-};
 
+  // Damac
+  Damac: 'logos/rivales/damac.png',
+  damac: 'logos/rivales/damac.png',
+
+// Sevilla
+'Sevilla': 'logos/rivales/sevilla.png',
+'Sevilla FC': 'logos/rivales/sevilla.png',
+sevilla: 'logos/rivales/sevilla.png',
+sevilla_fc: 'logos/rivales/sevilla.png',
+
+// Espanyol
+'Espanyol': 'logos/rivales/espanyol.png',
+'RCD Espanyol': 'logos/rivales/espanyol.png',
+'RCD Espanyol de Barcelona': 'logos/rivales/espanyol.png',
+espanyol: 'logos/rivales/espanyol.png',
+rcd_espanyol: 'logos/rivales/espanyol.png',
+
+// Atlético de Madrid
+'Atlético de Madrid': 'logos/rivales/atmadrid.png',
+'Atletico de Madrid': 'logos/rivales/atmadrid.png',
+'Atlético Madrid': 'logos/rivales/atmadrid.png',
+'Atletico Madrid': 'logos/rivales/atmadrid.png',
+'at_madrid': 'logos/rivales/atmadrid.png',
+atletico_de_madrid: 'logos/rivales/atmadrid.png',
+atletico_madrid: 'logos/rivales/atmadrid.png',
+
+// Real Oviedo
+'Real Oviedo': 'logos/rivales/oviedo.png',
+'Oviedo': 'logos/rivales/oviedo.png',
+real_oviedo: 'logos/rivales/oviedo.png',
+oviedo: 'logos/rivales/oviedo.png',
+
+// Athletic Club
+'Athletic Club': 'logos/rivales/abilbao.png',
+'Athletic Bilbao': 'logos/rivales/abilbao.png',
+'Athletic de Bilbao': 'logos/rivales/abilbao.png',
+'Bilbao': 'logos/rivales/abilbao.png',
+athletic_club: 'logos/rivales/abilbao.png',
+athletic_bilbao: 'logos/rivales/abilbao.png',
+athletic_de_bilbao: 'logos/rivales/abilbao.png',
+bilbao: 'logos/rivales/abilbao.png',
+
+// FC Barcelona
+'FC Barcelona': 'logos/rivales/fcbarcelona.png',
+'Barcelona': 'logos/rivales/fcbarcelona.png',
+'Barça': 'logos/rivales/fcbarcelona.png',
+'Barca': 'logos/rivales/fcbarcelona.png',
+fc_barcelona: 'logos/rivales/fcbarcelona.png',
+barcelona: 'logos/rivales/fcbarcelona.png',
+barca: 'logos/rivales/fcbarcelona.png'
+  
+};
 
 /* =====================================================================
    RESOLUCIÓN AUTOMÁTICA DE LOGOS
