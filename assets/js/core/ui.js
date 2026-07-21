@@ -16,11 +16,11 @@ function initials(value){
 }
 
 function rivalLogoHtml(name){
-  const safeName=escapeHtml(name||'—');
-  const safeInitials=escapeHtml(initials(name));
-  const logo=resolveRivalLogo(name);
+  const safeName = escapeHtml(name);
+  const safeInitials = escapeHtml(initials(name));
+  const logo = resolveRivalLogo(name);
   if(logo){
-    return `<span class="rival-cell"><span class="rival-logo"><img src="${escapeAttribute(logo)}" alt="${safeName}" onerror="this.hidden=true;this.nextElementSibling.hidden=false"><span class="rival-fallback" hidden>${safeInitials}</span></span><span>${safeName}</span></span>`;
+    return `<span class="rival-cell"><span class="rival-logo"><img src="${escapeAttr(logo)}" alt="${safeName}" onerror="this.hidden=true;this.nextElementSibling.hidden=false"><span class="rival-fallback" hidden>${safeInitials}</span></span><span>${safeName}</span></span>`;
   }
   return `<span class="rival-cell"><span class="rival-logo"><span class="rival-fallback">${safeInitials}</span></span><span>${safeName}</span></span>`;
 }
@@ -55,11 +55,11 @@ function effectiveTournamentStatus(team,tournament){
 }
 
 function miniLogoHtml(id){
-  const logo = resolveTeamLogo(id, TEAMS[id]?.name);
-  const fallback = escapeHtml(initials(TEAMS[id]?.name || id));
-  const safeName = escapeAttribute(TEAMS[id]?.name||'');
+  const teamName = TEAMS[id]?.name || id;
+  const logo = resolveTeamLogo(id, teamName);
+  const fallback = escapeHtml(initials(teamName));
   if(logo){
-    return `<div class="mini-logo-slot"><img src="${escapeAttribute(logo)}" alt="${safeName}" onerror="this.hidden=true;this.nextElementSibling.hidden=false"><span class="slot-placeholder" hidden>${fallback}</span></div>`;
+    return `<div class="mini-logo-slot"><img src="${escapeAttr(logo)}" alt="${escapeAttr(teamName)}" onerror="this.hidden=true;this.nextElementSibling.hidden=false"><span class="slot-placeholder" hidden>${fallback}</span></div>`;
   }
   return `<div class="mini-logo-slot"><span class="slot-placeholder">${fallback}</span></div>`;
 }
@@ -68,13 +68,13 @@ function badgeHtml(id){
   const t = TEAMS[id];
   const logo = resolveTeamLogo(id, TEAMS[id]?.name);
   if(logo){
-    return `<div class="team-badge" style="--team-color:${t.color}; --team-fg:${t.accent}">
-      <img src="${escapeAttribute(logo)}" alt="${escapeAttribute(t.name)}" onload="this.parentElement.querySelector('.add-logo-hint').style.display='none';" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'; this.parentElement.querySelector('.add-logo-hint').style.display='flex';">
+    return `<div class="team-badge" style="--team-color:${escapeAttr(t.color)}; --team-fg:${escapeAttr(t.accent)}">
+      <img src="${escapeAttr(logo)}" alt="${escapeAttr(t.name)}" onload="this.parentElement.querySelector('.add-logo-hint').style.display='none';" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'; this.parentElement.querySelector('.add-logo-hint').style.display='flex';">
       <span class="badge-fallback" style="display:none">${escapeHtml(t.name.slice(0,1))}</span>
       
     </div>`;
   }
-  return `<div class="team-badge" style="--team-color:${t.color}; --team-fg:${t.accent}">
+  return `<div class="team-badge" style="--team-color:${escapeAttr(t.color)}; --team-fg:${escapeAttr(t.accent)}">
     <span class="badge-fallback" style="display:flex">${escapeHtml(t.name.slice(0,1))}</span>
     
   </div>`;
@@ -89,8 +89,8 @@ function teamCardHtml(id){
   const pctP = s.pj ? Math.round(s.pp / s.pj * 100) : 0;
   const honours = titleCountsForTeam(id);
   return `
-    <div class="team-card team-card-v16" style="--team-color:${t.color}" data-team="${escapeAttribute(id)}">
-      ${resolveTeamLogo(id, TEAMS[id]?.name) ? `<img class="watermark" src="${escapeAttribute(resolveTeamLogo(id, TEAMS[id]?.name))}" alt="" onerror="this.style.display='none'">` : ``}
+    <div class="team-card team-card-v16" style="--team-color:${escapeAttr(t.color)}" data-team="${escapeAttr(id)}">
+      ${resolveTeamLogo(id, TEAMS[id]?.name) ? `<img class="watermark" src="${escapeAttr(resolveTeamLogo(id, TEAMS[id]?.name))}" alt="" onerror="this.style.display='none'">` : ``}
 
       <div class="team-card-v16-head">
         <div class="team-card-identity">
@@ -117,7 +117,7 @@ function teamCardHtml(id){
         </div>
 
         <div class="pct-track" aria-label="Distribución de resultados">
-          <span title="Ganados ${pctG}%" style="width:${pctG}%; background:var(--win)"></span>
+          <span title="Ganados ${escapeAttr(pctG)}%" style="width:${pctG}%; background:var(--win)"></span>
           <span title="Empatados ${pctE}%" style="width:${pctE}%; background:var(--draw)"></span>
           <span title="Perdidos ${pctP}%" style="width:${pctP}%; background:var(--loss)"></span>
         </div>
@@ -129,7 +129,7 @@ function teamCardHtml(id){
 
         <div class="team-v16-form-label">Forma reciente · últimos 8</div>
         <div class="form-strip">
-          ${last8.length ? last8.map(m=>`<span class="form-pip ${resClass(m.resultado)}" title="${escapeAttribute(m.rival)} · ${escapeAttribute(resLabel(m.resultado))}">${m.resultado==='Ganado'?'G':m.resultado==='Perdido'?'P':'E'}</span>`).join('') : '<span class="muted" style="font-size:11px;">Sin partidos aún</span>'}
+          ${last8.length ? last8.map(m=>`<span class="form-pip ${resClass(m.resultado)}" title="${escapeAttr(m.rival)} · ${escapeAttr(resLabel(m.resultado))}">${m.resultado==='Ganado'?'G':m.resultado==='Perdido'?'P':'E'}</span>`).join('') : '<span class="muted" style="font-size:11px;">Sin partidos aún</span>'}
         </div>
 
         <div class="team-v16-eff">Efectividad <b>${s.pct}%</b></div>
@@ -142,9 +142,9 @@ function titleTeamLogoHtml(id, icon){
   const t=TEAMS[id];
   const logo=resolveTeamLogo(id, TEAMS[id]?.name);
   if(logo){
-    return `<div class="title-team-logo" style="--team-color:${t.color};--team-fg:${t.accent}"><img src="${escapeAttribute(logo)}" alt="${escapeAttribute(t.name)}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"><span class="logo-fallback" style="display:none">${escapeHtml(t.name.slice(0,1))}</span><span class="trophy-mini">${escapeHtml(icon)}</span></div>`;
+    return `<div class="title-team-logo" style="--team-color:${escapeAttr(t.color)};--team-fg:${t.accent}"><img src="${escapeAttr(logo)}" alt="${escapeAttr(t.name)}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"><span class="logo-fallback" style="display:none">${escapeHtml(t.name.slice(0,1))}</span><span class="trophy-mini">${icon}</span></div>`;
   }
-  return `<div class="title-team-logo" style="--team-color:${t.color};--team-fg:${t.accent}"><span class="logo-fallback">${escapeHtml(t.name.slice(0,1))}</span><span class="trophy-mini">${escapeHtml(icon)}</span></div>`;
+  return `<div class="title-team-logo" style="--team-color:${escapeAttr(t.color)};--team-fg:${t.accent}"><span class="logo-fallback">${escapeHtml(t.name.slice(0,1))}</span><span class="trophy-mini">${icon}</span></div>`;
 }
 
 function applyTheme(theme){

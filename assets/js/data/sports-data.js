@@ -1,12 +1,9 @@
 /* =====================================================================
    DATOS BASE DE RATIO SPORTS
 
-   Este archivo contiene únicamente datos estáticos:
-   - equipos seguidos;
-   - bitácora inicial de partidos;
-   - iconos y banderas asociadas a cada equipo.
-
-   No contiene renderizado, eventos ni acceso al DOM.
+   Fuente de verdad: Sports-main(1).zip proporcionado por el usuario.
+   Este archivo contiene únicamente equipos, partidos históricos e iconos.
+   No contiene lógica de presentación ni acceso al DOM.
    ===================================================================== */
 
 const TEAMS = {"real_madrid":{"name":"Real Madrid","alias":["Real Madrid"],"country":"España","type":"Club","color":"#ffffff","accent":"#1a1a2e","sport":"futbol"},"pumas":{"name":"Pumas UNAM","alias":["Pumas UNAM"],"country":"México","type":"Club","color":"#0a2f5c","accent":"#f5d800","sport":"futbol"},"al_nassr":{"name":"Al Nassr","alias":["Al Nassr"],"country":"Arabia Saudita","type":"Club","color":"#fbe122","accent":"#0033a0","sport":"futbol"},"sel_mex":{"name":"México","alias":["México"],"country":"Selección Nacional","type":"Selección","color":"#00843D","accent":"#ce1126","sport":"futbol"},"sel_por":{"name":"Portugal","alias":["Portugal"],"country":"Selección Nacional","type":"Selección","color":"#C8102E","accent":"#ff0000","sport":"futbol"},"cowboys":{"name":"Dallas Cowboys","alias":["Dallas Cowboys"],"country":"USA","type":"NFL","color":"#041e42","accent":"#869397","sport":"nfl"}};

@@ -79,6 +79,27 @@ const storageAdapter = {
   }
 };
 
+function normalizedMatch(raw, seed){
+  const m={...(seed||{}),...(raw||{})};
+  const teamName=TEAMS[m.team]?.name||m.team||'Equipo';
+  const away=m.venueSide==='away';
+  m.rival=m.rival || (away?m.localName:m.visitName) || 'Rival';
+  m.localName=away?(m.localName||m.rival):(m.localName||teamName);
+  m.visitName=away?(m.visitName||teamName):(m.visitName||m.rival);
+  m.gf=Number.isFinite(Number(m.gf))?Number(m.gf):0;
+  m.gc=Number.isFinite(Number(m.gc))?Number(m.gc):0;
+  m.localScore=away?m.gc:m.gf;
+  m.visitScore=away?m.gf:m.gc;
+  m.resultado=m.resultado||computeResult(m.gf,m.gc);
+  m.originLocal=m.originLocal||'—';
+  m.originVisit=m.originVisit||'—';
+  m.torneo=m.torneo||'Sin competición';
+  m.fase=m.fase||'—';
+  m.estadio=m.estadio||'';
+  m.ciudad=m.ciudad||'';
+  return m;
+}
+
 function storageEnvelope(){
   return { schemaVersion:STORAGE_SCHEMA_VERSION, updatedAt:new Date().toISOString(), matches, titleOverrides };
 }
@@ -250,6 +271,6 @@ function fmtDayRange(minD, maxD){
 function escapeHtml(value=''){
   return String(value).replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
 }
-function escapeAttribute(value=''){ return escapeHtml(value); }
+function escapeAttr(value=''){ return escapeHtml(value); }
 function setSafeText(element,value){ if(element) element.textContent=String(value??''); }
-window.SportsCore={exportLedger,importLedgerFile,escapeHtml,escapeAttribute,setSafeText,storageEnvelope,STORAGE_SCHEMA_VERSION};
+window.SportsCore={exportLedger,importLedgerFile,escapeHtml,storageEnvelope,STORAGE_SCHEMA_VERSION};
