@@ -1,1833 +1,224 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Ratio Sports · Centro de Seguimiento</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Teko:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
-<style>
-:root{
-  --bg: #faf6ee;
-  --bg-flood:
-    radial-gradient(900px 480px at 100% -6%, rgba(10,106,62,0.07), transparent 60%),
-    radial-gradient(800px 420px at -6% 10%, rgba(200,16,46,0.06), transparent 55%);
-  --panel: #ffffff;
-  --panel-2: #f3efe4;
-  --panel-3: #ece6d8;
-  --border: #e4dcc9;
-  --border-soft: #ece6d8;
-  --text: #211d18;
-  --text-dim: #6b6455;
-  --text-faint: #a39a86;
-  --win: #1f9d55;
-  --win-dim: #e5f6ec;
-  --loss: #d6434c;
-  --loss-dim: #fbe9ea;
-  --draw: #c1860f;
-  --draw-dim: #faf1de;
-  --accent: #0a6a3e;
-  --accent-2: #c8102e;
-  --accent-3: #c1860f;
-  --radius: 14px;
-  --font-display: 'Teko', sans-serif;
-  --font-body: 'Inter', sans-serif;
-  --font-mono: 'JetBrains Mono', monospace;
-}
-html[data-theme="dark"]{
-  --bg:#0f1210;
-  --bg-flood:
-    radial-gradient(900px 480px at 100% -6%, rgba(45,170,105,0.10), transparent 60%),
-    radial-gradient(800px 420px at -6% 10%, rgba(225,67,76,0.08), transparent 55%);
-  --panel:#171b18;
-  --panel-2:#202620;
-  --panel-3:#293029;
-  --border:#343c35;
-  --border-soft:#2a312b;
-  --text:#f4f1e9;
-  --text-dim:#c4bfae;
-  --text-faint:#8f948a;
-  --win:#54c983; --win-dim:#173624;
-  --loss:#ef6a72; --loss-dim:#3a1d20;
-  --draw:#e2ad43; --draw-dim:#3b301b;
-  --accent:#168654; --accent-2:#df3650; --accent-3:#d3a23b;
-}
-*{box-sizing:border-box;}
-html,body{margin:0;padding:0;}
-body{
-  background:var(--bg) var(--bg-flood);
-  color:var(--text);
-  font-family:var(--font-body);
-  min-height:100vh;
-  -webkit-font-smoothing:antialiased;
-}
-.wrap{max-width:1180px;margin:0 auto;padding:28px 20px 60px; position:relative;}
-
-/* decorative ball watermark, pure vector, floats behind content */
-.ball-decor{
-  position:fixed; top:-60px; right:-60px; width:340px; height:340px; z-index:0;
-  opacity:0.05; pointer-events:none;
-}
-.ball-decor.b2{ top:auto; bottom:-80px; left:-90px; right:auto; width:280px; height:280px; opacity:0.04; }
-
-.bg-photo-layer{
-  position:fixed; inset:0; z-index:0; background-size:cover; background-position:center top;
-  opacity:0; transition:opacity .5s ease; pointer-events:none;
-}
-.bg-photo-layer.active{ opacity:.72; }
-
-/* ---------- HEADER ---------- */
-.masthead{
-  position:relative; z-index:1; display:flex; align-items:center; justify-content:space-between; gap:20px;
-  flex-wrap:wrap; margin-bottom:22px; padding:22px 26px; border-radius:18px;
-  border:1px solid var(--border); overflow:hidden;
-  background:var(--panel);
-  box-shadow:0 1px 0 rgba(0,0,0,0.02), 0 12px 30px -18px rgba(33,29,24,0.18);
-}
-.masthead::before{
-  content:""; position:absolute; inset:0; z-index:0;
-  background:repeating-linear-gradient(90deg, rgba(10,106,62,0.035) 0px, rgba(10,106,62,0.035) 60px, transparent 60px, transparent 120px);
-}
-.brand{display:flex; align-items:center; gap:14px; position:relative; z-index:1;}
-.brand-mark{
-  width:48px; height:48px; border-radius:50%; flex-shrink:0; position:relative;
-  background:radial-gradient(circle at 32% 28%, #ffffff, #eef1e6 60%, #d8dcc9 100%);
-  border:2px solid #21201c;
-  display:flex; align-items:center; justify-content:center;
-  box-shadow:0 6px 14px -6px rgba(0,0,0,0.35);
-}
-.brand-mark svg{width:30px; height:30px;}
-.brand h1{
-  font-family:var(--font-display); font-weight:600; letter-spacing:0.5px;
-  font-size:30px; line-height:1; margin:0; text-transform:uppercase;
-}
-.brand p{margin:4px 0 0; font-size:12.5px; color:var(--text-faint); letter-spacing:0.4px;}
-
-.scoreboard{
-  position:relative; z-index:1;
-  display:flex; gap:0; background:var(--panel-2); border:1px solid var(--border);
-  border-radius:12px; overflow:hidden;
-}
-.scoreboard div{padding:8px 18px; text-align:center; border-right:1px solid var(--border);}
-.scoreboard div:last-child{border-right:none;}
-.scoreboard .sb-num{font-family:var(--font-display); font-size:28px; line-height:1; font-weight:600; color:var(--win);}
-.scoreboard .sb-num.loss{color:var(--loss);}
-.scoreboard .sb-num.draw{color:var(--draw);}
-.scoreboard .sb-label{font-size:10px; letter-spacing:1.2px; color:var(--text-faint); text-transform:uppercase; margin-top:2px;}
-.scoreboard .sb-pct{font-size:10px; font-family:var(--font-mono); color:var(--text-faint); margin-top:1px;}
-
-.header-actions{position:relative;z-index:1;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
-.theme-toggle{display:inline-flex;align-items:center;gap:8px;background:var(--panel-2);border:1px solid var(--border);color:var(--text);padding:9px 12px;border-radius:10px;font:600 12px var(--font-body);cursor:pointer;}
-.theme-toggle:hover{border-color:var(--accent);}
-html[data-theme="dark"] .section-title, html[data-theme="dark"] .panel h2{color:#fff;}
-html[data-theme="dark"] .brand-mark{background:radial-gradient(circle at 32% 28%,#fff,#dfe5da 60%,#b9c2b5 100%);}
-html[data-theme="dark"] .bg-photo-layer.active{opacity:.52;}
-
-/* ---------- TABS ---------- */
-.tabbar{display:flex; gap:8px; margin-bottom:22px; position:relative; z-index:1;}
-.tab-btn{
-  font-family:var(--font-body); font-weight:600; font-size:14px; color:var(--text-dim);
-  background:var(--panel); border:1px solid var(--border); padding:11px 20px; border-radius:10px;
-  cursor:pointer; transition:all .15s ease; letter-spacing:0.2px;
-}
-.tab-btn:hover{color:var(--text); border-color:#c9bd9e;}
-.tab-btn.active{color:#fff; background:var(--accent); border-color:var(--accent); box-shadow:0 6px 16px -8px rgba(10,106,62,0.5);}
-
-.section-title{
-  font-family:var(--font-display); font-size:15px; font-weight:600; letter-spacing:1.4px;
-  text-transform:uppercase; color:#111; margin:30px 0 12px; display:flex; align-items:center; gap:10px;
-  position:relative; z-index:1;
-}
-.section-title::after{content:""; flex:1; height:1px; background:var(--border);}
-.section-title:first-child{margin-top:0;}
-
-.chipbar{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:24px; position:relative; z-index:1;}
-.chip{
-  display:flex; align-items:center; gap:7px; font-size:13px; font-weight:600;
-  padding:7px 14px 7px 10px; border-radius:999px; border:1px solid var(--border);
-  background:var(--panel); color:var(--text-dim); cursor:pointer; transition:all .15s ease;
-}
-.chip .dot{width:9px; height:9px; border-radius:50%; flex-shrink:0; border:1.5px solid rgba(33,29,24,0.3); box-shadow:0 0 0 1px rgba(255,255,255,0.6) inset;}
-.chip:hover{border-color:#c9bd9e; color:var(--text);}
-.chip.active{background:var(--panel-2); border-color:var(--accent); color:var(--text); box-shadow:0 0 0 1px rgba(10,106,62,0.25);}
-
-.panel{
-  position:relative; z-index:1;
-  background:var(--panel); border:1px solid var(--border); border-radius:var(--radius);
-  padding:22px; margin-bottom:20px;
-  box-shadow:0 1px 0 rgba(0,0,0,0.02), 0 10px 24px -20px rgba(33,29,24,0.25);
-}
-.panel h2{font-family:var(--font-display); font-size:22px; font-weight:600; letter-spacing:0.3px; text-transform:uppercase; margin:0 0 4px; color:#111;}
-.panel .sub{font-size:12.5px; color:var(--text-faint); margin:0 0 18px;}
-
-/* ---------- FORM ---------- */
-.form-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:14px;}
-.field{display:flex; flex-direction:column; gap:6px;}
-.field.span2{grid-column:span 2;}
-.field label{font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.6px; color:var(--text-faint);}
-.field select, .field input{
-  background:var(--panel-2); border:1px solid var(--border); color:var(--text);
-  padding:10px 12px; border-radius:8px; font-family:var(--font-body); font-size:14px;
-  outline:none; transition:border-color .15s ease;
-}
-.field select:focus, .field input:focus{border-color:var(--accent);}
-.field input::placeholder{color:var(--text-faint);}
-.preview-badge{
-  grid-column:span 4; display:flex; align-items:center; gap:14px; padding:12px 16px;
-  background:var(--panel-2); border:1px dashed var(--border); border-radius:10px; font-size:13px; color:var(--text-dim);
-}
-.result-pill{font-family:var(--font-display); font-size:20px; font-weight:600; letter-spacing:0.5px; padding:2px 14px; border-radius:6px; text-transform:uppercase;}
-.result-pill.g{background:var(--win-dim); color:var(--win);}
-.result-pill.p{background:var(--loss-dim); color:var(--loss);}
-.result-pill.e{background:var(--draw-dim); color:var(--draw);}
-.form-actions{grid-column:span 4; display:flex; justify-content:flex-end; gap:10px; margin-top:4px;}
-.btn{font-family:var(--font-body); font-weight:700; font-size:13.5px; padding:11px 22px; border-radius:9px; border:1px solid transparent; cursor:pointer; letter-spacing:0.2px; transition:transform .1s ease, filter .15s ease;}
-.btn:active{transform:scale(0.98);}
-.btn-primary{background:var(--accent); color:#fff;}
-.btn-primary:hover{filter:brightness(1.1);}
-.btn-ghost{background:transparent; border-color:var(--border); color:var(--text-dim);}
-.btn-ghost:hover{color:var(--text); border-color:#c9bd9e;}
-
-/* ---------- TEAM CARDS (light, color-washed, watermark) ---------- */
-.team-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:16px;}
-.team-card{
-  position:relative; overflow:hidden; border-radius:var(--radius); padding:18px;
-  border:1px solid var(--border); cursor:pointer; transition:transform .12s ease, box-shadow .12s ease;
-  background:
-    radial-gradient(120px 120px at 100% 0%, color-mix(in srgb, var(--team-color) 22%, white) , transparent 70%),
-    var(--panel);
-}
-.team-card:hover{transform:translateY(-3px); box-shadow:0 14px 28px -18px rgba(33,29,24,0.35);}
-.team-card::before{content:""; position:absolute; top:0; left:0; right:0; height:5px; background:var(--team-color);}
-.team-card .watermark{
-  position:absolute; right:-10px; bottom:-14px; width:112px; height:112px; opacity:0.075;
-  color:#313131; filter:drop-shadow(0 2px 1px rgba(255,255,255,.35));
-}
-.team-card::after{content:"";position:absolute;right:13px;bottom:18px;width:78px;height:78px;border-radius:50%;border:1px solid rgba(33,29,24,.07);pointer-events:none;}
-.team-card-top{padding-right:10px;}
-.team-card-identity{display:flex;align-items:center;gap:10px;}
-.team-monogram{width:10px;height:42px;border-radius:8px;background:var(--team-color);box-shadow:inset 0 0 0 1px rgba(0,0,0,.08);flex-shrink:0;}
-.team-card-top{display:flex; align-items:center; gap:12px; margin-bottom:14px; position:relative;}
-.team-badge{
-  width:44px; height:44px; border-radius:10px; flex-shrink:0; position:relative;
-  display:flex; align-items:center; justify-content:center;
-  background:#fff;
-  border:1.5px dashed rgba(33,29,24,0.3);
-  box-shadow:0 2px 6px -2px rgba(33,29,24,0.2);
-  overflow:visible;
-}
-.team-badge img{width:100%; height:100%; object-fit:contain; padding:4px; border-radius:8px;}
-.team-badge .badge-fallback{
-  width:100%; height:100%; display:flex; align-items:center; justify-content:center;
-  font-family:var(--font-display); font-weight:700; font-size:18px;
-  background:var(--team-color); color:var(--team-fg,#fff);
-  clip-path:polygon(50% 0%, 100% 20%, 100% 75%, 50% 100%, 0% 75%, 0% 20%);
-  border-radius:8px;
-}
-.team-badge .add-logo-hint{
-  position:absolute; bottom:-6px; right:-6px; width:18px; height:18px; border-radius:50%;
-  background:var(--panel); border:1.5px dashed var(--text-faint);
-  display:flex; align-items:center; justify-content:center;
-  font-size:11px; font-weight:800; color:var(--text-faint); line-height:1;
-}
-.team-name{font-weight:700; font-size:15px; line-height:1.2; color:var(--text);}
-.team-meta{font-size:11px; color:var(--text-faint); margin-top:2px;}
-.team-stat-row{display:flex; justify-content:space-between; margin-bottom:10px; position:relative;}
-.team-record{font-family:var(--font-mono); font-size:13px; color:var(--text-dim);}
-.team-record b{color:var(--text);}
-.pct-track{height:7px; border-radius:4px; background:var(--panel-2); overflow:hidden; display:flex; margin-bottom:10px; position:relative;}
-.pct-track span{height:100%;}
-.form-strip{display:flex; gap:4px; margin-top:10px; position:relative;}
-.form-pip{width:22px; height:22px; border-radius:5px; font-size:11px; font-weight:700; display:flex; align-items:center; justify-content:center; font-family:var(--font-mono);}
-.form-pip.g{background:var(--win-dim); color:var(--win);}
-.form-pip.p{background:var(--loss-dim); color:var(--loss);}
-.form-pip.e{background:var(--draw-dim); color:var(--draw);}
-.gf-gc-row{display:flex; justify-content:space-between; font-size:11px; color:var(--text-faint); margin-top:12px; border-top:1px solid var(--border-soft); padding-top:10px; position:relative;}
-.gf-gc-row b{color:var(--text-dim); font-family:var(--font-mono);}
-
-/* ---------- TITLES ---------- */
-.title-grid{display:grid; grid-template-columns:repeat(6,1fr); gap:12px;}
-.title-card{background:var(--panel-2); border:2px solid var(--border); border-radius:12px; padding:16px; text-align:center; position:relative;overflow:hidden;}
-.title-card::after{content:"⚽";position:absolute;right:-19px;bottom:-25px;font-size:88px;line-height:1;opacity:.055;filter:grayscale(1);pointer-events:none;}
-.title-card>*{position:relative;z-index:1;}
-.title-team-logo{width:58px;height:58px;border-radius:50%;margin:0 auto 8px;background:var(--panel);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;overflow:hidden;box-shadow:0 5px 12px -7px rgba(0,0,0,.45);position:relative;}
-.title-team-logo img{width:100%;height:100%;object-fit:contain;padding:7px;}
-.title-team-logo .logo-fallback{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font:700 24px var(--font-display);color:var(--team-fg,#fff);background:var(--team-color);}
-.title-team-logo .trophy-mini{position:absolute;right:-1px;bottom:-1px;width:22px;height:22px;border-radius:50%;background:var(--panel);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:12px;}
-.title-card .trophy-icon{font-size:26px; margin-bottom:6px;}
-.title-card .t-name{font-size:12px; font-weight:700; color:var(--text); margin-bottom:10px; line-height:1.2; min-height:30px;}
-.title-card .t-nums{display:flex; justify-content:center; gap:14px;}
-.title-card .t-num{font-family:var(--font-display); font-size:26px; font-weight:600;}
-.title-card .t-num.won{color:var(--accent-3);}
-.title-card .t-num.contested{color:var(--text-dim);}
-.title-card .t-lbl{font-size:9px; text-transform:uppercase; letter-spacing:0.6px; color:var(--text-faint); margin-top:2px;}
-
-.title-logo-slot{
-  width:42px; height:42px; border-radius:50%; border:1.5px dashed var(--border);
-  background:var(--panel); display:flex; align-items:center; justify-content:center;
-  overflow:hidden; flex-shrink:0; position:relative; cursor:default;
-}
-.title-logo-slot.slot-won{border:2px solid #d8ae3f; border-style:solid; box-shadow:0 0 0 2px rgba(216,174,63,0.3), 0 4px 10px -4px rgba(216,174,63,0.6);}
-.title-logo-slot.slot-lost{border:2px solid #d6434c; border-style:solid; box-shadow:0 0 0 2px rgba(214,67,76,0.22);}
-.title-logo-slot img{width:100%; height:100%; object-fit:contain; padding:5px; border-radius:50%;}
-.title-logo-slot .slot-placeholder{font:700 10px var(--font-body); color:var(--text-dim);}
-.title-logos{display:flex; justify-content:center; gap:6px; margin-top:12px; flex-wrap:wrap;}
-.title-link-note{margin-top:10px;font-size:10px;line-height:1.35;color:var(--text-faint);min-height:27px;}
-.title-link-note strong{color:var(--text-dim);}
-.title-total{margin-top:14px; padding-top:14px; border-top:1px solid var(--border); display:flex; justify-content:center; gap:30px; text-align:center;}
-.title-total .t-num{font-family:var(--font-display); font-size:32px; font-weight:600; color:var(--accent-3);}
-.title-total .t-lbl{font-size:10px; text-transform:uppercase; letter-spacing:0.8px; color:var(--text-faint);}
-
-/* ---------- CHART ---------- */
-.chart-wrap svg{width:100%; height:auto; display:block;}
-.chart-scroll{overflow-x:auto; padding-bottom:6px;}
-.legend-row{display:flex; gap:18px; margin-bottom:14px; flex-wrap:wrap;}
-.legend-item{display:flex; align-items:center; gap:6px; font-size:12px; color:var(--text-dim); font-weight:600;}
-.legend-swatch{width:12px; height:12px; border-radius:3px;}
-.legend-line{width:18px; height:2px; border-radius:2px; background:var(--accent-3);}
-
-/* ---------- TABLE ---------- */
-.table-controls{display:flex; gap:10px; margin-bottom:16px; flex-wrap:wrap;}
-.table-controls input, .table-controls select{background:var(--panel-2); border:1px solid var(--border); color:var(--text); padding:9px 12px; border-radius:8px; font-size:13px; font-family:var(--font-body);}
-.table-controls input{flex:1; min-width:180px;}
-.table-wrap{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;}
-table{width:100%; border-collapse:collapse; font-size:13px; min-width:760px;}
-thead th{text-align:left; font-size:10.5px; text-transform:uppercase; letter-spacing:0.5px; color:var(--text-faint); padding:8px 10px; border-bottom:1px solid var(--border); font-weight:700;}
-tbody td{padding:10px; border-bottom:1px solid var(--border-soft); color:var(--text-dim); vertical-align:middle;}
-tbody tr:hover td{background:var(--panel-2);}
-.mono{font-family:var(--font-mono);}
-.team-tag{display:inline-flex; align-items:center; gap:6px; font-weight:600; color:var(--text);}
-.team-tag .dot{width:8px; height:8px; border-radius:50%; border:1.5px solid rgba(33,29,24,0.3); box-shadow:0 0 0 1px rgba(255,255,255,0.6) inset;}
-.res-tag{font-weight:700; font-size:11px; padding:3px 9px; border-radius:5px; text-transform:uppercase; letter-spacing:0.3px;}
-.res-tag.g{background:var(--win-dim); color:var(--win);}
-.res-tag.p{background:var(--loss-dim); color:var(--loss);}
-.res-tag.e{background:var(--draw-dim); color:var(--draw);}
-.del-btn{background:none; border:1px solid var(--border); color:var(--text-faint); border-radius:6px; padding:4px 9px; cursor:pointer; font-size:11px;}
-.del-btn:hover{color:var(--loss); border-color:var(--loss);}
-.empty-row td{text-align:center; padding:30px; color:var(--text-faint); font-style:italic;}
-.mini-logo-slot{
-  width:26px; height:26px; border-radius:6px; border:1.5px dashed var(--border);
-  background:var(--panel-2); display:flex; align-items:center; justify-content:center; overflow:hidden;
-}
-.mini-logo-slot img{width:100%; height:100%; object-fit:contain; padding:2px;}
-.mini-logo-slot .slot-placeholder{font:700 10px var(--font-body); color:var(--text-dim);}
-.rival-cell{display:inline-flex;align-items:center;gap:8px;font-weight:600;color:var(--text);}
-.rival-logo{width:28px;height:28px;border-radius:50%;background:var(--panel-2);border:1px solid var(--border);display:inline-flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0;}
-.rival-logo img{width:100%;height:100%;object-fit:contain;padding:3px;}
-.rival-logo .rival-fallback{font:700 11px var(--font-body);color:var(--text-dim);}
-.nfl-flag{display:inline-block; font-size:10px; font-weight:800; letter-spacing:0.5px; background:var(--panel-3); color:var(--text-dim); padding:3px 8px; border-radius:5px; margin-left:8px; vertical-align:middle;}
-.muted{color:var(--text-faint); font-style:italic;}
-
-.hidden{display:none !important;}
-.toast{
-  position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(20px);
-  background:var(--text); color:#fff;
-  padding:12px 20px; border-radius:10px; font-size:13.5px; font-weight:600;
-  opacity:0; transition:all .25s ease; pointer-events:none; z-index:50;
-  box-shadow:0 10px 30px -10px rgba(0,0,0,0.3);
-}
-.toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
-
-@media (max-width:760px){
-  .form-grid{grid-template-columns:repeat(2,1fr);}
-  .field.span2{grid-column:span 2;}
-  .preview-badge, .form-actions{grid-column:span 2;}
-  .team-grid{grid-template-columns:1fr;}
-  .title-grid{grid-template-columns:repeat(2,1fr);}
-  .scoreboard{flex-wrap:wrap;}
-  .masthead{flex-direction:column; align-items:stretch;}
-  .header-actions{justify-content:space-between;width:100%;}
-  .scoreboard{width:100%;justify-content:center;}
-  .scoreboard div{flex:1;padding:8px 10px;}
-  .tabbar{overflow-x:auto;padding-bottom:4px;}
-  .tab-btn{white-space:nowrap;}
-  .wrap{padding:16px 12px 42px;}
-  .panel{padding:16px;}
-}
-@media (max-width:430px){
-  .title-grid{grid-template-columns:1fr;}
-  .form-grid{grid-template-columns:1fr;}
-  .field.span2,.preview-badge,.form-actions{grid-column:span 1;}
-}
-
-/* =========================================================
-   RATIO SPORTS V4 — REDISEÑO INTEGRAL
-   Dashboard de consulta + módulo de carga independiente
-   ========================================================= */
-:root{
-  --bg:#f5f6f8; --panel:#fff; --panel-2:#f8f9fb; --panel-3:#eef1f5;
-  --border:#e3e6eb; --border-soft:#edf0f3; --text:#111318;
-  --text-dim:#626873; --text-faint:#9298a3; --accent:#0e8a4b;
-  --accent-2:#e0363e; --accent-3:#e99a00; --radius:14px;
-  --sidebar-w:148px;
-  --shadow:0 8px 28px rgba(18,24,40,.06);
-}
-html[data-theme="dark"]{
-  --bg:#0e1116; --panel:#171b22; --panel-2:#20252e; --panel-3:#292f3a;
-  --border:#303744; --border-soft:#252b34; --text:#f5f7fa;
-  --text-dim:#bdc3cc; --text-faint:#858d98;
-}
-body{background:var(--bg);font-family:Inter,system-ui,sans-serif;}
-.bg-photo-layer{background-position:center 15%;filter:saturate(.78) contrast(1.04);}
-.bg-photo-layer.active{opacity:.08!important;}
-.ball-decor{display:none;}
-.wrap{max-width:none;margin:0 0 0 var(--sidebar-w);padding:20px 26px 48px;}
-.masthead{min-height:78px;margin:0 0 20px;padding:14px 18px;border-radius:14px;background:rgba(255,255,255,.94);box-shadow:var(--shadow);position:sticky;top:12px;z-index:30;backdrop-filter:blur(14px);}
-html[data-theme="dark"] .masthead{background:rgba(23,27,34,.94);}
-.masthead::before{display:none;}
-.brand-mark{width:44px;height:44px;border:none;border-radius:12px;background:linear-gradient(145deg,#f2b700,#111827);box-shadow:none;}
-.brand-mark svg{filter:invert(1);opacity:.94;}
-.brand h1{font-family:Inter,sans-serif;font-size:22px;font-weight:800;letter-spacing:-.4px;text-transform:none;}
-.brand p{font-size:11.5px;letter-spacing:0;color:var(--text-faint);}
-.header-actions{margin-left:auto;}
-.scoreboard{background:transparent;border:none;border-radius:0;gap:8px;overflow:visible;}
-.scoreboard div{min-width:64px;padding:6px 10px;border:1px solid var(--border)!important;border-radius:10px;background:var(--panel-2);}
-.scoreboard .sb-num{font-family:Inter,sans-serif;font-size:20px;font-weight:800;}
-.scoreboard .sb-label{font-size:8px;letter-spacing:.8px;}
-.theme-toggle{border-radius:10px;background:var(--panel);}
-/* Sidebar: los tabs siguen siendo dos módulos separados */
-.tabbar{position:fixed;left:0;top:0;bottom:0;width:var(--sidebar-w);z-index:50;margin:0;padding:120px 12px 20px;display:flex;flex-direction:column;gap:8px;background:var(--panel);border-right:1px solid var(--border);box-shadow:4px 0 20px rgba(15,23,42,.035);}
-.tabbar::before{content:'RATIO\\A SPORTS';white-space:pre;position:absolute;top:28px;left:22px;font-size:17px;line-height:1.05;font-weight:900;letter-spacing:-.4px;color:var(--text);}
-.tabbar::after{content:'Datos guardados';position:absolute;bottom:26px;left:17px;font-size:10px;color:var(--text-faint);padding-left:17px;}
-.tab-btn{width:100%;text-align:left;border:none;background:transparent;padding:12px 12px;border-radius:9px;color:var(--text-dim);font-size:12px;box-shadow:none;}
-.tab-btn:hover{background:var(--panel-2);border:none;color:var(--text);}
-.tab-btn.active{background:#fff7df;color:#161616;border:none;box-shadow:inset 3px 0 #f2ae00;}
-html[data-theme="dark"] .tab-btn.active{background:#30291b;color:#fff;}
-.section-title{font-family:Inter,sans-serif;font-size:20px;font-weight:800;letter-spacing:-.4px;text-transform:none;color:var(--text);margin:25px 0 13px;}
-.section-title::after{display:none;}
-.chipbar{margin:0 0 18px;gap:7px;}
-.chip{padding:7px 12px;border-radius:8px;font-size:11.5px;background:var(--panel);}
-.panel{border:1px solid var(--border);border-radius:14px;padding:18px;margin-bottom:18px;box-shadow:var(--shadow);}
-.panel h2{font-family:Inter,sans-serif;font-size:17px;font-weight:800;letter-spacing:-.2px;text-transform:none;color:var(--text);}
-.panel .sub{font-size:11.5px;margin-top:4px;}
-/* Tarjetas de equipos */
-.team-grid{grid-template-columns:repeat(4,minmax(230px,1fr));gap:14px;overflow-x:auto;padding-bottom:5px;}
-.team-card{min-height:220px;padding:18px 16px 16px;border-radius:13px;background:var(--panel);box-shadow:0 5px 20px rgba(15,23,42,.055);}
-.team-card::before{height:5px;}
-.team-card:hover{transform:translateY(-4px);box-shadow:0 14px 35px rgba(15,23,42,.11);}
-.team-card .watermark{position:absolute;right:-9px!important;bottom:-13px!important;width:112px!important;height:112px!important;opacity:.16!important;object-fit:contain;filter:saturate(.75);pointer-events:none;}
-.team-card-identity{align-items:flex-start!important;}
-.team-monogram{display:none!important;}
-.team-name{font-size:16px!important;font-weight:800!important;color:var(--text)!important;}
-.team-meta{font-size:11px!important;color:var(--text-faint)!important;}
-.team-stat-row{margin-top:20px!important;align-items:flex-end!important;}
-.team-record:first-child b{font-size:25px!important;}
-.team-record{font-size:12px!important;}
-.pct-track{height:8px!important;border-radius:99px!important;margin:12px 0 12px!important;}
-.form-strip{display:none!important;}
-.team-card .team-meta[style*="margin-top:2px"]{display:none!important;}
-.gf-gc-row{position:absolute;left:16px;right:16px;bottom:16px;padding-top:12px!important;border-top:1px solid var(--border-soft)!important;font-size:10.5px!important;z-index:2;}
-/* Títulos */
-.title-grid{grid-template-columns:repeat(4,minmax(200px,1fr));gap:12px;}
-.title-card{min-height:260px;border-radius:13px;padding:16px;background:linear-gradient(180deg,var(--panel),var(--panel-2));border:1px solid var(--border);box-shadow:none;overflow:hidden;position:relative;text-align:center;}
-.title-card::after{content:'⚽';position:absolute;left:-10px;bottom:-26px;font-size:105px;opacity:.035;filter:grayscale(1);}
-.title-team-logo{width:78px!important;height:78px!important;margin:6px auto 10px!important;border-radius:0!important;background:transparent!important;border:none!important;box-shadow:none!important;}
-.title-team-logo img{width:100%!important;height:100%!important;object-fit:contain!important;}
-.title-team-logo .trophy-mini{display:none!important;}
-.title-card .t-name{font-size:15px!important;font-weight:800!important;color:var(--text)!important;}
-.title-card .t-nums{justify-content:center!important;gap:34px!important;margin:12px 0!important;}
-.title-card .t-num{font-family:Inter,sans-serif!important;font-weight:900!important;font-size:23px!important;}
-.title-card .t-lbl{font-size:9px!important;letter-spacing:.3px!important;}
-.title-logos{justify-content:center!important;}
-.title-logo-slot{width:34px!important;height:34px!important;border-radius:50%!important;background:var(--panel)!important;}
-.title-link-note{font-size:9.5px!important;line-height:1.35!important;}
-.title-total{border-radius:12px!important;background:var(--panel-2)!important;}
-/* Tablas y gráfica */
-.table-wrap{border:1px solid var(--border-soft);border-radius:10px;overflow:auto;}
-table{font-size:11px!important;}
-thead th{background:var(--panel-2)!important;color:var(--text)!important;font-size:9px!important;font-weight:800!important;letter-spacing:.35px!important;}
-tbody tr:hover{background:var(--panel-2)!important;}
-.mini-logo-slot{width:25px!important;height:25px!important;border-radius:50%!important;background:#fff!important;box-shadow:0 0 0 1px var(--border);}
-.mini-logo-slot img{width:21px!important;height:21px!important;object-fit:contain!important;}
-.team-tag{gap:7px!important;}
-.table-controls{gap:8px!important;}
-.table-controls input,.table-controls select{border-radius:9px!important;background:var(--panel-2)!important;}
-.chart-scroll{border:1px solid var(--border-soft);border-radius:11px;background:var(--panel-2);padding:5px 8px;}
-/* Módulo de carga independiente */
-#tab-registrar{max-width:1050px;margin:0 auto;}
-#tab-registrar::before{content:'Módulo independiente de gestión de partidos';display:block;margin:2px 0 14px;padding:11px 14px;border-radius:10px;background:#fff7df;color:#6a4c00;font-size:12px;font-weight:700;border:1px solid #f4d683;}
-html[data-theme="dark"] #tab-registrar::before{background:#30291b;color:#ffd66c;border-color:#57471f;}
-.form-grid{gap:12px;}
-.field label{color:var(--text-dim);}
-.field select,.field input{background:var(--panel-2);border-radius:9px;}
-.preview-badge{background:var(--panel-2);}
-.btn{border-radius:9px;}
-.btn-primary{background:#111;color:#fff;}
-/* responsive */
-@media(max-width:1180px){.team-grid{grid-template-columns:repeat(2,1fr)}.title-grid{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:760px){:root{--sidebar-w:0px}.wrap{margin-left:0;padding:12px 12px 92px}.tabbar{top:auto;left:0;right:0;bottom:0;width:auto;height:70px;padding:9px 12px;flex-direction:row;justify-content:center;border-right:none;border-top:1px solid var(--border)}.tabbar::before,.tabbar::after{display:none}.tab-btn{text-align:center;max-width:210px}.masthead{top:7px}.scoreboard{display:none}.team-grid,.title-grid{grid-template-columns:1fr}.team-card{min-height:210px}.section-title{font-size:18px}.header-actions{margin-left:0}.brand p{display:none}}
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Teko:wght@400;500;600;700&amp;family=Inter:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
 
 
-/* ===== Ratio Sports v5: ajustes finales ===== */
-.country-flag{width:34px;height:24px;border-radius:4px;display:inline-flex;align-items:center;justify-content:center;overflow:hidden;background:transparent;font-size:25px;line-height:1;padding:0}
-.country-flag span{display:block;transform:scale(1.25)}
-.team-card .watermark{display:block!important;right:-6px!important;bottom:-9px!important;width:118px!important;height:118px!important;opacity:.18!important;z-index:1}
-.team-card::after{display:none!important}
-.team-flag{width:34px!important;height:23px!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;font-size:25px!important;line-height:1!important;background:transparent!important}
-.team-flag img{width:100%!important;height:100%!important;object-fit:cover!important}
-.gf-gc-row{padding-right:92px!important}
-.match-team-dot{width:9px;height:9px;border-radius:50%;display:inline-block;flex:0 0 9px;box-shadow:0 0 0 2px rgba(255,255,255,.75),0 0 0 3px rgba(15,23,42,.08)}
-.match-team-name{display:inline-flex;align-items:center;gap:9px;font-weight:700}
-.title-association-help{margin:10px 0 16px;padding:12px 14px;border-radius:10px;background:var(--panel-2);border:1px solid var(--border);font-size:11px;line-height:1.55;color:var(--text-dim)}
-.title-association-help strong{color:var(--text)}
-.module-link{display:inline-flex;align-items:center;gap:8px;text-decoration:none}
-
-
-/* =========================================================
-   RATIO SPORTS V6 — PRODUCT REDESIGN
-   Conserva la lógica, datos y seguimiento semanal del dashboard.
-   ========================================================= */
-:root{
-  --sidebar-w:164px;
-  --app-bg:#f4f6f8;
-  --nav:#0c2339;
-  --nav-2:#102d49;
-  --gold:#f5b800;
-  --glass:rgba(255,255,255,.92);
-}
-body{background:var(--app-bg);}
-.bg-photo-layer{background-position:center 12%;filter:saturate(.82) contrast(1.05);}
-.bg-photo-layer.active{opacity:.26!important;}
-html[data-theme="dark"] .bg-photo-layer.active{opacity:.30!important;}
-.wrap{margin-left:var(--sidebar-w);padding:20px 28px 54px;min-height:100vh;}
-.masthead{top:10px;min-height:72px;padding:12px 16px;background:rgba(255,255,255,.88);border:1px solid rgba(255,255,255,.68);box-shadow:0 10px 36px rgba(15,23,42,.08);backdrop-filter:blur(18px) saturate(1.12);}
-html[data-theme="dark"] .masthead{background:rgba(20,25,32,.88);border-color:rgba(255,255,255,.08)}
-.brand-mark{background:linear-gradient(145deg,#f7c400,#0b2035);}
-.brand h1{font-size:23px;}
-.brand p{font-size:11px;}
-.tabbar{width:var(--sidebar-w);padding:112px 12px 86px;background:linear-gradient(180deg,var(--nav),#0a1d30);border:0;box-shadow:8px 0 30px rgba(5,18,31,.12);}
-.tabbar::before{content:'RATIO\A SPORTS';top:27px;left:28px;color:#fff;font-size:18px;letter-spacing:.2px;}
-.tabbar::after{content:'●  Datos guardados';left:20px;bottom:25px;color:#76d9a4;}
-.tab-btn{color:#d9e4ee;padding:12px 12px;font-size:12px;border-radius:9px;}
-.tab-btn:hover{background:rgba(255,255,255,.08);color:#fff;}
-.tab-btn.active{background:linear-gradient(90deg,rgba(38,155,222,.26),rgba(255,255,255,.06));color:#fff;box-shadow:inset 4px 0 #20a9e6;}
-.panel{background:var(--glass);backdrop-filter:blur(14px);box-shadow:0 8px 28px rgba(15,23,42,.055);}
-html[data-theme="dark"] .panel{background:rgba(23,27,34,.90);}
-.section-title{font-size:19px;margin:22px 0 12px;}
-#tab-seguimiento{display:grid;grid-template-columns:minmax(0,1.12fr) minmax(390px,.88fr);gap:16px;align-items:start;}
-#tab-seguimiento>.chipbar,#tab-seguimiento>#equiposTitle,#tab-seguimiento>#teamGrid{grid-column:1/-1;}
-#tab-seguimiento>.section-title{display:none;}
-#titlesPanel{grid-column:1;}
-#weeklyPanel{grid-column:2;}
-#matchesPanel{grid-column:1;}
-#nflPanel{grid-column:2;}
-.team-grid{grid-template-columns:repeat(4,minmax(230px,1fr));gap:16px;overflow:visible;}
-.team-card{min-height:248px;padding:18px 17px;border:1px solid rgba(226,230,235,.9);background:rgba(255,255,255,.94);box-shadow:0 8px 26px rgba(15,23,42,.065);}
-html[data-theme="dark"] .team-card{background:rgba(23,27,34,.94)}
-.team-card::before{left:0;right:auto;top:0;bottom:0;width:6px;height:auto;border-radius:14px 0 0 14px;}
-.team-card .watermark{right:-3px!important;bottom:-7px!important;width:126px!important;height:126px!important;opacity:.17!important;filter:saturate(.75) drop-shadow(0 2px 2px rgba(255,255,255,.5));z-index:1;}
-.team-card-top{margin-bottom:12px;}
-.team-name{font-size:16px!important;line-height:1.15;}
-.team-flag{width:39px!important;height:27px!important;margin-left:7px;vertical-align:middle!important;border-radius:3px!important;box-shadow:0 0 0 1px rgba(15,23,42,.12)!important;}
-.team-flag svg{width:100%!important;height:100%!important;display:block!important;}
-.team-stat-row{margin-top:16px!important;display:block!important;}
-.team-record:first-child{display:block;margin-bottom:12px;}
-.team-record:first-child b{font-size:27px!important;}
-.team-record:nth-child(2){display:flex;justify-content:space-between;gap:6px;max-width:270px;}
-.pct-track{height:7px!important;margin:10px 0 13px!important;}
-.team-card .team-meta[style*="margin-top:2px"]{display:block!important;margin-top:5px!important;}
-.form-strip{display:flex!important;gap:7px;margin-top:8px;}
-.form-pip{width:25px;height:25px;border-radius:6px;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;}
-.gf-gc-row{padding-right:105px!important;bottom:14px;}
-/* individual title cards */
-#titlesPanel .sub{margin-bottom:12px;}
-.title-grid{display:grid;grid-template-columns:repeat(3,minmax(175px,1fr));gap:11px;}
-.achievement-card{position:relative;min-height:252px;padding:14px 14px 15px;border-radius:12px;border:1px solid var(--border);background:linear-gradient(180deg,rgba(255,255,255,.98),rgba(249,250,252,.94));text-align:center;overflow:hidden;}
-html[data-theme="dark"] .achievement-card{background:linear-gradient(180deg,#1b2028,#171b22)}
-.achievement-card.won{border-color:#a9d7b8;box-shadow:inset 0 -3px #23a65c;}
-.achievement-card.lost{border-color:#f0b8bd;box-shadow:inset 0 -3px #e43f49;}
-.achievement-status{display:inline-flex;padding:3px 9px;border-radius:999px;font-size:9px;font-weight:900;letter-spacing:.3px;background:#e5f6ec;color:#157b42;}
-.achievement-card.lost .achievement-status{background:#fde7e9;color:#c72b35;}
-.achievement-name{font-size:12px;font-weight:850;line-height:1.25;min-height:31px;margin:9px 0 5px;color:var(--text);}
-.achievement-logo{width:72px;height:72px;margin:4px auto 5px;display:flex;align-items:center;justify-content:center;}
-.achievement-logo img{max-width:100%;max-height:100%;object-fit:contain;}
-.achievement-team{font-size:13px;font-weight:850;color:var(--text);}
-.achievement-meta{font-size:9.5px;color:var(--text-faint);margin-top:3px;}
-.achievement-final{margin-top:10px;padding-top:9px;border-top:1px solid var(--border-soft);font-size:10px;color:var(--text-dim);}
-.achievement-score{font-size:20px;font-weight:900;color:var(--text);margin:3px 0;}
-.achievement-card::after{content:'⚽';position:absolute;left:-18px;bottom:-35px;font-size:110px;opacity:.035;filter:grayscale(1);}
-.title-total{margin-top:12px!important;}
-/* weekly is the best part of previous dashboard, preserve and elevate it */
-#weeklyPanel{position:sticky;top:108px;}
-#weeklyPanel .chart-scroll{background:linear-gradient(180deg,rgba(248,250,252,.95),rgba(255,255,255,.75));min-height:190px;}
-html[data-theme="dark"] #weeklyPanel .chart-scroll{background:#151a21;}
-.legend-row{gap:12px;}
-/* compact match log like product UI */
-#matchesPanel table{min-width:760px;}
-.match-team-dot{width:10px;height:10px;flex-basis:10px;box-shadow:0 0 0 2px rgba(255,255,255,.9),0 0 0 3px rgba(15,23,42,.09)}
-.table-wrap{background:rgba(255,255,255,.62);}
-html[data-theme="dark"] .table-wrap{background:rgba(18,22,28,.55)}
-/* header scores become general-stat cards */
-.scoreboard{display:grid;grid-template-columns:repeat(3,74px);gap:7px;}
-.scoreboard div{background:rgba(248,249,251,.92);}
-/* mobile */
-@media(max-width:1220px){#tab-seguimiento{grid-template-columns:1fr}.team-grid{grid-template-columns:repeat(2,1fr)}#titlesPanel,#weeklyPanel,#matchesPanel,#nflPanel{grid-column:1}#weeklyPanel{position:relative;top:auto}.title-grid{grid-template-columns:repeat(3,1fr)}}
-@media(max-width:760px){.wrap{padding:12px 12px 90px}.tabbar{width:auto}.team-grid{grid-template-columns:1fr}.title-grid{grid-template-columns:repeat(2,1fr)}.bg-photo-layer.active{opacity:.18!important}.masthead{position:relative;top:0}.team-card{min-height:242px}}
-@media(max-width:480px){.title-grid{grid-template-columns:1fr}.achievement-card{min-height:235px}}
-
-
-/* ===== RATIO SPORTS V7 — compact navigation + title/ledger refinement ===== */
-:root{--sidebar-w:138px;--sidebar-collapsed:62px;}
-body.sidebar-collapsed{--sidebar-w:var(--sidebar-collapsed);}
-.wrap{transition:margin-left .25s ease;padding-top:14px;}
-.bg-photo-layer.active{opacity:.36!important;}
-html[data-theme="dark"] .bg-photo-layer.active{opacity:.34!important;}
-.masthead{position:relative!important;top:auto!important;min-height:56px!important;padding:8px 12px!important;margin-bottom:14px!important;border-radius:13px!important;flex-wrap:nowrap!important;}
-.brand{gap:9px!important;min-width:180px}.brand-mark{width:36px!important;height:36px!important}.brand-mark svg{width:23px!important;height:23px!important}.brand h1{font-size:20px!important}.brand p{font-size:9px!important;margin-top:1px!important;white-space:nowrap}
-.header-actions{margin-left:auto!important;flex-wrap:nowrap!important}.theme-toggle{padding:7px 9px!important}.scoreboard{display:flex!important;grid-template-columns:none!important;gap:0!important;white-space:nowrap}.scoreboard div{padding:5px 10px!important;min-width:65px!important}.scoreboard .sb-num{font-size:20px!important;display:inline!important}.scoreboard .sb-label{font-size:8px!important;display:inline!important;margin-left:4px!important}.scoreboard .sb-pct{font-size:8px!important;display:inline!important;margin-left:3px!important}
-.tabbar{width:var(--sidebar-w)!important;padding:82px 8px 68px!important;transition:width .25s ease!important;overflow:hidden!important}.tabbar::before{top:20px!important;left:18px!important;font-size:15px!important}.tabbar::after{left:14px!important;font-size:8px!important}.tab-btn{white-space:nowrap!important;overflow:hidden!important;text-overflow:clip!important;padding:10px 9px!important}.nav-icon{display:inline-flex;width:22px;justify-content:center;font-size:15px}.nav-label{transition:opacity .15s ease}.sidebar-collapsed .nav-label,.sidebar-collapsed .tabbar::before,.sidebar-collapsed .tabbar::after{opacity:0;pointer-events:none}.sidebar-toggle{position:fixed;z-index:80;left:calc(var(--sidebar-w) - 14px);top:18px;width:28px;height:28px;border-radius:50%;border:1px solid rgba(255,255,255,.34);background:#fff;color:#0c2339;box-shadow:0 4px 12px rgba(0,0,0,.2);cursor:pointer;transition:left .25s ease;font-weight:900}.sidebar-collapsed .sidebar-toggle{transform:rotate(180deg)}
-#weeklyPanel{position:relative!important;top:auto!important;}
-/* Smaller title cards: four newest + expandable */
-.title-grid{grid-template-columns:repeat(4,minmax(135px,1fr))!important;gap:9px!important}.achievement-card{min-height:205px!important;padding:10px!important;background-size:105px auto!important;background-repeat:no-repeat!important;background-position:center 58%!important}.achievement-card::before{content:"";position:absolute;inset:0;background:rgba(255,255,255,.86);z-index:0}.achievement-card>*{position:relative;z-index:1}.achievement-card::after{display:none!important}.achievement-name{font-size:10.5px!important;min-height:26px!important;margin:7px 0 3px!important}.achievement-logo{width:52px!important;height:52px!important}.achievement-team{font-size:11.5px!important}.achievement-meta{font-size:8.5px!important}.achievement-final{margin-top:7px!important;padding-top:6px!important;font-size:9px!important}.achievement-score{font-size:17px!important}.titles-more-row{display:flex;justify-content:center;margin-top:12px}
-/* ledger */
-#matchesPanel table{min-width:1120px!important}.club-circle{width:24px;height:24px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;background:#fff;border:1px solid var(--border);overflow:hidden}.club-circle img{width:20px;height:20px;object-fit:contain}.club-circle.fallback{font-size:8px;font-weight:900;color:#fff}.match-name-cell{display:flex;align-items:center;gap:7px;white-space:nowrap}.score-cell{font:900 13px var(--font-mono);white-space:nowrap}.status-tag{display:inline-flex;padding:4px 8px;border-radius:999px;font-size:8.5px;font-weight:900;letter-spacing:.25px}.status-tag.g{background:var(--win-dim);color:var(--win)}.status-tag.e{background:var(--draw-dim);color:var(--draw)}.status-tag.p{background:var(--loss-dim);color:var(--loss)}
-/* extra stats strip */
-.extra-stats{grid-column:1/-1;display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.extra-stat{background:rgba(255,255,255,.9);border:1px solid var(--border);border-radius:12px;padding:12px 14px}.extra-stat strong{display:block;font-size:21px}.extra-stat span{font-size:9px;text-transform:uppercase;letter-spacing:.5px;color:var(--text-faint)}
-@media(max-width:900px){.title-grid{grid-template-columns:repeat(2,1fr)!important}.extra-stats{grid-template-columns:repeat(2,1fr)}.scoreboard div{padding:5px 7px!important;min-width:auto!important}.brand p{display:none!important}}
-@media(max-width:760px){.sidebar-toggle{display:none}.bg-photo-layer.active{opacity:.24!important}.masthead{flex-wrap:wrap!important}.header-actions{width:100%;justify-content:space-between}.scoreboard{overflow-x:auto;max-width:100%}}
-
-
-/* ===== Ratio Sports v8 fixes ===== */
-:root{--glass:rgba(255,255,255,.78);}
-html[data-theme="dark"]{--glass:rgba(23,27,34,.78);}
-.panel,.team-card,.masthead,.extra-stat{backdrop-filter:blur(12px) saturate(1.06);}
-.panel{background:rgba(255,255,255,.76)!important;}
-html[data-theme="dark"] .panel{background:rgba(23,27,34,.76)!important;}
-.team-card{min-height:282px!important;background:rgba(255,255,255,.82)!important;padding-bottom:22px!important;}
-html[data-theme="dark"] .team-card{background:rgba(23,27,34,.82)!important;}
-.team-card .watermark{opacity:.23!important;width:132px!important;height:132px!important;right:-2px!important;bottom:-4px!important;}
-.team-card .last-five,.team-card .last5,.team-card [class*="last"]{overflow:visible!important;}
-.team-card .result-row{margin-bottom:8px!important;}
-.title-grid{grid-template-columns:repeat(4,minmax(110px,1fr))!important;gap:8px!important;}
-.achievement-card{min-height:145px!important;padding:8px!important;border-radius:10px!important;background-size:74px auto!important;background-position:center 54%!important;}
-.achievement-card::before{background:rgba(255,255,255,.78)!important;}
-html[data-theme="dark"] .achievement-card::before{background:rgba(23,27,34,.78)!important;}
-.achievement-name{font-size:9px!important;min-height:20px!important;margin:4px 0 2px!important;}
-.achievement-logo{width:38px!important;height:38px!important;}
-.achievement-team{font-size:10px!important;}
-.achievement-meta{font-size:7.5px!important;}
-.achievement-final{margin-top:4px!important;padding-top:4px!important;font-size:8px!important;}
-.achievement-score{font-size:14px!important;}
-.team-flag{width:38px!important;height:27px!important;padding:0!important;background:transparent!important;overflow:hidden!important;}
-.team-flag svg{width:100%!important;height:100%!important;display:block!important;transform:none!important;}
-.team-card[data-team="cowboys"] .team-flag svg{transform:scale(1.14)!important;transform-origin:center!important;}
-.followed-team-dot{display:inline-block;width:10px;height:34px;border-radius:8px;background:var(--team-color);box-shadow:inset 0 0 0 1px rgba(0,0,0,.08);}
-.tab-btn{cursor:pointer;pointer-events:auto!important;position:relative;z-index:2;}
-.tabbar{pointer-events:auto!important;}
-.table-wrap{max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;}
-#matchesPanel table{min-width:1180px!important;}
-@media(max-width:1220px){
-  .team-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;}
-  .title-grid{grid-template-columns:repeat(4,minmax(105px,1fr))!important;}
-}
-@media(max-width:900px){
-  .wrap{padding-left:18px!important;padding-right:18px!important;}
-  .masthead{position:relative!important;top:0!important;flex-wrap:wrap!important;}
-  .header-actions{width:100%!important;overflow-x:auto!important;}
-  .scoreboard{display:flex!important;min-width:max-content!important;}
-  .title-grid{grid-template-columns:repeat(2,minmax(120px,1fr))!important;}
-}
-@media(max-width:760px){
-  .team-grid{grid-template-columns:1fr!important;}
-  .team-card{min-height:292px!important;}
-  .title-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;}
-  .tabbar{overflow-x:auto!important;justify-content:flex-start!important;}
-  .tab-btn{min-width:78px!important;flex:0 0 auto!important;}
-  .panel{padding:13px!important;}
-}
-@media(max-width:460px){
-  .title-grid{grid-template-columns:1fr!important;}
-  .achievement-card{min-height:140px!important;}
-  .team-flag{width:36px!important;height:25px!important;}
-}
-
-
-/* V9 responsive management module */
-html,body{max-width:100%;overflow-x:hidden}.wrap,.panel,.form-grid{min-width:0}.panel{background:rgba(255,255,255,.74)!important;backdrop-filter:blur(9px)}html[data-theme="dark"] .panel{background:rgba(23,27,34,.76)!important}.bg-photo-layer.active{opacity:.42!important}.table-wrap{max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}.table-wrap table{min-width:980px}@media(max-width:760px){.wrap{padding:12px!important}.form-grid{grid-template-columns:1fr!important}.masthead{flex-wrap:wrap!important}.header-actions{width:100%!important}.panel{padding:14px!important}}
- .penalty-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.hint-pen{font-size:11px;color:var(--text-faint)} 
-/* ===== Ratio Sports reconstructed data model ===== */
-.competition-logo-corner{position:absolute!important;right:8px!important;bottom:7px!important;width:34px!important;height:34px!important;object-fit:contain!important;opacity:.72!important;z-index:3!important;filter:drop-shadow(0 2px 3px rgba(0,0,0,.18))}
-.team-honours{display:flex;gap:12px;align-items:center;margin-top:4px;font-size:10px;font-weight:800;color:var(--text-dim)}
-.team-honours b{font-size:14px;color:var(--text)}
-.form-pip{font-weight:900!important;font-size:10px!important}
-.match-name-cell{min-width:145px}.origin-note{display:block;margin-top:3px;color:var(--text-faint);font-size:9px;font-weight:600}
-.score-cell{white-space:nowrap;font-weight:900;font-size:13px}.score-cell small{display:block;font-size:8px;color:var(--text-dim);margin-top:2px}
-#matchesPanel table th:nth-child(9),#matchesPanel table td:nth-child(9){min-width:170px}
-
-
-/* v14 sidebar correction */
-.sidebar-collapsed .nav-icon{display:inline-flex!important;visibility:visible!important;opacity:1!important;color:#fff!important;font-size:17px!important;min-width:24px!important}.sidebar-collapsed .tab-btn{display:flex!important;width:100%!important;min-height:40px!important;justify-content:center!important;overflow:visible!important}.sidebar-collapsed .tabbar{overflow-y:auto!important;overflow-x:visible!important}
-</style>
-
-<style id="v203-three-final-fixes">
-/* 1) Bitácora filters: always remain inside their panel */
-.table-controls-v20{
-  width:100%!important;
-  max-width:100%!important;
-  box-sizing:border-box!important;
-  display:grid!important;
-  grid-template-columns:minmax(230px,1.35fr) repeat(2,minmax(150px,1fr))!important;
-  gap:9px!important;
-  align-items:stretch!important;
-  overflow:visible!important;
-}
-.table-controls-v20>*{min-width:0!important;width:100%!important;box-sizing:border-box!important}
-.table-controls-v20 .btn{min-height:48px!important;white-space:nowrap!important}
-@media(max-width:1050px){.table-controls-v20{grid-template-columns:1fr 1fr!important}.table-controls-v20 .search-box{grid-column:1/-1!important}}
-@media(max-width:650px){.table-controls-v20{grid-template-columns:1fr!important}.table-controls-v20 .search-box{grid-column:auto!important}}
-
-/* 2) Team cards: no horizontal rule; recent form label and last eight results share one row */
-.team-card-v16 .team-v16-core{
-  display:grid!important;
-  grid-template-columns:max-content minmax(0,1fr)!important;
-  align-items:center!important;
-  column-gap:8px!important;
-  row-gap:7px!important;
-}
-.team-card-v16 .team-v16-goals,
-.team-card-v16 .pct-track,
-.team-card-v16 .team-honours,
-.team-card-v16 .team-v16-eff{grid-column:1/-1!important}
-.team-card-v16 .team-v16-goals{
-  position:static!important;
-  inset:auto!important;
-  border:0!important;
-  border-top:0!important;
-  border-bottom:0!important;
-  padding:0!important;
-  margin:0!important;
-  width:100%!important;
-  max-width:100%!important;
-}
-.team-card-v16 .team-v16-form-label{
-  grid-column:1!important;
-  margin:0!important;
-  padding:0!important;
-  white-space:nowrap!important;
-  line-height:20px!important;
-}
-.team-card-v16 .form-strip{
-  grid-column:2!important;
-  margin:0!important;
-  padding:0!important;
-  width:auto!important;
-  max-width:100%!important;
-  min-width:0!important;
-  min-height:20px!important;
-  align-items:center!important;
-  overflow:visible!important;
-}
-.team-card-v16 .team-v16-eff{margin:0!important;padding:0!important}
-.team-card-v16{min-height:252px!important}
-
-/* 3) Collapsed navigation: fixed centered icon buttons, never clipped */
-body.sidebar-collapsed .tabbar{
-  width:var(--sidebar-collapsed)!important;
-  min-width:var(--sidebar-collapsed)!important;
-  max-width:var(--sidebar-collapsed)!important;
-  box-sizing:border-box!important;
-  padding:74px 7px 64px!important;
-  align-items:center!important;
-  overflow-x:hidden!important;
-}
-body.sidebar-collapsed .tabbar .nav-label{display:none!important}
-body.sidebar-collapsed .tab-btn{
-  flex:0 0 46px!important;
-  width:46px!important;
-  min-width:46px!important;
-  max-width:46px!important;
-  height:46px!important;
-  min-height:46px!important;
-  box-sizing:border-box!important;
-  padding:0!important;
-  margin:0 auto!important;
-  display:flex!important;
-  align-items:center!important;
-  justify-content:center!important;
-  gap:0!important;
-  overflow:hidden!important;
-  transform:none!important;
-  border-radius:10px!important;
-}
-body.sidebar-collapsed .tab-btn.active{box-shadow:inset 3px 0 0 rgba(255,255,255,.92)!important}
-body.sidebar-collapsed .nav-icon{
-  flex:0 0 28px!important;
-  display:flex!important;
-  align-items:center!important;
-  justify-content:center!important;
-  width:28px!important;
-  min-width:28px!important;
-  max-width:28px!important;
-  height:28px!important;
-  margin:0!important;
-  padding:0!important;
-  overflow:visible!important;
-  text-align:center!important;
-  font-size:18px!important;
-  line-height:28px!important;
-  transform:none!important;
-}
-body.sidebar-collapsed .sidebar-theme-wrap{width:46px!important;margin-left:auto!important;margin-right:auto!important}
-body.sidebar-collapsed .sidebar-theme-toggle{width:46px!important;height:46px!important;padding:0!important;overflow:hidden!important}
-</style>
-
-</head>
+<link href="assets/css/base.css" rel="stylesheet"/>
+<link href="assets/css/partidos.css" rel="stylesheet"/></head>
 <body>
-
 <div class="bg-photo-layer" id="bgPhotoLayer"></div>
-<svg class="ball-decor" viewBox="0 0 100 100"><use href="#ballShape"/></svg>
-<svg class="ball-decor b2" viewBox="0 0 100 100"><use href="#ballShape"/></svg>
-<svg width="0" height="0" style="position:absolute">
-  <defs>
-    <g id="ballShape">
-      <circle cx="50" cy="50" r="48" fill="none" stroke="#21201c" stroke-width="2"/>
-      <polygon points="50,20 62,30 58,44 42,44 38,30" fill="#21201c"/>
-      <polygon points="50,20 62,30 78,26 76,12" fill="none" stroke="#21201c" stroke-width="1.6"/>
-      <polygon points="50,20 38,30 22,26 24,12" fill="none" stroke="#21201c" stroke-width="1.6"/>
-      <polygon points="62,30 58,44 74,54 84,42 78,26" fill="none" stroke="#21201c" stroke-width="1.6"/>
-      <polygon points="38,30 42,44 26,54 16,42 22,26" fill="none" stroke="#21201c" stroke-width="1.6"/>
-      <polygon points="58,44 42,44 38,60 50,70 62,60" fill="none" stroke="#21201c" stroke-width="1.6"/>
-    </g>
-  </defs>
+<svg class="ball-decor" viewbox="0 0 100 100"><use href="#ballShape"></use></svg>
+<svg class="ball-decor b2" viewbox="0 0 100 100"><use href="#ballShape"></use></svg>
+<svg height="0" style="position:absolute" width="0">
+<defs>
+<g id="ballShape">
+<circle cx="50" cy="50" fill="none" r="48" stroke="#21201c" stroke-width="2"></circle>
+<polygon fill="#21201c" points="50,20 62,30 58,44 42,44 38,30"></polygon>
+<polygon fill="none" points="50,20 62,30 78,26 76,12" stroke="#21201c" stroke-width="1.6"></polygon>
+<polygon fill="none" points="50,20 38,30 22,26 24,12" stroke="#21201c" stroke-width="1.6"></polygon>
+<polygon fill="none" points="62,30 58,44 74,54 84,42 78,26" stroke="#21201c" stroke-width="1.6"></polygon>
+<polygon fill="none" points="38,30 42,44 26,54 16,42 22,26" stroke="#21201c" stroke-width="1.6"></polygon>
+<polygon fill="none" points="58,44 42,44 38,60 50,70 62,60" stroke="#21201c" stroke-width="1.6"></polygon>
+</g>
+</defs>
 </svg>
-
 <div class="wrap">
-
-  <div class="masthead">
-    <div class="brand">
-      <div class="brand-mark"><svg viewBox="0 0 100 100"><use href="#ballShape"/></svg></div>
-      <div>
-        <h1>Ratio Sports</h1>
-        <p>Vista general de tu rendimiento · datos reales del Excel</p>
-      </div>
-    </div>
-    <div class="header-actions">
-      <button class="theme-toggle" id="themeToggle" type="button" aria-label="Cambiar tema"><span id="themeIcon">🌙</span><span id="themeLabel">Modo oscuro</span></button>
-      <div class="scoreboard" id="scoreboard"></div>
-    </div>
-  </div>
-
-  <button class="sidebar-toggle" id="sidebarToggle" type="button" title="Colapsar menú">‹</button>
-  <div class="tabbar">
-    <a class="tab-btn module-link" href="index.html"><span class="nav-icon">⌂</span><span class="nav-label">Resumen</span></a>
-    <a class="tab-btn module-link" href="#teamGrid"><span class="nav-icon">♟</span><span class="nav-label">Mis equipos</span></a>
-    <a class="tab-btn module-link" href="#titlesPanel"><span class="nav-icon">♜</span><span class="nav-label">Títulos</span></a>
-    <a class="tab-btn module-link" href="#weeklyPanel"><span class="nav-icon">⌁</span><span class="nav-label">Seguimiento</span></a>
-    <a class="tab-btn module-link" href="#matchesPanel"><span class="nav-icon">▤</span><span class="nav-label">Bitácora</span></a>
-    <a class="tab-btn module-link" href="#scoreboard"><span class="nav-icon">▥</span><span class="nav-label">Estadísticas</span></a>
-    <a class="tab-btn active module-link" href="partidos.html"><span class="nav-icon">⚙</span><span class="nav-label">Gestión</span></a>
-  </div>
-
-  <!-- ============ TAB: SEGUIMIENTO ============ -->
-  <section id="tab-seguimiento" class="hidden">
-
-    <div class="chipbar" id="chipbar"></div>
-
-    <div class="section-title" id="equiposTitle">Mis equipos</div>
-    <div class="team-grid" id="teamGrid"></div>
-
-    <div class="section-title">Tus títulos</div>
-    <div class="panel" id="titlesPanel">
-      <h2>Títulos y finales</h2>
-      <p class="sub">Torneos ganados, perdidos y vinculados con sus finales</p>
-      <div class="title-grid" id="titleGrid"></div>
-      <div class="title-total" id="titleTotal"></div>
-    </div>
-
-    <div class="section-title">Seguimiento semanal</div>
-    <div class="panel" id="weeklyPanel">
-      <h2>Seguimiento semanal</h2>
-      <p class="sub">La gráfica muestra todas las semanas. El detalle inferior se despliega de cinco en cinco.</p>
-      <div class="legend-row">
-        <div class="legend-item"><span class="legend-swatch" style="background:var(--win)"></span>Ganados</div>
-        <div class="legend-item"><span class="legend-swatch" style="background:var(--draw)"></span>Empatados</div>
-        <div class="legend-item"><span class="legend-swatch" style="background:var(--loss)"></span>Perdidos</div>
-        <div class="legend-item"><span class="legend-line"></span>% Efectividad</div>
-      </div>
-      <div class="chart-scroll"><div class="chart-wrap" id="weeklyChartWrap"></div></div>
-      <div class="table-wrap"><table style="margin-top:18px;">
-        <thead><tr><th>Semana</th><th>Rango</th><th>PJ</th><th>G</th><th>E</th><th>P</th><th>Efectividad</th></tr></thead>
-        <tbody id="weeklyTableBody"></tbody>
-      </table></div>
-      <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:16px;">
-        <span class="muted" id="weeklyCount" style="font-size:12px;"></span>
-        <button class="btn btn-ghost" id="weeklyMoreBtn" type="button">Ver 5 semanas más</button>
-      </div>
-    </div>
-
-    <div class="section-title">Bitácora de fútbol</div>
-    <div class="panel" id="matchesPanel">
-      <h2>Bitácora de partidos</h2>
-      <p class="sub">Historial de fútbol, filtrable por equipo</p>
-      <div class="table-controls">
-        <input type="text" id="searchInput" placeholder="Buscar rival, estadio o torneo…">
-        <select id="competitionFilter"><option value="all">Todas las competiciones</option></select>
-        <select id="sortSelect">
-          <option value="recent">Más recientes primero</option>
-          <option value="oldest">Más antiguos primero</option>
-        </select>
-        <button class="btn btn-ghost" id="clearFiltersBtn" type="button">Limpiar filtros</button>
-      </div>
-      <div class="table-wrap"><table>
-        <thead><tr><th>Fecha</th><th>Equipo</th><th>Rival</th><th>Estadio / Ciudad</th><th>Torneo / Fase</th><th>Marcador</th><th>Resultado</th></tr></thead>
-        <tbody id="matchTableBody"></tbody>
-      </table></div>
-      <div style="display:flex; align-items:center; justify-content:space-between; margin-top:16px;">
-        <span class="muted" id="matchTableCount" style="font-size:12px;"></span>
-        <button class="btn btn-ghost" id="verMasBtn">Ver más</button>
-      </div>
-    </div>
-
-    <div class="section-title">🏈 NFL</div>
-    <div class="panel" id="nflPanel">
-      <h2>Dallas Cowboys<span class="nfl-flag">NFL</span></h2>
-      <p class="sub">Resultados de fútbol americano, separados del resto</p>
-      <div class="table-wrap"><table>
-        <thead><tr><th></th><th>Fecha</th><th>Rival</th><th>Estadio / Ciudad</th><th>Temporada / Semana</th><th>Marcador (puntos)</th><th>Resultado</th></tr></thead>
-        <tbody id="nflTableBody"></tbody>
-      </table></div>
-    </div>
-  </section>
-
-  <!-- ============ TAB: REGISTRAR ============ -->
-  <section id="tab-registrar">
-    <div class="panel">
-      <h2>Nuevo marcador</h2>
-      <p class="sub">Llena los datos del partido y agrégalo a tu bitácora</p>
-      <div class="title-association-help"><strong>Asociación con títulos:</strong> usa el mismo nombre de torneo, escribe una fase que contenga “Final” y activa “Este partido definió un título”. El registro guarda un <code>tournamentId</code> y la tarjeta toma automáticamente rival, fecha, marcador y estado ganado/perdido.</div>
-      <div class="form-grid">
-        <div class="field">
-          <label>Equipo</label>
-          <select id="f_team"></select>
-        </div>
-        <div class="field">
-          <label>Rival</label>
-          <input type="text" id="f_rival" placeholder="Ej. FC Barcelona">
-        </div>
-        <div class="field">
-          <label>Condición del equipo seguido</label>
-          <select id="f_venueSide"><option value="home">Local</option><option value="away">Visitante</option></select>
-        </div>
-        <div class="field">
-          <label>Día</label>
-          <input type="number" id="f_dia" min="1" max="31" placeholder="14">
-        </div>
-        <div class="field">
-          <label>Mes</label>
-          <select id="f_mes">
-            <option value="1">Enero</option><option value="2">Febrero</option><option value="3">Marzo</option>
-            <option value="4">Abril</option><option value="5">Mayo</option><option value="6">Junio</option>
-            <option value="7">Julio</option><option value="8">Agosto</option><option value="9">Septiembre</option>
-            <option value="10">Octubre</option><option value="11">Noviembre</option><option value="12">Diciembre</option>
-          </select>
-        </div>
-
-        <div class="field span2">
-          <label>Torneo / Competición</label>
-          <input type="text" id="f_torneo" list="torneoOptions" placeholder="Ej. La Liga">
-          <datalist id="torneoOptions"></datalist>
-          <span class="muted" style="font-size:10.5px;">Elige uno de la lista para que quede ligado a su logo de torneo</span>
-        </div>
-        <div class="field span2">
-          <label>Fase / Jornada</label>
-          <input type="text" id="f_fase" placeholder="Ej. Jornada 20">
-        </div>
-
-        <div class="field">
-          <label>Estadio</label>
-          <input type="text" id="f_estadio" placeholder="Ej. Santiago Bernabéu">
-        </div>
-        <div class="field">
-          <label>Ciudad</label>
-          <input type="text" id="f_ciudad" placeholder="Ej. Madrid">
-        </div>
-        <div class="field">
-          <label id="lbl_gf">Goles a favor</label>
-          <input type="number" id="f_gf" min="0" placeholder="0">
-        </div>
-        <div class="field">
-          <label id="lbl_gc">Goles en contra</label>
-          <input type="number" id="f_gc" min="0" placeholder="0">
-        </div>
-
-        <div class="preview-badge">
-          <span>Resultado (se calcula solo):</span>
-          <span class="result-pill e" id="resultPreview">—</span>
-        </div>
-
-        <div class="preview-badge" style="flex-wrap:wrap;">
-          <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-weight:600;">
-            <input type="checkbox" id="f_esTitulo" style="width:16px; height:16px;">
+<div class="masthead">
+<div class="brand">
+<div class="brand-mark"><svg viewbox="0 0 100 100"><use href="#ballShape"></use></svg></div>
+<div>
+<h1>Ratio Sports</h1>
+<p>Vista general de tu rendimiento · datos reales del Excel</p>
+</div>
+</div>
+<div class="header-actions">
+<button aria-label="Cambiar tema" class="theme-toggle" id="themeToggle" type="button"><span id="themeIcon">🌙</span><span id="themeLabel">Modo oscuro</span></button>
+<div class="scoreboard" id="scoreboard"></div>
+</div>
+</div>
+<button class="sidebar-toggle" id="sidebarToggle" title="Colapsar menú" type="button">‹</button>
+<div class="tabbar">
+<a class="tab-btn module-link" href="index.html"><span class="nav-icon">⌂</span><span class="nav-label">Resumen</span></a>
+<a class="tab-btn module-link" href="#teamGrid"><span class="nav-icon">♟</span><span class="nav-label">Mis equipos</span></a>
+<a class="tab-btn module-link" href="#titlesPanel"><span class="nav-icon">♜</span><span class="nav-label">Títulos</span></a>
+<a class="tab-btn module-link" href="#weeklyPanel"><span class="nav-icon">⌁</span><span class="nav-label">Seguimiento</span></a>
+<a class="tab-btn module-link" href="#matchesPanel"><span class="nav-icon">▤</span><span class="nav-label">Bitácora</span></a>
+<a class="tab-btn module-link" href="#scoreboard"><span class="nav-icon">▥</span><span class="nav-label">Estadísticas</span></a>
+<a class="tab-btn active module-link" href="partidos.html"><span class="nav-icon">⚙</span><span class="nav-label">Gestión</span></a>
+</div>
+<!-- ============ TAB: SEGUIMIENTO ============ -->
+<section class="hidden" id="tab-seguimiento">
+<div class="chipbar" id="chipbar"></div>
+<div class="section-title" id="equiposTitle">Mis equipos</div>
+<div class="team-grid" id="teamGrid"></div>
+<div class="section-title">Tus títulos</div>
+<div class="panel" id="titlesPanel">
+<h2>Títulos y finales</h2>
+<p class="sub">Torneos ganados, perdidos y vinculados con sus finales</p>
+<div class="title-grid" id="titleGrid"></div>
+<div class="title-total" id="titleTotal"></div>
+</div>
+<div class="section-title">Seguimiento semanal</div>
+<div class="panel" id="weeklyPanel">
+<h2>Seguimiento semanal</h2>
+<p class="sub">La gráfica muestra todas las semanas. El detalle inferior se despliega de cinco en cinco.</p>
+<div class="legend-row">
+<div class="legend-item"><span class="legend-swatch" style="background:var(--win)"></span>Ganados</div>
+<div class="legend-item"><span class="legend-swatch" style="background:var(--draw)"></span>Empatados</div>
+<div class="legend-item"><span class="legend-swatch" style="background:var(--loss)"></span>Perdidos</div>
+<div class="legend-item"><span class="legend-line"></span>% Efectividad</div>
+</div>
+<div class="chart-scroll"><div class="chart-wrap" id="weeklyChartWrap"></div></div>
+<div class="table-wrap"><table style="margin-top:18px;">
+<thead><tr><th>Semana</th><th>Rango</th><th>PJ</th><th>G</th><th>E</th><th>P</th><th>Efectividad</th></tr></thead>
+<tbody id="weeklyTableBody"></tbody>
+</table></div>
+<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:16px;">
+<span class="muted" id="weeklyCount" style="font-size:12px;"></span>
+<button class="btn btn-ghost" id="weeklyMoreBtn" type="button">Ver 5 semanas más</button>
+</div>
+</div>
+<div class="section-title">Bitácora de fútbol</div>
+<div class="panel" id="matchesPanel">
+<h2>Bitácora de partidos</h2>
+<p class="sub">Historial de fútbol, filtrable por equipo</p>
+<div class="table-controls">
+<input id="searchInput" placeholder="Buscar rival, estadio o torneo…" type="text"/>
+<select id="competitionFilter"><option value="all">Todas las competiciones</option></select>
+<select id="sortSelect">
+<option value="recent">Más recientes primero</option>
+<option value="oldest">Más antiguos primero</option>
+</select>
+<button class="btn btn-ghost" id="clearFiltersBtn" type="button">Limpiar filtros</button>
+</div>
+<div class="table-wrap"><table>
+<thead><tr><th>Fecha</th><th>Equipo</th><th>Rival</th><th>Estadio / Ciudad</th><th>Torneo / Fase</th><th>Marcador</th><th>Resultado</th></tr></thead>
+<tbody id="matchTableBody"></tbody>
+</table></div>
+<div style="display:flex; align-items:center; justify-content:space-between; margin-top:16px;">
+<span class="muted" id="matchTableCount" style="font-size:12px;"></span>
+<button class="btn btn-ghost" id="verMasBtn">Ver más</button>
+</div>
+</div>
+<div class="section-title">🏈 NFL</div>
+<div class="panel" id="nflPanel">
+<h2>Dallas Cowboys<span class="nfl-flag">NFL</span></h2>
+<p class="sub">Resultados de fútbol americano, separados del resto</p>
+<div class="table-wrap"><table>
+<thead><tr><th></th><th>Fecha</th><th>Rival</th><th>Estadio / Ciudad</th><th>Temporada / Semana</th><th>Marcador (puntos)</th><th>Resultado</th></tr></thead>
+<tbody id="nflTableBody"></tbody>
+</table></div>
+</div>
+</section>
+<!-- ============ TAB: REGISTRAR ============ -->
+<section id="tab-registrar">
+<div class="panel">
+<h2>Nuevo marcador</h2>
+<p class="sub">Llena los datos del partido y agrégalo a tu bitácora</p>
+<div class="title-association-help"><strong>Asociación con títulos:</strong> usa el mismo nombre de torneo, escribe una fase que contenga “Final” y activa “Este partido definió un título”. El registro guarda un <code>tournamentId</code> y la tarjeta toma automáticamente rival, fecha, marcador y estado ganado/perdido.</div>
+<div class="form-grid">
+<div class="field">
+<label>Equipo</label>
+<select id="f_team"></select>
+</div>
+<div class="field">
+<label>Rival</label>
+<input id="f_rival" placeholder="Ej. FC Barcelona" type="text"/>
+</div>
+<div class="field">
+<label>Condición del equipo seguido</label>
+<select id="f_venueSide"><option value="home">Local</option><option value="away">Visitante</option></select>
+</div>
+<div class="field">
+<label>Día</label>
+<input id="f_dia" max="31" min="1" placeholder="14" type="number"/>
+</div>
+<div class="field">
+<label>Mes</label>
+<select id="f_mes">
+<option value="1">Enero</option><option value="2">Febrero</option><option value="3">Marzo</option>
+<option value="4">Abril</option><option value="5">Mayo</option><option value="6">Junio</option>
+<option value="7">Julio</option><option value="8">Agosto</option><option value="9">Septiembre</option>
+<option value="10">Octubre</option><option value="11">Noviembre</option><option value="12">Diciembre</option>
+</select>
+</div>
+<div class="field span2">
+<label>Torneo / Competición</label>
+<input id="f_torneo" list="torneoOptions" placeholder="Ej. La Liga" type="text"/>
+<datalist id="torneoOptions"></datalist>
+<span class="muted" style="font-size:10.5px;">Elige uno de la lista para que quede ligado a su logo de torneo</span>
+</div>
+<div class="field span2">
+<label>Fase / Jornada</label>
+<input id="f_fase" placeholder="Ej. Jornada 20" type="text"/>
+</div>
+<div class="field">
+<label>Estadio</label>
+<input id="f_estadio" placeholder="Ej. Santiago Bernabéu" type="text"/>
+</div>
+<div class="field">
+<label>Ciudad</label>
+<input id="f_ciudad" placeholder="Ej. Madrid" type="text"/>
+</div>
+<div class="field">
+<label id="lbl_gf">Goles a favor</label>
+<input id="f_gf" min="0" placeholder="0" type="number"/>
+</div>
+<div class="field">
+<label id="lbl_gc">Goles en contra</label>
+<input id="f_gc" min="0" placeholder="0" type="number"/>
+</div>
+<div class="preview-badge">
+<span>Resultado (se calcula solo):</span>
+<span class="result-pill e" id="resultPreview">—</span>
+</div>
+<div class="preview-badge" style="flex-wrap:wrap;">
+<label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-weight:600;">
+<input id="f_esTitulo" style="width:16px; height:16px;" type="checkbox"/>
             🏆 Este partido definió un título (fue una final)
           </label>
-          <select id="f_tituloResultado" class="hidden" style="margin-left:auto;">
-            <option value="ganado">Lo ganamos 🏆</option>
-            <option value="perdido">Lo perdimos</option>
-          </select>
-        </div>
-
-        <div class="field"><label>Global local (opcional)</label><input id="f_aggLocal" type="number" min="0" placeholder="Ej. 2"><span class="hint-pen">Actívalo para eliminatorias de ida y vuelta.</span></div>
-        <div class="field"><label>Global visitante (opcional)</label><input id="f_aggVisit" type="number" min="0" placeholder="Ej. 4"></div>
-        <div class="field"><label>Penales local (opcional)</label><input id="f_penLocal" type="number" min="0" placeholder="Ej. 4"><span class="hint-pen">Solo si la serie se decidió por penales.</span></div>
-        <div class="field"><label>Penales visitante (opcional)</label><input id="f_penVisit" type="number" min="0" placeholder="Ej. 2"></div>
-        <div class="preview-badge"><label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-weight:700"><input type="checkbox" id="f_extraTime" style="width:16px;height:16px"> Partido definido en tiempo extra</label></div>
-<div class="form-actions">
-          <button class="btn btn-ghost" id="clearBtn">Limpiar</button>
-          <button class="btn btn-primary" id="addBtn">Agregar marcador</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="panel">
-      <h2>Agregados recientemente</h2>
-      <p class="sub">Últimos partidos capturados en esta bitácora</p>
-      <table>
-        <thead><tr><th>Mi equipo</th><th>Fecha</th><th>Local</th><th>Marcador</th><th>Visitante</th><th>Estadio / Ciudad</th><th>Torneo</th><th>Fase</th><th>Status</th><th></th></tr></thead>
-        <tbody id="recentTableBody"></tbody>
-      </table>
-    </div>
-  </section>
-
+<select class="hidden" id="f_tituloResultado" style="margin-left:auto;">
+<option value="ganado">Lo ganamos 🏆</option>
+<option value="perdido">Lo perdimos</option>
+</select>
 </div>
-
+<div class="field"><label>Global local (opcional)</label><input id="f_aggLocal" min="0" placeholder="Ej. 2" type="number"/><span class="hint-pen">Actívalo para eliminatorias de ida y vuelta.</span></div>
+<div class="field"><label>Global visitante (opcional)</label><input id="f_aggVisit" min="0" placeholder="Ej. 4" type="number"/></div>
+<div class="field"><label>Penales local (opcional)</label><input id="f_penLocal" min="0" placeholder="Ej. 4" type="number"/><span class="hint-pen">Solo si la serie se decidió por penales.</span></div>
+<div class="field"><label>Penales visitante (opcional)</label><input id="f_penVisit" min="0" placeholder="Ej. 2" type="number"/></div>
+<div class="preview-badge"><label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-weight:700"><input id="f_extraTime" style="width:16px;height:16px" type="checkbox"/> Partido definido en tiempo extra</label></div>
+<div class="form-actions">
+<button class="btn btn-ghost" id="clearBtn">Limpiar</button>
+<button class="btn btn-primary" id="addBtn">Agregar marcador</button>
+</div>
+</div>
+</div>
+<div class="panel">
+<h2>Agregados recientemente</h2>
+<p class="sub">Últimos partidos capturados en esta bitácora</p>
+<table>
+<thead><tr><th>Mi equipo</th><th>Fecha</th><th>Local</th><th>Marcador</th><th>Visitante</th><th>Estadio / Ciudad</th><th>Torneo</th><th>Fase</th><th>Status</th><th></th></tr></thead>
+<tbody id="recentTableBody"></tbody>
+</table>
+</div>
+</section>
+</div>
 <div class="toast" id="toast"></div>
-
 <!-- Rutas de logos y foto de fondo: ver logos-config.js (archivo aparte) -->
-<script src="logos-config.js"></script>
-<script>
-const TEAMS = {"real_madrid":{"name":"Real Madrid","alias":["Real Madrid"],"country":"España","type":"Club","color":"#ffffff","accent":"#1a1a2e","sport":"futbol"},"pumas":{"name":"Pumas UNAM","alias":["Pumas UNAM"],"country":"México","type":"Club","color":"#0a2f5c","accent":"#f5d800","sport":"futbol"},"al_nassr":{"name":"Al Nassr","alias":["Al Nassr"],"country":"Arabia Saudita","type":"Club","color":"#fbe122","accent":"#0033a0","sport":"futbol"},"sel_mex":{"name":"México","alias":["México"],"country":"Selección Nacional","type":"Selección","color":"#006341","accent":"#ce1126","sport":"futbol"},"sel_por":{"name":"Portugal","alias":["Portugal"],"country":"Selección Nacional","type":"Selección","color":"#006600","accent":"#ff0000","sport":"futbol"},"cowboys":{"name":"Dallas Cowboys","alias":["Dallas Cowboys"],"country":"USA","type":"NFL","color":"#041e42","accent":"#869397","sport":"nfl"}};
-const SEED_MATCHES = [{"id":"m1_al_nassr","team":"al_nassr","dia":2,"mes":1,"rival":"Al-Ahli","torneo":"Saudi Professional League","fase":"Jornada 12","gf":2,"gc":3,"resultado":"Perdido","estadio":"","ciudad":"","venueSide":"away","localName":"Al-Ahli","originLocal":"Arabia Saudita","visitName":"Al Nassr","originVisit":"Arabia Saudita","localScore":2,"visitScore":3,"scoreAnnotation":"-"},{"id":"m2_real_madrid","team":"real_madrid","dia":4,"mes":1,"rival":"Real Betis","torneo":"La Liga","fase":"Jornada 19","gf":5,"gc":1,"resultado":"Ganado","estadio":"","ciudad":"","venueSide":"home","localName":"Real Madrid","originLocal":"España","visitName":"Real Betis","originVisit":"España","localScore":5,"visitScore":1,"scoreAnnotation":"-"},{"id":"m3_cowboys","team":"cowboys","dia":4,"mes":1,"rival":"New York Giants","torneo":"NFL Temporada","fase":"Week 18","gf":17,"gc":34,"resultado":"Perdido","estadio":"","ciudad":"","venueSide":"away","localName":"New York Giants","originLocal":"NFC Este","visitName":"Dallas Cowboys","originVisit":"NFC Este","localScore":17,"visitScore":34,"scoreAnnotation":"-"},{"id":"m4_al_nassr","team":"al_nassr","dia":8,"mes":1,"rival":"Al Qadisiyah","torneo":"Saudi Professional League","fase":"Jornada 13","gf":1,"gc":2,"resultado":"Perdido","estadio":"","ciudad":"","venueSide":"home","localName":"Al Nassr","originLocal":"Arabia Saudita","visitName":"Al Qadisiyah","originVisit":"Arabia Saudita","localScore":1,"visitScore":2,"scoreAnnotation":"-"},{"id":"m5_real_madrid","team":"real_madrid","dia":8,"mes":1,"rival":"Atlético de Madrid","torneo":"Supercopa de España","fase":"Semifinales","gf":2,"gc":1,"resultado":"Ganado","estadio":"","ciudad":"","venueSide":"away","localName":"Atlético de Madrid","originLocal":"España","visitName":"Real Madrid","originVisit":"España","localScore":2,"visitScore":1,"scoreAnnotation":"-"},{"id":"m6_pumas","team":"pumas","dia":11,"mes":1,"rival":"Querétaro","torneo":"Liga BBVA MX Clausura 2026","fase":"Jornada 1","gf":1,"gc":1,"resultado":"Empatado","estadio":"","ciudad":"","venueSide":"home","localName":"Pumas UNAM","originLocal":"México","visitName":"Querétaro","originVisit":"México","localScore":1,"visitScore":1,"scoreAnnotation":"-"},{"id":"m7_real_madrid","team":"real_madrid","dia":11,"mes":1,"rival":"FC Barcelona","torneo":"Supercopa de España","fase":"Gran Final","gf":2,"gc":3,"resultado":"Perdido","estadio":"","ciudad":"","venueSide":"away","localName":"FC Barcelona","originLocal":"España","visitName":"Real Madrid","originVisit":"España","localScore":3,"visitScore":2,"scoreAnnotation":"-","titleDecision":true,"titleStatus":"perdido","tournamentId":"supercopa_de_espana"},{"id":"m8_al_nassr","team":"al_nassr","dia":12,"mes":1,"rival":"Al Hilal","torneo":"Saudi Professional League","fase":"Jornada 14","gf":1,"gc":3,"resultado":"Perdido","estadio":"","ciudad":"","venueSide":"away","localName":"Al Hilal","originLocal":"Arabia Saudita","visitName":"Al Nassr","originVisit":"Arabia Saudita","localScore":1,"visitScore":3,"scoreAnnotation":"-"},{"id":"m9_real_madrid","team":"real_madrid","dia":14,"mes":1,"rival":"Albacete","torneo":"Copa del Rey","fase":"Octavos de Final","gf":2,"gc":3,"resultado":"Perdido","estadio":"","ciudad":"","venueSide":"away","localName":"Albacete","originLocal":"España","visitName":"Real Madrid","originVisit":"España","localScore":3,"visitScore":2,"scoreAnnotation":"-","titleDecision":true,"titleStatus":"eliminado","tournamentId":"copa_del_rey"},{"id":"m10_pumas","team":"pumas","dia":14,"mes":1,"rival":"Tigres UANL","torneo":"Liga BBVA MX Clausura 2026","fase":"Jornada 2","gf":1,"gc":0,"resultado":"Ganado","estadio":"","ciudad":"","venueSide":"away","localName":"Tigres UANL","originLocal":"México","visitName":"Pumas UNAM","originVisit":"México","localScore":1,"visitScore":0,"scoreAnnotation":"-"},{"id":"m11_real_madrid","team":"real_madrid","dia":17,"mes":1,"rival":"Levante","torneo":"La Liga","fase":"Jornada 20","gf":2,"gc":0,"resultado":"Ganado","estadio":"","ciudad":"","venueSide":"home","localName":"Real Madrid","originLocal":"España","visitName":"Levante","originVisit":"España","localScore":2,"visitScore":0,"scoreAnnotation":"-"},{"id":"m12_al_nassr","team":"al_nassr","dia":17,"mes":1,"rival":"Al Shabab","torneo":"Saudi Professional League","fase":"Jornada 15","gf":3,"gc":2,"resultado":"Ganado","estadio":"","ciudad":"","venueSide":"home","localName":"Al Nassr","originLocal":"Arabia Saudita","visitName":"Al Shabab","originVisit":"Arabia Saudita","localScore":3,"visitScore":2,"scoreAnnotation":"-"},{"id":"m13_pumas","team":"pumas","dia":18,"mes":1,"rival":"León","torneo":"Liga BBVA MX Clausura 2026","fase":"Jornada 3","gf":1,"gc":1,"resultado":"Empatado","estadio":"","ciudad":"","venueSide":"home","localName":"Pumas UNAM","originLocal":"México","visitName":"León","originVisit":"México","localScore":1,"visitScore":1,"scoreAnnotation":"-"},{"id":"m14_real_madrid","team":"real_madrid","dia":20,"mes":1,"rival":"AS Mónaco","torneo":"UEFA Champions League 2025-2026","fase":"Fase de Liga J7","gf":6,"gc":1,"resultado":"Ganado","estadio":"","ciudad":"","venueSide":"home","localName":"Real Madrid","originLocal":"España","visitName":"AS Mónaco","originVisit":"Francia","localScore":6,"visitScore":1,"scoreAnnotation":"-"},{"id":"m15_al_nassr","team":"al_nassr","dia":21,"mes":1,"rival":"Damac","torneo":"Saudi Professional League","fase":"Jornada 16","gf":2,"gc":1,"resultado":"Ganado","estadio":"","ciudad":"","venueSide":"away","localName":"Damac","originLocal":"Arabia Saudita","visitName":"Al Nassr","originVisit":"Arabia Saudita","localScore":2,"visitScore":1,"scoreAnnotation":"-"},{"id":"m16_sel_mex","team":"sel_mex","dia":22,"mes":1,"rival":"Panamá","torneo":"Partido de Preparación","fase":"Partido Amistoso","gf":1,"gc":0,"resultado":"Ganado","estadio":"","ciudad":"","venueSide":"away","localName":"Panamá","originLocal":"América Central","visitName":"México","originVisit":"América del Norte","localScore":1,"visitScore":0,"scoreAnnotation":"-"},{"id":"m17_real_madrid","team":"real_madrid","dia":24,"mes":1,"rival":"Villareal","torneo":"La Liga","fase":"Jornada 21","gf":2,"gc":0,"resultado":"Ganado","estadio":"","ciudad":"","venueSide":"away","localName":"Villareal","originLocal":"España","visitName":"Real Madrid","originVisit":"España","localScore":2,"visitScore":0,"scoreAnnotation":"-"},{"id":"m18_sel_mex","team":"sel_mex","dia":25,"mes":1,"rival":"Bolivia","torneo":"Partido de Preparación","fase":"Partido Amistoso","gf":1,"gc":0,"resultado":"Ganado","estadio":"","ciudad":"","venueSide":"away","localName":"Bolivia","originLocal":"América del Sur","visitName":"México","originVisit":"América del Norte","localScore":1,"visitScore":0,"scoreAnnotation":"-"},{"id":"m19_al_nassr","team":"al_nassr","dia":26,"mes":1,"rival":"Al-Taawoun","torneo":"Saudi Professional League","fase":"Jornada 17","gf":1,"gc":0,"resultado":"Ganado","estadio":"","ciudad":"","venueSide":"home","localName":"Al Nassr","originLocal":"Arabia Saudita","visitName":"Al-Taawoun","originVisit":"Arabia Saudita","localScore":1,"visitScore":0,"scoreAnnotation":"-"},{"id":"m20_real_madrid","team":"real_madrid","dia":28,"mes":1,"rival":"Benfica","torneo":"UEFA Champions League 2025-2026","fase":"Fase de Liga J8","gf":2,"gc":4,"resultado":"Perdido","estadio":"","ciudad":"","venueSide":"away","localName":"Benfica","originLocal":"Portugal","visitName":"Real Madrid","originVisit":"España","localScore":2,"visitScore":4,"scoreAnnotation":"-"},{"id":"m21_al_nassr","team":"al_nassr","dia":30,"mes":1,"rival":"Al Kholood","torneo":"Saudi Professional League","fase":"Jornada 18","gf":3,"gc":0,"resultado":"Ganado","estadio":"","ciudad":"","venueSide":"away","localName":"Al Kholood","originLocal":"Arabia Saudita","visitName":"Al Nassr","originVisit":"Arabia Saudita","localScore":3,"visitScore":0,"scoreAnnotation":"-"},{"id":"m22_pumas","team":"pumas","dia":30,"mes":1,"rival":"Santos Laguna","torneo":"Liga BBVA MX Clausura 2026","fase":"Jornada 4","gf":4,"gc":0,"resultado":"Ganado","estadio":"","ciudad":"","venueSide":"home","localName":"Pumas UNAM","originLocal":"México","visitName":"Santos Laguna","originVisit":"México","localScore":4,"visitScore":0,"scoreAnnotation":"-"},{"id":"m23_real_madrid","team":"real_madrid","dia":1,"mes":2,"rival":"Rayo Vallecano","torneo":"La Liga","fase":"Jornada 22","gf":2,"gc":1,"resultado":"Ganado","estadio":"","ciudad":"","venueSide":"home","localName":"Real Madrid","originLocal":"España","visitName":"Rayo Vallecano","originVisit":"España","localScore":2,"visitScore":1,"scoreAnnotation":"-"},{"id":"m24_al_nassr","team":"al_nassr","dia":2,"mes":2,"rival":"Al-Riyadh","torneo":"Saudi Professional League","fase":"Jornada 19","gf":1,"gc":0,"resultado":"Ganado","estadio":"","ciudad":"","venueSide":"away","localName":"Al-Riyadh","originLocal":"Arabia Saudita","visitName":"Al Nassr","originVisit":"Arabia Saudita","localScore":1,"visitScore":0,"scoreAnnotation":"-"},{"id":"m25_pumas","team":"pumas","dia":3,"mes":2,"rival":"San Diego","torneo":"CONCACAF Champions Cup","fase":"Primera Ronda Ida","gf":1,"gc":4,"resultado":"Perdido","estadio":"","ciudad":"","venueSide":"away","localName":"San Diego","originLocal":"Estados Unidos","visitName":"Pumas UNAM","originVisit":"México","localScore":1,"visitScore":4,"scoreAnnotation":"-"},{"id":"m26_al_nassr","team":"al_nassr","dia":6,"mes":2,"rival":"Al-Ittihad Jeddah","torneo":"Saudi Professional League","fase":"Jornada 20","gf":2,"gc":0,"resultado":"Ganado","estadio":"","ciudad":"","venueSide":"home","localName":"Al Nassr","originLocal":"Arabia Saudita","visitName":"Al-Ittihad Jeddah","originVisit":"Arabia Saudita","localScore":2,"visitScore":0,"scoreAnnotation":"-"},{"id":"m27_pumas","team":"pumas","dia":7,"mes":2,"rival":"Atlas","torneo":"Liga BBVA MX Clausura 2026","fase":"Jornada 5","gf":2,"gc":2,"resultado":"Empatado","estadio":"","ciudad":"","venueSide":"away","localName":"Atlas","originLocal":"México","visitName":"Pumas UNAM","originVisit":"México","localScore":2,"visitScore":2,"scoreAnnotation":"-"},{"id":"m28_real_madrid","team":"real_madrid","dia":8,"mes":2,"rival":"Valencia","torneo":"La Liga","fase":"Jornada 23","gf":2,"gc":0,"resultado":"Ganado","estadio":"","ciudad":"","venueSide":"away","localName":"Valencia","originLocal":"España","visitName":"Real Madrid","originVisit":"España","localScore":2,"visitScore":0,"scoreAnnotation":"-"},{"id":"m29_pumas","team":"pumas","dia":28,"mes":2,"rival":"San Diego","torneo":"CONCACAF Champions Cup","fase":"Primera Ronda","gf":1,"gc":0,"resultado":"Perdido","estadio":"","ciudad":"","venueSide":"home","localName":"Pumas UNAM","originLocal":"México","visitName":"San Diego FC","originVisit":"Estados Unidos","localScore":1,"visitScore":0,"scoreAnnotation":"(2-4)","aggregateLocal":2,"aggregateVisit":4,"titleDecision":true,"titleStatus":"eliminado","tournamentId":"concacaf_champions_cup"},{"id":"m30_al_nassr","team":"al_nassr","dia":11,"mes":2,"rival":"Arkadag","torneo":"AFC Champions League Two","fase":"Octavos de Final Ida","gf":1,"gc":0,"resultado":"Ganado","estadio":"","ciudad":"","venueSide":"away","localName":"Arkadag","originLocal":"Turkemenistán","visitName":"Al Nassr","originVisit":"Arabia Saudita","localScore":1,"visitScore":0,"scoreAnnotation":"-"},{"id":"m31_pumas","team":"pumas","dia":13,"mes":2,"rival":"Puebla","torneo":"Liga BBVA MX Clausura 2026","fase":"Jornada 6","gf":3,"gc":2,"resultado":"Ganado","estadio":"","ciudad":"","venueSide":"away","localName":"Puebla","originLocal":"México","visitName":"Pumas UNAM","originVisit":"México","localScore":3,"visitScore":2,"scoreAnnotation":"-"},{"id":"m32_al_nassr","team":"al_nassr","dia":14,"mes":2,"rival":"Al Fateh SC","torneo":"Saudi Professional League","fase":"Jornada 21","gf":2,"gc":0,"resultado":"Ganado","estadio":"","ciudad":"","venueSide":"away","localName":"Al Fateh SC","originLocal":"Arabia Saudita","visitName":"Al Nassr","originVisit":"Arabia Saudita","localScore":2,"visitScore":0,"scoreAnnotation":"-"},{"id":"m33_real_madrid","team":"real_madrid","dia":14,"mes":2,"rival":"Real Sociedad","torneo":"La Liga","fase":"Jornada 24","gf":4,"gc":1,"resultado":"Ganado","estadio":"","ciudad":"","venueSide":"home","localName":"Real Madrid","originLocal":"España","visitName":"Real Sociedad","originVisit":"España","localScore":4,"visitScore":1,"scoreAnnotation":"-"},{"id":"m34_real_madrid","team":"real_madrid","dia":17,"mes":2,"rival":"Benfica","torneo":"UEFA Champions League 2025-2026","fase":"Knockout Playoff Ida","gf":1,"gc":0,"resultado":"Ganado","estadio":"","ciudad":"","venueSide":"away","localName":"Benfica","originLocal":"Portugal","visitName":"Real Madrid","originVisit":"España","localScore":1,"visitScore":0,"scoreAnnotation":"-"},{"id":"m35_al_nassr","team":"al_nassr","dia":18,"mes":2,"rival":"Arkadag","torneo":"AFC Champions League Two","fase":"Octavos de Final Vuelta","gf":1,"gc":0,"resultado":"Ganado","estadio":"","ciudad":"","venueSide":"home","localName":"Al Nassr","originLocal":"Arabia Saudita","visitName":"Arkadag","originVisit":"Turkemenistán","localScore":1,"visitScore":0,"scoreAnnotation":"(2-0)"},{"id":"m36_real_madrid","team":"real_madrid","dia":21,"mes":2,"rival":"Osasuna","torneo":"La Liga","fase":"Jornada 25","gf":1,"gc":2,"resultado":"Perdido","estadio":"","ciudad":"","venueSide":"away","localName":"Osasuna","originLocal":"España","visitName":"Real Madrid","originVisit":"España","localScore":1,"visitScore":2,"scoreAnnotation":"-"},{"id":"m37_al_nassr","team":"al_nassr","dia":21,"mes":2,"rival":"Al-Hazem","torneo":"Saudi Professional League","fase":"Jornada 22","gf":4,"gc":0,"resultado":"Ganado","estadio":"","ciudad":"","venueSide":"home","localName":"Al Nassr","originLocal":"Arabia Saudita","visitName":"Al-Hazem","originVisit":"Arabia Saudita","localScore":4,"visitScore":0,"scoreAnnotation":"-"},{"id":"m38_pumas","team":"pumas","dia":22,"mes":2,"rival":"Monterrey","torneo":"Liga BBVA MX Clausura 2026","fase":"Jornada 7","gf":2,"gc":0,"resultado":"Ganado","estadio":"","ciudad":"","venueSide":"home","localName":"Pumas UNAM","originLocal":"México","visitName":"Monterrey","originVisit":"México","localScore":2,"visitScore":0,"scoreAnnotation":"-"},{"id":"m39_al_nassr","team":"al_nassr","dia":25,"mes":2,"rival":"Al-Najma","torneo":"Saudi Professional League","fase":"Jornada 23","gf":5,"gc":0,"resultado":"Ganado","estadio":"","ciudad":"","venueSide":"away","localName":"Al-Najma","originLocal":"Arabia Saudita","visitName":"Al Nassr","originVisit":"Arabia Saudita","localScore":5,"visitScore":0,"scoreAnnotation":"-"},{"id":"m40_real_madrid","team":"real_madrid","dia":25,"mes":2,"rival":"Benfica","torneo":"UEFA Champions League 2025-2026","fase":"Knockout Playoff Vuelta","gf":2,"gc":1,"resultado":"Ganado","estadio":"","ciudad":"","venueSide":"home","localName":"Real Madrid","originLocal":"España","visitName":"Benfica","originVisit":"Portugal","localScore":2,"visitScore":1,"scoreAnnotation":"(3-1)"},{"id":"m41_sel_mex","team":"sel_mex","dia":25,"mes":2,"rival":"Islandia","torneo":"Partido de Preparación","fase":"Partido Amistoso","gf":4,"gc":0,"resultado":"Ganado","estadio":"","ciudad":"","venueSide":"home","localName":"México","originLocal":"América del Norte","visitName":"Islandia","originVisit":"Europa","localScore":4,"visitScore":0,"scoreAnnotation":"-"},{"id":"m42_pumas","team":"pumas","dia":27,"mes":2,"rival":"Tijuana","torneo":"Liga BBVA MX Clausura 2026","fase":"Jornada 8","gf":1,"gc":1,"resultado":"Empatado","estadio":"","ciudad":"","venueSide":"away","localName":"Tijuana","originLocal":"México","visitName":"Pumas UNAM","originVisit":"México","localScore":1,"visitScore":1,"scoreAnnotation":"-"},{"id":"m43_al_nassr","team":"al_nassr","dia":28,"mes":2,"rival":"Al Faiha","torneo":"Saudi Professional League","fase":"Jornada 24","gf":3,"gc":1,"resultado":"Ganado","estadio":"","ciudad":"","venueSide":"away","localName":"Al Faiha","originLocal":"Arabia Saudita","visitName":"Al Nassr","originVisit":"Arabia Saudita","localScore":3,"visitScore":1,"scoreAnnotation":"-"},{"id":"m44_real_madrid","team":"real_madrid","dia":2,"mes":3,"rival":"Getafe","torneo":"La Liga","fase":"Jornada  26","gf":0,"gc":1,"resultado":"Perdido","estadio":"","ciudad":"","venueSide":"home","localName":"Real Madrid","originLocal":"España","visitName":"Getafe","originVisit":"España","localScore":0,"visitScore":1,"scoreAnnotation":"-"},{"id":"m45_pumas","team":"pumas","dia":3,"mes":3,"rival":"Toluca","torneo":"Liga BBVA MX Clausura 2026","fase":"Jornada 9","gf":2,"gc":3,"resultado":"Perdido","estadio":"","ciudad":"","venueSide":"home","localName":"Pumas UNAM","originLocal":"México","visitName":"Toluca","originVisit":"México","localScore":2,"visitScore":3,"scoreAnnotation":"-"},{"id":"m46_real_madrid","team":"real_madrid","dia":6,"mes":3,"rival":"Celta de Vigo","torneo":"La Liga","fase":"Jornada 27","gf":2,"gc":1,"resultado":"Ganado","estadio":"","ciudad":"","venueSide":"away","localName":"Celta de Vigo","originLocal":"España","visitName":"Real Madrid","originVisit":"España","localScore":2,"visitScore":1,"scoreAnnotation":"-"},{"id":"m47_pumas","team":"pumas","dia":6,"mes":3,"rival":"Necaxa","torneo":"Liga BBVA MX Clausura 2026","fase":"Jornada 10","gf":1,"gc":0,"resultado":"Ganado","estadio":"","ciudad":"","venueSide":"away","localName":"Necaxa","originLocal":"México","visitName":"Pumas UNAM","originVisit":"México","localScore":1,"visitScore":0,"scoreAnnotation":"-"},{"id":"m48_al_nassr","team":"al_nassr","dia":7,"mes":3,"rival":"NEOM","torneo":"Saudi Professional League","fase":"Jornada 25","gf":1,"gc":0,"resultado":"Ganado","estadio":"","ciudad":"","venueSide":"home","localName":"Al Nassr","originLocal":"Arabia Saudita","visitName":"NEOM","originVisit":"Arabia Saudita","localScore":1,"visitScore":0,"scoreAnnotation":"-"},{"id":"m49_real_madrid","team":"real_madrid","dia":11,"mes":3,"rival":"Manchester City","torneo":"UEFA Champions League 2025-2026","fase":"Octavos de Final Ida","gf":3,"gc":0,"resultado":"Ganado","estadio":"","ciudad":"","venueSide":"home","localName":"Real Madrid","originLocal":"España","visitName":"Manchester City","originVisit":"Inglaterra","localScore":3,"visitScore":0,"scoreAnnotation":"-"},{"id":"m50_al_nassr","team":"al_nassr","dia":14,"mes":3,"rival":"Al Khaleej","torneo":"Saudi Professional League","fase":"Jornada 26","gf":5,"gc":0,"resultado":"Ganado","estadio":"","ciudad":"","venueSide":"away","localName":"Al Khaleej","originLocal":"Arabia Saudita","visitName":"Al Nassr","originVisit":"Arabia Saudita","localScore":5,"visitScore":0,"scoreAnnotation":"-"},{"id":"m51_real_madrid","team":"real_madrid","dia":14,"mes":3,"rival":"Elche","torneo":"La Liga","fase":"Jornada 28","gf":4,"gc":1,"resultado":"Ganado","estadio":"","ciudad":"","venueSide":"home","localName":"Real Madrid","originLocal":"España","visitName":"Elche","originVisit":"España","localScore":4,"visitScore":1,"scoreAnnotation":"-"},{"id":"m52_pumas","team":"pumas","dia":14,"mes":3,"rival":"Cruz Azul","torneo":"Liga BBVA MX Clausura 2026","fase":"Jornada 11","gf":2,"gc":2,"resultado":"Empatado","estadio":"","ciudad":"","venueSide":"home","localName":"Pumas UNAM","originLocal":"México","visitName":"Cruz Azul","originVisit":"México","localScore":2,"visitScore":2,"scoreAnnotation":"-"},{"id":"m53_real_madrid","team":"real_madrid","dia":17,"mes":3,"rival":"Manchester City","torneo":"UEFA Champions League 2025-2026","fase":"Octavos de Final Vuelta","gf":2,"gc":1,"resultado":"Ganado","estadio":"","ciudad":"","venueSide":"away","localName":"Manchester City","originLocal":"Inglaterra","visitName":"Real Madrid","originVisit":"España","localScore":2,"visitScore":1,"scoreAnnotation":"(5-1)"},{"id":"m54_pumas","team":"pumas","dia":21,"mes":3,"rival":"América","torneo":"Liga BBVA MX Clausura 2026","fase":"Jornada 12","gf":1,"gc":0,"resultado":"Ganado","estadio":"","ciudad":"","venueSide":"home","localName":"Pumas UNAM","originLocal":"México","visitName":"América","originVisit":"México","localScore":1,"visitScore":0,"scoreAnnotation":"-"},{"id":"m55_real_madrid","team":"real_madrid","dia":22,"mes":3,"rival":"Atlético de Madrid","torneo":"La Liga","fase":"Jornada 29","gf":3,"gc":2,"resultado":"Ganado","estadio":"","ciudad":"","venueSide":"home","localName":"Real Madrid","originLocal":"España","visitName":"Atlético de Madrid","originVisit":"España","localScore":3,"visitScore":2,"scoreAnnotation":"-"},{"id":"m56_sel_mex","team":"sel_mex","dia":28,"mes":3,"rival":"Portugal","torneo":"Fecha FIFA","fase":"Partido Amistoso","gf":0,"gc":0,"resultado":"Empatado","estadio":"","ciudad":"","venueSide":"home","localName":"México","originLocal":"América del Norte","visitName":"Portugal","originVisit":"Europa","localScore":0,"visitScore":0,"scoreAnnotation":"-"},{"id":"m56_sel_por","team":"sel_por","dia":28,"mes":3,"rival":"México","torneo":"Fecha FIFA","fase":"Partido Amistoso","gf":0,"gc":0,"resultado":"Empatado","estadio":"","ciudad":"","venueSide":"away","localName":"México","originLocal":"América del Norte","visitName":"Portugal","originVisit":"Europa","localScore":0,"visitScore":0,"scoreAnnotation":"-"},{"id":"m57_sel_por","team":"sel_por","dia":31,"mes":3,"rival":"Estados Unidos","torneo":"Fecha FIFA","fase":"Partido Amistoso","gf":2,"gc":0,"resultado":"Ganado","estadio":"","ciudad":"","venueSide":"away","localName":"Estados Unidos","originLocal":"América del Norte","visitName":"Portugal","originVisit":"Europa","localScore":2,"visitScore":0,"scoreAnnotation":"-"},{"id":"m58_sel_mex","team":"sel_mex","dia":31,"mes":3,"rival":"Bélgica","torneo":"Fecha FIFA","fase":"Partido Amistoso","gf":1,"gc":1,"resultado":"Empatado","estadio":"","ciudad":"","venueSide":"home","localName":"México","originLocal":"América del Norte","visitName":"Bélgica","originVisit":"Europa","localScore":1,"visitScore":1,"scoreAnnotation":"-"},{"id":"m59_al_nassr","team":"al_nassr","dia":3,"mes":4,"rival":"Al-Najma","torneo":"Saudi Professional League","fase":"Jornada 27","gf":5,"gc":2,"resultado":"Ganado","estadio":"","ciudad":"","venueSide":"home","localName":"Al Nassr","originLocal":"Arabia Saudita","visitName":"Al-Najma","originVisit":"Arabia Saudita","localScore":5,"visitScore":2,"scoreAnnotation":"-"},{"id":"m60_real_madrid","team":"real_madrid","dia":4,"mes":4,"rival":"Mallorca","torneo":"La Liga","fase":"Jornada 30","gf":1,"gc":2,"resultado":"Perdido","estadio":"","ciudad":"","venueSide":"away","localName":"Mallorca","originLocal":"España","visitName":"Real Madrid","originVisit":"España","localScore":1,"visitScore":2,"scoreAnnotation":"-"},{"id":"m61_pumas","team":"pumas","dia":5,"mes":4,"rival":"Guadalajara","torneo":"Liga BBVA MX Clausura 2026","fase":"Jornada 13","gf":2,"gc":2,"resultado":"Empatado","estadio":"","ciudad":"","venueSide":"away","localName":"Guadalajara","originLocal":"México","visitName":"Pumas UNAM","originVisit":"México","localScore":2,"visitScore":2,"scoreAnnotation":"-"},{"id":"m62_real_madrid","team":"real_madrid","dia":7,"mes":4,"rival":"Bayer Munich","torneo":"UEFA Champions League 2025-2026","fase":"Cuartos de Final Ida","gf":1,"gc":2,"resultado":"Perdido","estadio":"","ciudad":"","venueSide":"home","localName":"Real Madrid","originLocal":"España","visitName":"Bayer Munich","originVisit":"Aleamania","localScore":1,"visitScore":2,"scoreAnnotation":"-"},{"id":"m63_real_madrid","team":"real_madrid","dia":10,"mes":4,"rival":"Girona","torneo":"La Liga","fase":"Jornada 31","gf":1,"gc":1,"resultado":"Empatado","estadio":"","ciudad":"","venueSide":"home","localName":"Real Madrid","originLocal":"España","visitName":"Girona","originVisit":"España","localScore":1,"visitScore":1,"scoreAnnotation":"-"},{"id":"m64_al_nassr","team":"al_nassr","dia":11,"mes":4,"rival":"Al-Okhdood","torneo":"Saudi Professional League","fase":"Jornada 29","gf":2,"gc":0,"resultado":"Ganado","estadio":"","ciudad":"","venueSide":"away","localName":"Al-Okhdood","originLocal":"Arabia Saudita","visitName":"Al Nassr","originVisit":"Arabia Saudita","localScore":2,"visitScore":0,"scoreAnnotation":"-"},{"id":"m65_pumas","team":"pumas","dia":12,"mes":4,"rival":"Mazatlán","torneo":"Liga BBVA MX Clausura 2026","fase":"Jornada 14","gf":3,"gc":1,"resultado":"Ganado","estadio":"","ciudad":"","venueSide":"home","localName":"Pumas UNAM","originLocal":"México","visitName":"Mazatlán","originVisit":"México","localScore":3,"visitScore":1,"scoreAnnotation":"-"},{"id":"m66_al_nassr","team":"al_nassr","dia":15,"mes":4,"rival":"Al-Ettifaq","torneo":"Saudi Professional League","fase":"Jornada 28","gf":1,"gc":0,"resultado":"Ganado","estadio":"","ciudad":"","venueSide":"home","localName":"Al Nassr","originLocal":"Arabia Saudita","visitName":"Al-Ettifaq","originVisit":"Arabia Saudita","localScore":1,"visitScore":0,"scoreAnnotation":"-"},{"id":"m67_real_madrid","team":"real_madrid","dia":15,"mes":4,"rival":"Bayer Munich","torneo":"UEFA Champions League 2025-2026","fase":"Cuartos de Final","gf":3,"gc":4,"resultado":"Perdido","estadio":"","ciudad":"","venueSide":"away","localName":"Bayern Munich","originLocal":"Alemania","visitName":"Real Madrid","originVisit":"España","localScore":4,"visitScore":3,"scoreAnnotation":"(6-4)","aggregateLocal":6,"aggregateVisit":4,"titleDecision":true,"titleStatus":"eliminado","tournamentId":"uefa_champions_league_2025_2026"},{"id":"m68_pumas","team":"pumas","dia":17,"mes":4,"rival":"Atlético de San Luis","torneo":"Liga BBVA MX Clausura 2026","fase":"Jornada 15","gf":2,"gc":0,"resultado":"Ganado","estadio":"","ciudad":"","venueSide":"away","localName":"Atlético de San Luis","originLocal":"México","visitName":"Pumas UNAM","originVisit":"México","localScore":2,"visitScore":0,"scoreAnnotation":"-"},{"id":"m69_al_nassr","team":"al_nassr","dia":19,"mes":4,"rival":"Al-Wasl","torneo":"AFC Champions League Two","fase":"Cuartos de Final","gf":4,"gc":0,"resultado":"Ganado","estadio":"","ciudad":"","venueSide":"away","localName":"Al-Wasl","originLocal":"Emiratos Árabes Unidos","visitName":"Al Nassr","originVisit":"Arabia Saudita","localScore":4,"visitScore":0,"scoreAnnotation":"-"},{"id":"m70_real_madrid","team":"real_madrid","dia":21,"mes":4,"rival":"Alavés","torneo":"La Liga","fase":"Jornada 32","gf":2,"gc":1,"resultado":"Ganado","estadio":"","ciudad":"","venueSide":"home","localName":"Real Madrid","originLocal":"España","visitName":"Alavés","originVisit":"España","localScore":2,"visitScore":1,"scoreAnnotation":"-"},{"id":"m71_pumas","team":"pumas","dia":21,"mes":4,"rival":"FC Juarez","torneo":"Liga BBVA MX Clausura 2026","fase":"Jornada 16","gf":4,"gc":2,"resultado":"Ganado","estadio":"","ciudad":"","venueSide":"home","localName":"Pumas UNAM","originLocal":"México","visitName":"FC Juarez","originVisit":"México","localScore":4,"visitScore":2,"scoreAnnotation":"-"},{"id":"m72_al_nassr","team":"al_nassr","dia":22,"mes":4,"rival":"Al Ahli Doha SC","torneo":"AFC Champions League Two","fase":"Semifinales","gf":5,"gc":1,"resultado":"Ganado","estadio":"","ciudad":"","venueSide":"home","localName":"Al Nassr","originLocal":"Arabia Saudita","visitName":"Al Ahli Doha SC","originVisit":"Qatar","localScore":5,"visitScore":1,"scoreAnnotation":"-"},{"id":"m73_real_madrid","team":"real_madrid","dia":24,"mes":4,"rival":"Real Betis","torneo":"La Liga","fase":"Jornada 33","gf":1,"gc":1,"resultado":"Empatado","estadio":"","ciudad":"","venueSide":"away","localName":"Real Betis","originLocal":"España","visitName":"Real Madrid","originVisit":"España","localScore":1,"visitScore":1,"scoreAnnotation":"-"},{"id":"m74_pumas","team":"pumas","dia":25,"mes":4,"rival":"Pachuca","torneo":"Liga BBVA MX Clausura 2026","fase":"Jornada 17","gf":2,"gc":0,"resultado":"Ganado","estadio":"","ciudad":"","venueSide":"away","localName":"Pachuca","originLocal":"México","visitName":"Pumas UNAM","originVisit":"México","localScore":2,"visitScore":0,"scoreAnnotation":"-"},{"id":"m75_al_nassr","team":"al_nassr","dia":29,"mes":4,"rival":"Al-Ahli","torneo":"Saudi Professional League","fase":"Jornada 30","gf":2,"gc":0,"resultado":"Ganado","estadio":"","ciudad":"","venueSide":"home","localName":"Al Nassr","originLocal":"Arabia Saudita","visitName":"Al-Ahli","originVisit":"Arabia Saudita","localScore":2,"visitScore":0,"scoreAnnotation":"-"},{"id":"m76_al_nassr","team":"al_nassr","dia":3,"mes":5,"rival":"Al Qadisiyah","torneo":"Saudi Professional League","fase":"Jornada 31","gf":1,"gc":3,"resultado":"Perdido","estadio":"","ciudad":"","venueSide":"away","localName":"Al Qadisiyah","originLocal":"Arabia Saudita","visitName":"Al Nassr","originVisit":"Arabia Saudita","localScore":1,"visitScore":3,"scoreAnnotation":"-"},{"id":"m77_real_madrid","team":"real_madrid","dia":3,"mes":5,"rival":"RCD Espanyol","torneo":"La Liga","fase":"Jornada 34","gf":2,"gc":0,"resultado":"Ganado","estadio":"","ciudad":"","venueSide":"away","localName":"RCD Espanyol","originLocal":"España","visitName":"Real Madrid","originVisit":"España","localScore":2,"visitScore":0,"scoreAnnotation":"-"},{"id":"m78_pumas","team":"pumas","dia":3,"mes":5,"rival":"América","torneo":"Liga BBVA MX Clausura 2026","fase":"Cuartos de Final Ida","gf":3,"gc":3,"resultado":"Empatado","estadio":"","ciudad":"","venueSide":"away","localName":"América","originLocal":"México","visitName":"Pumas UNAM","originVisit":"México","localScore":3,"visitScore":3,"scoreAnnotation":"-"},{"id":"m79_al_nassr","team":"al_nassr","dia":7,"mes":5,"rival":"Al Shabab KSA","torneo":"Saudi Professional League","fase":"Jornada 32","gf":4,"gc":2,"resultado":"Ganado","estadio":"","ciudad":"","venueSide":"away","localName":"Al Shabab KSA","originLocal":"Arabia Saudita","visitName":"Al Nassr","originVisit":"Arabia Saudita","localScore":4,"visitScore":2,"scoreAnnotation":"-"},{"id":"m80_real_madrid","team":"real_madrid","dia":10,"mes":5,"rival":"FC Barcelona","torneo":"La Liga","fase":"Jornada 35","gf":0,"gc":2,"resultado":"Perdido","estadio":"","ciudad":"","venueSide":"away","localName":"FC Barcelona","originLocal":"España","visitName":"Real Madrid","originVisit":"España","localScore":2,"visitScore":0,"scoreAnnotation":"-","titleDecision":true,"titleStatus":"eliminado","tournamentId":"la_liga"},{"id":"m81_pumas","team":"pumas","dia":10,"mes":5,"rival":"América","torneo":"Liga BBVA MX Clausura 2026","fase":"Cuartos de Final Vuelta","gf":3,"gc":3,"resultado":"Empatado","estadio":"","ciudad":"","venueSide":"home","localName":"Pumas UNAM","originLocal":"México","visitName":"América","originVisit":"México","localScore":3,"visitScore":3,"scoreAnnotation":"(6-6)"},{"id":"m82_al_nassr","team":"al_nassr","dia":12,"mes":5,"rival":"Al Hilal","torneo":"Saudi Professional League","fase":"Jornada 33","gf":1,"gc":1,"resultado":"Empatado","estadio":"","ciudad":"","venueSide":"home","localName":"Al Nassr","originLocal":"Arabia Saudita","visitName":"Al Hilal","originVisit":"Arabia Saudita","localScore":1,"visitScore":1,"scoreAnnotation":"-"},{"id":"m83_real_madrid","team":"real_madrid","dia":14,"mes":5,"rival":"Real Oviedo","torneo":"La Liga","fase":"Jornada 36","gf":2,"gc":0,"resultado":"Ganado","estadio":"","ciudad":"","venueSide":"home","localName":"Real Madrid","originLocal":"España","visitName":"Real Oviedo","originVisit":"España","localScore":2,"visitScore":0,"scoreAnnotation":"-"},{"id":"m84_pumas","team":"pumas","dia":14,"mes":5,"rival":"Pachuca","torneo":"Liga BBVA MX Clausura 2026","fase":"Semifinales Ida","gf":0,"gc":1,"resultado":"Perdido","estadio":"","ciudad":"","venueSide":"away","localName":"Pachuca","originLocal":"México","visitName":"Pumas UNAM","originVisit":"México","localScore":0,"visitScore":1,"scoreAnnotation":"-"},{"id":"m85_al_nassr","team":"al_nassr","dia":16,"mes":5,"rival":"Gamba Osaka","torneo":"AFC Champions League Two","fase":"Gran Final","gf":0,"gc":1,"resultado":"Perdido","estadio":"","ciudad":"","venueSide":"home","localName":"Al Nassr","originLocal":"Arabia Saudita","visitName":"Gamba Osaka","originVisit":"Japón","localScore":0,"visitScore":1,"scoreAnnotation":"-","titleDecision":true,"titleStatus":"perdido","tournamentId":"afc_champions_league_two"},{"id":"m87_pumas","team":"pumas","dia":17,"mes":5,"rival":"Pachuca","torneo":"Liga BBVA MX Clausura 2026","fase":"Semifinales Vuelta","gf":1,"gc":0,"resultado":"Ganado","estadio":"","ciudad":"","venueSide":"home","localName":"Pumas UNAM","originLocal":"México","visitName":"Pachuca","originVisit":"México","localScore":1,"visitScore":0,"scoreAnnotation":"(1-1)"},{"id":"m88_al_nassr","team":"al_nassr","dia":21,"mes":5,"rival":"Damac","torneo":"Saudi Professional League","fase":"Jornada 34","gf":4,"gc":1,"resultado":"Ganado","estadio":"","ciudad":"","venueSide":"home","localName":"Al Nassr","originLocal":"Arabia Saudita","visitName":"Damac","originVisit":"Arabia Saudita","localScore":4,"visitScore":1,"scoreAnnotation":"-","titleWon":true,"titleDecision":true,"titleStatus":"ganado","tournamentId":"saudi_professional_league"},{"id":"m89_pumas","team":"pumas","dia":21,"mes":5,"rival":"Cruz Azul","torneo":"Liga BBVA MX Clausura 2026","fase":"Gran Final Ida","gf":0,"gc":0,"resultado":"Empatado","estadio":"","ciudad":"","venueSide":"away","localName":"Cruz Azul","originLocal":"México","visitName":"Pumas UNAM","originVisit":"México","localScore":0,"visitScore":0,"scoreAnnotation":"-"},{"id":"m90_sel_mex","team":"sel_mex","dia":22,"mes":5,"rival":"Ghana","torneo":"Partido de Preparación","fase":"Partido Amistoso","gf":2,"gc":0,"resultado":"Ganado","estadio":"","ciudad":"","venueSide":"home","localName":"México","originLocal":"América del Norte","visitName":"Ghana","originVisit":"África","localScore":2,"visitScore":0,"scoreAnnotation":"-"},{"id":"m91_real_madrid","team":"real_madrid","dia":23,"mes":5,"rival":"Athletic Club Bilbao","torneo":"La Liga","fase":"Jornada 38","gf":4,"gc":2,"resultado":"Ganado","estadio":"","ciudad":"","venueSide":"home","localName":"Real Madrid","originLocal":"España","visitName":"Athletic Club Bilbao","originVisit":"España","localScore":4,"visitScore":2,"scoreAnnotation":"-"},{"id":"m92_pumas","team":"pumas","dia":24,"mes":5,"rival":"Cruz Azul","torneo":"Liga BBVA MX Clausura 2026","fase":"Gran Final","gf":1,"gc":2,"resultado":"Perdido","estadio":"","ciudad":"","venueSide":"home","localName":"Pumas UNAM","originLocal":"México","visitName":"Cruz Azul","originVisit":"México","localScore":1,"visitScore":2,"scoreAnnotation":"(1-2)","aggregateLocal":1,"aggregateVisit":2,"titleDecision":true,"titleStatus":"perdido","tournamentId":"liga_bbva_mx_clausura_2026"},{"id":"m93_sel_mex","team":"sel_mex","dia":30,"mes":5,"rival":"Australia","torneo":"Partido de Preparación","fase":"Partido Amistoso","gf":1,"gc":0,"resultado":"Ganado","estadio":"","ciudad":"","venueSide":"home","localName":"México","originLocal":"América del Norte","visitName":"Australia","originVisit":"Oceanía","localScore":1,"visitScore":0,"scoreAnnotation":"-"},{"id":"m94_sel_mex","team":"sel_mex","dia":4,"mes":6,"rival":"Serbia","torneo":"Partido de Preparación","fase":"Partido Amistoso","gf":5,"gc":1,"resultado":"Ganado","estadio":"","ciudad":"","venueSide":"home","localName":"México","originLocal":"América del Norte","visitName":"Serbia","originVisit":"Europa","localScore":5,"visitScore":1,"scoreAnnotation":"-"},{"id":"m95_sel_por","team":"sel_por","dia":6,"mes":6,"rival":"Chile","torneo":"Partido de Preparación","fase":"Partido Amistoso","gf":2,"gc":1,"resultado":"Ganado","estadio":"","ciudad":"","venueSide":"home","localName":"Portugal","originLocal":"Europa","visitName":"Chile","originVisit":"América del Sur","localScore":2,"visitScore":1,"scoreAnnotation":"-"},{"id":"m96_sel_por","team":"sel_por","dia":10,"mes":6,"rival":"Nigeria","torneo":"Partido de Preparación","fase":"Partido Amistoso","gf":2,"gc":1,"resultado":"Ganado","estadio":"","ciudad":"","venueSide":"home","localName":"Portugal","originLocal":"Europa","visitName":"Nigeria","originVisit":"África","localScore":2,"visitScore":1,"scoreAnnotation":"-"},{"id":"m97_sel_mex","team":"sel_mex","dia":11,"mes":6,"rival":"Sudáfrica","torneo":"Copa Mundial FIFA USA-MEX-CAN 2026","fase":"Fase de Grupos J1","gf":2,"gc":0,"resultado":"Ganado","estadio":"","ciudad":"","venueSide":"home","localName":"México","originLocal":"CONCACAF","visitName":"Sudáfrica","originVisit":"CAF","localScore":2,"visitScore":0,"scoreAnnotation":"-"},{"id":"m98_sel_por","team":"sel_por","dia":17,"mes":6,"rival":"RD Congo","torneo":"Copa Mundial FIFA USA-MEX-CAN 2026","fase":"Fase de Grupos J1","gf":1,"gc":1,"resultado":"Empatado","estadio":"","ciudad":"","venueSide":"home","localName":"Portugal","originLocal":"UEFA","visitName":"RD Congo","originVisit":"CAF","localScore":1,"visitScore":1,"scoreAnnotation":"-"},{"id":"m99_sel_mex","team":"sel_mex","dia":18,"mes":6,"rival":"Corea del Sur","torneo":"Copa Mundial FIFA USA-MEX-CAN 2026","fase":"Fase de Grupos J2","gf":1,"gc":0,"resultado":"Ganado","estadio":"","ciudad":"","venueSide":"home","localName":"México","originLocal":"CONCACAF","visitName":"Corea del Sur","originVisit":"AFC","localScore":1,"visitScore":0,"scoreAnnotation":"-"},{"id":"m100_sel_por","team":"sel_por","dia":23,"mes":6,"rival":"Uzbekistán","torneo":"Copa Mundial FIFA USA-MEX-CAN 2026","fase":"Fase de Grupos J2","gf":5,"gc":0,"resultado":"Ganado","estadio":"","ciudad":"","venueSide":"home","localName":"Portugal","originLocal":"UEFA","visitName":"Uzbekistán","originVisit":"AFC","localScore":5,"visitScore":0,"scoreAnnotation":"-"},{"id":"m101_sel_mex","team":"sel_mex","dia":24,"mes":6,"rival":"República Checa","torneo":"Copa Mundial FIFA USA-MEX-CAN 2026","fase":"Fase de Grupos J3","gf":3,"gc":0,"resultado":"Ganado","estadio":"","ciudad":"","venueSide":"away","localName":"República Checa","originLocal":"UEFA","visitName":"México","originVisit":"CONCACAF","localScore":3,"visitScore":0,"scoreAnnotation":"-"},{"id":"m102_sel_por","team":"sel_por","dia":27,"mes":6,"rival":"Colombia","torneo":"Copa Mundial FIFA USA-MEX-CAN 2026","fase":"Fase de Grupos J3","gf":0,"gc":0,"resultado":"Empatado","estadio":"","ciudad":"","venueSide":"away","localName":"Colombia","originLocal":"CONMEBOL","visitName":"Portugal","originVisit":"UEFA","localScore":0,"visitScore":0,"scoreAnnotation":"-"},{"id":"m103_sel_mex","team":"sel_mex","dia":30,"mes":6,"rival":"Ecuador","torneo":"Copa Mundial FIFA USA-MEX-CAN 2026","fase":"Diecisievos de Final","gf":2,"gc":0,"resultado":"Ganado","estadio":"","ciudad":"","venueSide":"home","localName":"México","originLocal":"CONCACAF","visitName":"Ecuador","originVisit":"CONMEBOL","localScore":2,"visitScore":0,"scoreAnnotation":"-"},{"id":"m104_sel_por","team":"sel_por","dia":2,"mes":7,"rival":"Croacia","torneo":"Copa Mundial FIFA USA-MEX-CAN 2026","fase":"Diecisievos de Final","gf":2,"gc":1,"resultado":"Ganado","estadio":"","ciudad":"","venueSide":"home","localName":"Portugal","originLocal":"UEFA","visitName":"Croacia","originVisit":"UEFA","localScore":2,"visitScore":1,"scoreAnnotation":"-"},{"id":"m105_sel_mex","team":"sel_mex","dia":5,"mes":7,"rival":"Inglaterra","torneo":"Copa Mundial FIFA USA-MEX-CAN 2026","fase":"Octavos de Final","gf":0,"gc":1,"resultado":"Perdido","estadio":"","ciudad":"","venueSide":"home","localName":"México","originLocal":"Norteamérica","visitName":"Inglaterra","originVisit":"Europa","localScore":0,"visitScore":1,"scoreAnnotation":"-","titleDecision":true,"titleStatus":"eliminado","tournamentId":"copa_mundial_fifa_usa_mex_can_2026"},{"id":"m106_sel_por","team":"sel_por","dia":6,"mes":7,"rival":"España","torneo":"Copa Mundial FIFA USA-MEX-CAN 2026","fase":"Octavos de Final","gf":0,"gc":1,"resultado":"Perdido","estadio":"","ciudad":"","venueSide":"home","localName":"Portugal","originLocal":"Europa","visitName":"España","originVisit":"Europa","localScore":0,"visitScore":1,"scoreAnnotation":"-","titleDecision":true,"titleStatus":"eliminado","tournamentId":"copa_mundial_fifa_usa_mex_can_2026"}];
-const TEAM_ICON = {"real_madrid":"🛡️","pumas":"🛡️","al_nassr":"🛡️","sel_mex":"🌍","sel_por":"🌍","cowboys":"🏈"};
 
-/* Rutas de imágenes y torneos: viven en logos-config.js (archivo aparte).
-   Si ese archivo no está presente (p.ej. en la vista previa del chat),
-   caemos en objetos vacíos y el dashboard usa los respaldos normales. */
-const TEAM_LOGOS = window.TEAM_LOGOS || {};
-const RIVAL_LOGOS = window.RIVAL_LOGOS || {};
-const resolveRivalLogo = window.resolveRivalLogo || ((name)=>RIVAL_LOGOS[name] || RIVAL_LOGOS[normalizeKey(name)] || `logos/rivales/${normalizeKey(name)}.png`);
-const resolveTournamentLogo = window.resolveTournamentLogo || ((name)=>`logos/torneos/${normalizeKey(name)}.png`);
-const resolveTeamLogo = window.resolveTeamLogo || ((id,name)=>TEAM_LOGOS[id] || `logos/equipos/${normalizeKey(name||id)}.png`);
-const TOURNAMENTS_CONFIG = window.TOURNAMENTS || {};
-const BACKGROUND_IMAGE = window.BACKGROUND_IMAGE || '';
 
-// Bandera del país al que pertenece cada equipo — SVG dibujado a mano
-// (no depende de fuentes emoji, así que se ve igual en cualquier sistema).
-const FLAG_SVG = {
-  es: `<svg viewBox="0 0 30 20" width="22" height="15"><rect width="30" height="20" fill="#c60b1e"/><rect y="5" width="30" height="10" fill="#ffc400"/></svg>`,
-  mx: `<svg viewBox="0 0 30 20" width="22" height="15"><rect width="10" height="20" fill="#006341"/><rect x="10" width="10" height="20" fill="#fff"/><rect x="20" width="10" height="20" fill="#ce1126"/><circle cx="15" cy="10" r="2.4" fill="#8b5a2b"/></svg>`,
-  sa: `<svg viewBox="0 0 30 20" width="22" height="15"><rect width="30" height="20" fill="#0a5c36"/><rect x="6" y="8.5" width="14" height="1.6" fill="#fff"/><circle cx="22" cy="9.3" r="1.4" fill="#fff"/></svg>`,
-  pt: `<svg viewBox="0 0 30 20" width="22" height="15"><rect width="30" height="20" fill="#ff0000"/><rect width="12" height="20" fill="#006600"/><circle cx="12" cy="10" r="4" fill="#ffcc00" stroke="#ff0000" stroke-width="0.6"/></svg>`,
-  us: `<svg viewBox="0 0 30 20" width="22" height="15">
-        <rect width="30" height="20" fill="#fff"/>
-        ${[0,1,2,3,4,5,6].map(i=>`<rect y="${i*20/13}" width="30" height="${20/13}" fill="#b22234"/>`).join('')}
-        <rect width="14" height="10.8" fill="#3c3b6e"/>
-      </svg>`,
-};
-const TEAM_FLAG = {
-  real_madrid: FLAG_SVG.es,
-  pumas: FLAG_SVG.mx,
-  al_nassr: FLAG_SVG.sa,
-  sel_mex: FLAG_SVG.mx,
-  sel_por: FLAG_SVG.pt,
-  cowboys: FLAG_SVG.us,
-};
-
-const STORAGE_KEY = 'ratiosports_matches_v13_fixed';
-const LEGACY_STORAGE_KEY = 'ratiosports_matches_v5_excel';
-const TITLES_STORAGE_KEY = 'ratiosports_title_status_v1';
-const MONTHS = ['','Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
-const CUM_DAYS = [0,31,59,90,120,151,181,212,243,273,304,334];
-
-/* =========================================================
-   DATA LAYER — nothing here touches the DOM.
-   - TEAMS / TEAM_ICON / SEED_MATCHES: static reference data bundled
-     into this file (extracted once from your Excel).
-   - `matches`: the live, mutable dataset. Loaded from persistent
-     storage on first run (or seeded from SEED_MATCHES if empty),
-     then saved back to storage on every add/delete.
-   - `titleOverrides`: { equipo: { nombreTorneo: 'ganado'|'perdido' } }
-     también persistido aparte — se llena cuando marcas en el
-     formulario que un partido definió un título. No pisa lo que
-     tengas en TOURNAMENTS dentro de logos-config.js: si un torneo
-     no tiene override guardado, se usa el status por default de
-     ese archivo.
-   ========================================================= */
-let matches = [];
-let titleOverrides = {};
-let activeTeamFilter = 'all';
-const PAGE_SIZE = 15;
-const WEEK_PAGE_SIZE = 5;
-let matchTableVisible = PAGE_SIZE;
-let weeklyVisible = WEEK_PAGE_SIZE;
-
-const futbolTeamIds = Object.keys(TEAMS).filter(id=>TEAMS[id].sport==='futbol');
-const nflTeamIds = Object.keys(TEAMS).filter(id=>TEAMS[id].sport==='nfl');
-
-const storageAdapter = {
-  async get(key){
-    if(window.storage?.get){ const res = await window.storage.get(key, false); return res?.value ?? null; }
-    return localStorage.getItem(key);
-  },
-  async set(key,value){
-    if(window.storage?.set) return window.storage.set(key, value, false);
-    localStorage.setItem(key,value);
-  }
-};
-async function loadMatches(){
-  try{
-    const value = await storageAdapter.get(STORAGE_KEY);
-    if(value){ matches = JSON.parse(value); return; }
-    const legacyValue = await storageAdapter.get(LEGACY_STORAGE_KEY);
-    if(legacyValue){
-      const venueMap = Object.fromEntries(SEED_MATCHES.map(m=>[m.id,m.venueSide||'home']));
-      matches = JSON.parse(legacyValue).map(m=>({...m,venueSide:m.venueSide||venueMap[m.id]||'home'}));
-      await persist();
-      return;
-    }
-  }catch(e){ console.warn('No se pudieron cargar partidos guardados',e); }
-  matches = SEED_MATCHES.slice();
-  await persist();
-}
-async function persist(){
-  try{ await storageAdapter.set(STORAGE_KEY, JSON.stringify(matches)); }
-  catch(e){ console.error('storage error', e); }
-}
-
-async function loadTitleOverrides(){
-  try{
-    const value = await storageAdapter.get(TITLES_STORAGE_KEY);
-    if(value){ titleOverrides = JSON.parse(value); return; }
-  }catch(e){ console.warn('No se pudieron cargar títulos guardados',e); }
-  titleOverrides = {};
-}
-async function persistTitleOverrides(){
-  try{ await storageAdapter.set(TITLES_STORAGE_KEY, JSON.stringify(titleOverrides)); }
-  catch(e){ console.error('storage error', e); }
-}
-async function setTournamentStatus(team, torneoName, status){
-  if(!torneoName) return;
-  if(!titleOverrides[team]) titleOverrides[team] = {};
-  titleOverrides[team][torneoName] = status;
-  await persistTitleOverrides();
-}
-
-// Junta el status por default (logos-config.js) con lo que el usuario
-// haya capturado desde el formulario (titleOverrides), y agrega
-// cualquier torneo nuevo que el usuario haya escrito y no estuviera
-// en la config original.
-function getTeamTournaments(team){
-  const base = (TOURNAMENTS_CONFIG[team] || []).map(t=>({...t}));
-  const seen = new Set(base.map(t=>normalizeKey(t.name)));
-  matches.filter(m=>m.team===team && m.torneo && !/amistoso|preparación|fecha fifa/i.test(m.torneo)).forEach(m=>{
-    const key=normalizeKey(m.torneo);
-    if(!seen.has(key)){
-      base.push({name:m.torneo, logo:'', status:'en_curso', matchTerms:[m.torneo]});
-      seen.add(key);
-    }
-  });
-  const overrides = titleOverrides[team] || {};
-  base.forEach(t=>{ if(overrides[t.name]) t.status = overrides[t.name]; });
-  Object.keys(overrides).forEach(name=>{
-    if(!base.find(t=>t.name===name)) base.push({name,logo:'',status:overrides[name],matchTerms:[name]});
-  });
-  return base;
-}
-
-/* =========================================================
-   LOGIC LAYER — pure functions, no DOM access.
-
-   AUTOMATIZACIÓN: nada aquí se "llena a mano". statsForTeam() y
-   buildWeeklyData() recalculan TODO desde cero cada vez que se
-   llaman, leyendo directo del arreglo `matches` (el que vive en
-   storage). No hay números guardados aparte ni que sincronizar:
-   - Tarjetas de equipo -> statsForTeam(id) recorre `matches`,
-     filtra por equipo y suma PJ/PG/PE/PP/GF/GC en el momento.
-   - Stats por semana -> buildWeeklyData() recorre TODOS los
-     partidos, calcula a qué semana del año cae cada uno
-     (weekOfYear) y agrupa G/E/P por semana.
-   Como renderAll() se llama después de cada alta/baja de un
-   marcador (handleAdd / botón Eliminar), las tarjetas y la
-   gráfica semanal quedan actualizadas solas — no hace falta
-   tocar ningún otro lugar del código al agregar un partido.
-   ========================================================= */
-function resClass(r){ return r==='Ganado' ? 'g' : r==='Perdido' ? 'p' : 'e'; }
-function resLabel(r){ return r==='Ganado' ? 'Ganó' : r==='Perdido' ? 'Perdió' : 'Empató'; }
-function computeResult(gf,gc){ return gf>gc ? 'Ganado' : gf<gc ? 'Perdido' : 'Empatado'; }
-function dayOfYear(mes,dia){ return (CUM_DAYS[mes-1]||0) + Number(dia||1); }
-function weekOfYear(mes,dia){ return Math.floor((dayOfYear(mes,dia)-1)/7)+1; }
-function venueLabel(m){
-  if(m.estadio && m.ciudad) return `${m.estadio} · ${m.ciudad}`;
-  if(m.estadio) return m.estadio;
-  if(m.ciudad) return m.ciudad;
-  if(m.sede) return m.sede;
-  return '—';
-}
-
-function statsForTeam(teamId){
-  const rows = matches.filter(m=>m.team===teamId);
-  const s = {pj:0,pg:0,pe:0,pp:0,gf:0,gc:0};
-  rows.forEach(m=>{
-    s.pj++; s.gf+=Number(m.gf); s.gc+=Number(m.gc);
-    if(m.resultado==='Ganado') s.pg++;
-    else if(m.resultado==='Perdido') s.pp++;
-    else s.pe++;
-  });
-  s.pct = s.pj ? Math.round((s.pg/s.pj)*100) : 0;
-  s.diff = s.gf - s.gc;
-  s.rows = rows.slice().sort((a,b)=>(a.mes*100+a.dia)-(b.mes*100+b.dia));
-  return s;
-}
-
-function buildWeeklyData(){
-  const byWeek = {};
-  matches.forEach(m=>{
-    const wk = weekOfYear(m.mes, m.dia);
-    if(!byWeek[wk]) byWeek[wk] = {week:wk, matches:[], g:0, e:0, p:0};
-    const b = byWeek[wk];
-    b.matches.push(m);
-    if(m.resultado==='Ganado') b.g++;
-    else if(m.resultado==='Perdido') b.p++;
-    else b.e++;
-  });
-  const weeks = Object.values(byWeek).sort((a,b)=>a.week-b.week);
-  weeks.forEach(w=>{
-    w.pj = w.matches.length;
-    w.pct = w.pj ? Math.round((w.g/w.pj)*100) : 0;
-    const days = w.matches.map(m=>dayOfYear(m.mes,m.dia));
-    w.rangeLabel = fmtDayRange(Math.min(...days), Math.max(...days));
-  });
-  return weeks;
-}
-function smoothPath(pts){
-  if(pts.length < 2) return '';
-  if(pts.length === 2) return `M${pts[0][0]},${pts[0][1]} L${pts[1][0]},${pts[1][1]}`;
-  let d = `M${pts[0][0]},${pts[0][1]}`;
-  for(let i=0; i<pts.length-1; i++){
-    const p0 = pts[i-1] || pts[i];
-    const p1 = pts[i];
-    const p2 = pts[i+1];
-    const p3 = pts[i+2] || p2;
-    const cp1x = p1[0] + (p2[0]-p0[0])/6;
-    const cp1y = p1[1] + (p2[1]-p0[1])/6;
-    const cp2x = p2[0] - (p3[0]-p1[0])/6;
-    const cp2y = p2[1] - (p3[1]-p1[1])/6;
-    d += ` C${cp1x},${cp1y} ${cp2x},${cp2y} ${p2[0]},${p2[1]}`;
-  }
-  return d;
-}
-function fmtDayRange(minD, maxD){
-  const toLabel = (d)=>{
-    let mIdx = 0;
-    for(let i=0;i<12;i++){ if(d > CUM_DAYS[i]) mIdx = i; }
-    return `${d - CUM_DAYS[mIdx]} ${MONTHS[mIdx+1]}`;
-  };
-  return minD===maxD ? toLabel(minD) : `${toLabel(minD)} – ${toLabel(maxD)}`;
-}
-
-/* =========================================================
-   RENDER LAYER — reads data/logic layers, writes to DOM.
-   ========================================================= */
-function toast(msg){
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.classList.add('show');
-  clearTimeout(toast._timer);
-  toast._timer = setTimeout(()=>t.classList.remove('show'), 2200);
-}
-
-function renderScoreboard(){
-  const s = {pj:0,pg:0,pe:0,pp:0};
-  matches.forEach(m=>{
-    s.pj++;
-    if(m.resultado==='Ganado') s.pg++; else if(m.resultado==='Perdido') s.pp++; else s.pe++;
-  });
-  document.getElementById('scoreboard').innerHTML = `
-    <div><div class="sb-num">${s.pj}</div><div class="sb-label">Jugados</div></div>
-    <div><div class="sb-num">${s.pg}</div><div class="sb-label">Ganados</div><div class="sb-pct">${s.pj?Math.round(s.pg/s.pj*100):0}%</div></div>
-    <div><div class="sb-num draw">${s.pe}</div><div class="sb-label">Empatados</div><div class="sb-pct">${s.pj?Math.round(s.pe/s.pj*100):0}%</div></div>
-    <div><div class="sb-num loss">${s.pp}</div><div class="sb-label">Perdidos</div><div class="sb-pct">${s.pj?Math.round(s.pp/s.pj*100):0}%</div></div>
-  `;
-}
-
-function renderChips(){
-  const el = document.getElementById('chipbar');
-  let html = `<div class="chip ${activeTeamFilter==='all'?'active':''}" data-team="all"><span class="dot" style="background:var(--accent)"></span>Todos (fútbol)</div>`;
-  futbolTeamIds.forEach(id=>{
-    const t = TEAMS[id];
-    html += `<div class="chip ${activeTeamFilter===id?'active':''}" data-team="${id}"><span class="dot" style="background:${t.color}"></span>${t.name}</div>`;
-  });
-  el.innerHTML = html;
-  el.querySelectorAll('.chip').forEach(chip=>{
-    chip.addEventListener('click', ()=>{ activeTeamFilter = chip.dataset.team; matchTableVisible = PAGE_SIZE; renderChips(); renderMatchTable(); });
-  });
-}
-
-function normalizeKey(value){
-  return String(value||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/\bfc\b|\bsc\b|\bclub\b/g,'').replace(/[^a-z0-9]+/g,'_').replace(/^_+|_+$/g,'');
-}
-function initials(value){
-  const parts=String(value||'?').trim().split(/\s+/).filter(Boolean);
-  return (parts.slice(0,2).map(p=>p[0]).join('')||'?').toUpperCase();
-}
-function rivalLogoHtml(name){
-  const key=normalizeKey(name);
-  const logo=resolveRivalLogo(name);
-  if(logo){
-    return `<span class="rival-cell"><span class="rival-logo"><img src="${logo}" alt="${name}" onerror="this.parentElement.innerHTML='<span class=\\'rival-fallback\\'>${initials(name)}</span>';"></span><span>${name}</span></span>`;
-  }
-  return `<span class="rival-cell"><span class="rival-logo"><span class="rival-fallback">${initials(name)}</span></span><span>${name}</span></span>`;
-}
-function tournamentSimilarity(a,b){
-  const clean=v=>String(v||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase()
-    .replace(/professional/g,'pro').replace(/uefa|fifa|bbva|2025|2026|clausura|apertura/g,' ')
-    .replace(/[^a-z0-9]+/g,' ').trim();
-  const aa=clean(a), bb=clean(b);
-  if(!aa||!bb) return 0;
-  if(aa.includes(bb)||bb.includes(aa)) return 10;
-  const A=new Set(aa.split(/\s+/).filter(x=>x.length>1));
-  const B=new Set(bb.split(/\s+/).filter(x=>x.length>1));
-  let score=0; A.forEach(x=>{if(B.has(x)) score++;});
-  return score;
-}
-function findTitleMatch(team,tournament){
-  const targetId=normalizeKey(tournament.name);
-  const terms=[tournament.name, ...(tournament.matchTerms||[])];
-  const finals=matches.filter(m=>m.team===team && (m.titleDecision || /gran\s+final/i.test(m.fase||'') || /^final\b/i.test(m.fase||'')));
-  return finals.filter(m=>(m.tournamentId && normalizeKey(m.tournamentId)===targetId) || terms.some(term=>tournamentSimilarity(term,m.torneo)>=2))
-    .sort((a,b)=>(b.mes*100+b.dia)-(a.mes*100+a.dia))[0] || null;
-}
-function effectiveTournamentStatus(team,tournament){
-  const explicit=(titleOverrides[team]||{})[tournament.name];
-  if(explicit) return explicit;
-  const finalMatch=findTitleMatch(team,tournament);
-  if(finalMatch) return finalMatch.resultado==='Ganado'?'ganado':'perdido';
-  return tournament.status || 'en_curso';
-}
-
-function miniLogoHtml(id){
-  const logo = resolveTeamLogo(id, TEAMS[id]?.name);
-  const fallback = initials(TEAMS[id]?.name || id);
-  if(logo){
-    return `<div class="mini-logo-slot"><img src="${logo}" alt="${TEAMS[id]?.name||''}" onerror="this.parentElement.innerHTML='<span class=\'slot-placeholder\'>${fallback}</span>';"></div>`;
-  }
-  return `<div class="mini-logo-slot"><span class="slot-placeholder">${fallback}</span></div>`;
-}
-
-function badgeHtml(id){
-  const t = TEAMS[id];
-  const logo = resolveTeamLogo(id, TEAMS[id]?.name);
-  if(logo){
-    return `<div class="team-badge" style="--team-color:${t.color}; --team-fg:${t.accent}">
-      <img src="${logo}" alt="${t.name}" onload="this.parentElement.querySelector('.add-logo-hint').style.display='none';" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'; this.parentElement.querySelector('.add-logo-hint').style.display='flex';">
-      <span class="badge-fallback" style="display:none">${t.name.slice(0,1)}</span>
-      
-    </div>`;
-  }
-  return `<div class="team-badge" style="--team-color:${t.color}; --team-fg:${t.accent}">
-    <span class="badge-fallback" style="display:flex">${t.name.slice(0,1)}</span>
-    
-  </div>`;
-}
-
-function teamCardHtml(id){
-  const t = TEAMS[id];
-  const s = statsForTeam(id);
-  const last5 = s.rows.slice(-5).reverse();
-  return `
-    <div class="team-card" style="--team-color:${t.color}" data-team="${id}">
-      ${resolveTeamLogo(id, TEAMS[id]?.name) ? `<img class="watermark" src="${resolveTeamLogo(id, TEAMS[id]?.name)}" alt="" onerror="this.style.display='none'">` : ``}
-      <div class="team-card-top">
-        <div class="team-card-identity">
-          <span class="team-monogram" aria-hidden="true"></span>
-          <div>
-            <div class="team-name">${t.name} <span class="team-flag" style="display:inline-block; vertical-align:middle; border-radius:2px; overflow:hidden; box-shadow:0 0 0 1px rgba(33,29,24,0.15);">${TEAM_FLAG[id]||''}</span>${t.sport==='nfl'?'<span class="nfl-flag">NFL</span>':''}</div>
-            <div class="team-meta">${t.type} · ${t.country}</div>
-          </div>
-        </div>
-      </div>
-      <div class="team-stat-row">
-        <span class="team-record"><b>${s.pj}</b> PJ</span>
-        <span class="team-record">
-          <b style="color:var(--win)">${s.pg}G</b> <span class="muted" style="font-size:10.5px;">${s.pj?Math.round(s.pg/s.pj*100):0}%</span>
-          &nbsp;<b style="color:var(--draw)">${s.pe}E</b> <span class="muted" style="font-size:10.5px;">${s.pj?Math.round(s.pe/s.pj*100):0}%</span>
-          &nbsp;<b style="color:var(--loss)">${s.pp}P</b> <span class="muted" style="font-size:10.5px;">${s.pj?Math.round(s.pp/s.pj*100):0}%</span>
-        </span>
-      </div>
-      <div class="pct-track">
-        <span style="width:${s.pj?s.pg/s.pj*100:0}%; background:var(--win)"></span>
-        <span style="width:${s.pj?s.pe/s.pj*100:0}%; background:var(--draw)"></span>
-        <span style="width:${s.pj?s.pp/s.pj*100:0}%; background:var(--loss)"></span>
-      </div>
-      <div class="team-meta" style="margin-top:2px;">Últimos 5 partidos</div>
-      <div class="form-strip">
-        ${last5.length ? last5.map(m=>`<span class="form-pip ${resClass(m.resultado)}" title="${m.rival} · ${resLabel(m.resultado)}">${m.resultado[0]}</span>`).join('') : '<span class="muted" style="font-size:11px;">Sin partidos aún</span>'}
-      </div>
-      <div class="gf-gc-row">
-        <span>Efectividad: <b>${s.pct}%</b></span>
-        <span>${t.sport==='nfl'?'PF':'GF'} <b>${s.gf}</b> · ${t.sport==='nfl'?'PC':'GC'} <b>${s.gc}</b> · Dif <b>${s.diff>=0?'+':''}${s.diff}</b></span>
-      </div>
-    </div>
-  `;
-}
-
-function renderTeamCards(){
-  const grid = document.getElementById('teamGrid');
-  grid.innerHTML = Object.keys(TEAMS).map(teamCardHtml).join('');
-  grid.querySelectorAll('.team-card').forEach(card=>{
-    card.addEventListener('click', ()=>{
-      const id = card.dataset.team;
-      if(TEAMS[id].sport==='nfl'){
-        document.getElementById('nflTableBody').closest('.panel').scrollIntoView({behavior:'smooth', block:'start'});
-        return;
-      }
-      activeTeamFilter = id; matchTableVisible = PAGE_SIZE; renderChips(); renderMatchTable();
-      document.getElementById('matchTableBody').closest('.panel').scrollIntoView({behavior:'smooth', block:'start'});
-    });
-  });
-}
-
-function titleTeamLogoHtml(id, icon){
-  const t=TEAMS[id];
-  const logo=resolveTeamLogo(id, TEAMS[id]?.name);
-  if(logo){
-    return `<div class="title-team-logo" style="--team-color:${t.color};--team-fg:${t.accent}"><img src="${logo}" alt="${t.name}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"><span class="logo-fallback" style="display:none">${t.name.slice(0,1)}</span><span class="trophy-mini">${icon}</span></div>`;
-  }
-  return `<div class="title-team-logo" style="--team-color:${t.color};--team-fg:${t.accent}"><span class="logo-fallback">${t.name.slice(0,1)}</span><span class="trophy-mini">${icon}</span></div>`;
-}
-
-function renderTitles(){
-  const grid = document.getElementById('titleGrid');
-  let cards=[]; let totalComp=0,totalWon=0;
-  Object.keys(TEAMS).forEach(id=>{
-    const t=TEAMS[id];
-    getTeamTournaments(id).forEach(tt=>{
-      const status=effectiveTournamentStatus(id,tt);
-      const m=findTitleMatch(id,tt);
-      if(status==='en_curso' && !m) return;
-      totalComp++; if(status==='ganado') totalWon++;
-      const logo=resolveTeamLogo(id, TEAMS[id]?.name);
-      const state=status==='ganado'?'GANADO':status==='perdido'?'PERDIDO':'EN DISPUTA';
-      const cls=status==='ganado'?'won':status==='perdido'?'lost':'';
-      const finalHtml=m?`<div class="achievement-final">${m.fase||'Final'} vs ${m.rival}<div class="achievement-score">${m.gf} - ${m.gc}</div>${m.dia} ${MONTHS[m.mes]}</div>`:`<div class="achievement-final">Torneo en disputa</div>`;
-      cards.push(`<article class="achievement-card ${cls}" title="Vinculado por torneo + fase final">
-        <span class="achievement-status">${state}</span>
-        <div class="achievement-name">${tt.name}</div>
-        <div class="achievement-logo">${logo?`<img src="${logo}" alt="${t.name}">`:`<span style="font-size:44px">🏆</span>`}</div>
-        <div class="achievement-team">${t.name}</div>
-        <div class="achievement-meta">${t.type} · ${t.country}</div>
-        ${finalHtml}
-      </article>`);
-    });
-  });
-  grid.innerHTML=cards.length?cards.join(''):`<div class="muted">No hay finales vinculadas todavía.</div>`;
-  document.getElementById('titleTotal').innerHTML=`<div><div class="t-num">${totalWon}</div><div class="t-lbl">Títulos ganados</div></div><div><div class="t-num" style="color:var(--text-dim)">${totalComp}</div><div class="t-lbl">Finales / torneos</div></div>`;
-}
-
-function renderWeekly(){
-  const allWeeks = buildWeeklyData();
-  const chartWeeks = allWeeks;
-  const detailWeeks = allWeeks.slice(0, weeklyVisible);
-  const wrap = document.getElementById('weeklyChartWrap');
-  const body = document.getElementById('weeklyTableBody');
-
-  const count=document.getElementById('weeklyCount');
-  const moreBtn=document.getElementById('weeklyMoreBtn');
-  if(!allWeeks.length){
-    wrap.innerHTML = '';
-    body.innerHTML = `<tr class="empty-row"><td colspan="7">Aún no hay partidos registrados.</td></tr>`;
-    count.textContent=''; moreBtn.classList.add('hidden');
-    return;
-  }
-  count.textContent=`Detalle: ${detailWeeks.length} de ${allWeeks.length} semanas`;
-  moreBtn.classList.toggle('hidden',detailWeeks.length>=allWeeks.length);
-
-  const barW = 30, gap = 12, padL = 42, padR = 24, padT = 22, padB = 30;
-  const maxPj = Math.max(...chartWeeks.map(w=>w.pj), 1);
-  const chartH = Math.max(120, maxPj * 26);
-  const w = padL + chartWeeks.length*(barW+gap) + padR;
-  const h = padT + chartH + padB;
-  const unitH = chartH / maxPj;
-
-  let bars = '';
-  let linePts = [];
-  chartWeeks.forEach((wk,i)=>{
-    const x = padL + i*(barW+gap);
-    let yCursor = padT + chartH;
-    const segs = [
-      {n:wk.g, color:'var(--win)'},
-      {n:wk.e, color:'var(--draw)'},
-      {n:wk.p, color:'var(--loss)'},
-    ];
-    segs.forEach(seg=>{
-      const segH = seg.n * unitH;
-      yCursor -= segH;
-      if(seg.n>0) bars += `<rect x="${x}" y="${yCursor}" width="${barW}" height="${segH}" fill="${seg.color}"/>`;
-    });
-    bars += `<text x="${x+barW/2}" y="${padT+chartH+18}" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#a39a86">S${wk.week}</text>`;
-    const lineY = padT + chartH - (wk.pct/100)*chartH;
-    linePts.push([x+barW/2, lineY]);
-  });
-
-  const gridLines = [0,25,50,75,100].map(v=>{
-    const y = padT + chartH - (v/100)*chartH;
-    return `<line x1="${padL-8}" y1="${y}" x2="${w-padR}" y2="${y}" stroke="#ece6d8" stroke-width="1"/>`;
-  }).join('');
-
-  const linePath = smoothPath(linePts);
-  const lineDots = linePts.map(p=>`<circle cx="${p[0]}" cy="${p[1]}" r="3.5" fill="var(--accent-3)" stroke="#fff" stroke-width="1.4"/>`).join('');
-
-  wrap.innerHTML = `<svg viewBox="0 0 ${w} ${h}" width="${w}" height="${h}" xmlns="http://www.w3.org/2000/svg">
-    ${gridLines}
-    ${bars}
-    <path d="${linePath}" fill="none" stroke="var(--accent-3)" stroke-width="2.4"/>
-    ${lineDots}
-  </svg>`;
-
-  body.innerHTML = detailWeeks.map(wk=>`
-    <tr>
-      <td class="mono">Semana ${wk.week}</td>
-      <td>${wk.rangeLabel}</td>
-      <td class="mono">${wk.pj}</td>
-      <td class="mono" style="color:var(--win)">${wk.g}</td>
-      <td class="mono" style="color:var(--draw)">${wk.e}</td>
-      <td class="mono" style="color:var(--loss)">${wk.p}</td>
-      <td class="mono">${wk.pct}%</td>
-    </tr>`).join('');
-}
-
-function populateCompetitionFilter(){
-  const sel=document.getElementById('competitionFilter');
-  const current=sel.value || 'all';
-  const names=[...new Set(matches.filter(m=>TEAMS[m.team]?.sport==='futbol').map(m=>m.torneo).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'es'));
-  sel.innerHTML='<option value="all">Todas las competiciones</option>'+names.map(n=>`<option value="${n.replace(/"/g,'&quot;')}">${n}</option>`).join('');
-  sel.value=names.includes(current)?current:'all';
-}
-function applyTheme(theme){
-  document.documentElement.dataset.theme=theme;
-  localStorage.setItem('ratiosports_theme',theme);
-  const dark=theme==='dark';
-  document.getElementById('themeIcon').textContent=dark?'☀️':'🌙';
-  document.getElementById('themeLabel').textContent=dark?'Modo claro':'Modo oscuro';
-  applyBackgroundPhoto();
-}
-function toggleTheme(){ applyTheme(document.documentElement.dataset.theme==='dark'?'light':'dark'); }
-
-function renderMatchTable(){
-  const body = document.getElementById('matchTableBody');
-  const search = (document.getElementById('searchInput').value || '').toLowerCase();
-  const sortMode = document.getElementById('sortSelect').value;
-  const competition = document.getElementById('competitionFilter').value;
-
-  let rows = matches.filter(m=>{
-    if(TEAMS[m.team].sport!=='futbol') return false;
-    if(activeTeamFilter!=='all' && m.team!==activeTeamFilter) return false;
-    if(competition!=='all' && m.torneo!==competition) return false;
-    if(search){
-      const hay = `${m.rival} ${m.torneo} ${m.fase} ${m.estadio||''} ${m.ciudad||''}`.toLowerCase();
-      if(!hay.includes(search)) return false;
-    }
-    return true;
-  });
-  rows = rows.slice().sort((a,b)=>{
-    const av=a.mes*100+a.dia, bv=b.mes*100+b.dia;
-    return sortMode==='recent' ? bv-av : av-bv;
-  });
-
-  if(!rows.length){
-    body.innerHTML = `<tr class="empty-row"><td colspan="7">No hay partidos que coincidan con el filtro.</td></tr>`;
-    document.getElementById('matchTableCount').textContent = '';
-    document.getElementById('verMasBtn').classList.add('hidden');
-    return;
-  }
-
-  const total = rows.length;
-  const visibleRows = rows.slice(0, matchTableVisible);
-  const btn = document.getElementById('verMasBtn');
-  document.getElementById('matchTableCount').textContent = `Mostrando ${visibleRows.length} de ${total} partidos`;
-  btn.classList.toggle('hidden', visibleRows.length >= total);
-
-  body.innerHTML = visibleRows.map(m=>{
-    const t = TEAMS[m.team];
-    return `<tr>
-      <td class="mono">${m.dia} ${MONTHS[m.mes]}</td>
-      <td><span class="match-team-name"><span class="match-team-dot" style="background:${t.accent||t.color}"></span><span>${t.name}</span></span></td>
-      <td>${rivalLogoHtml(m.rival)}</td>
-      <td class="${venueLabel(m)==='—'?'muted':''}">${venueLabel(m)}</td>
-      <td>${m.torneo}${m.fase?' · '+m.fase:''}</td>
-      <td class="mono">${isAway?m.gc:m.gf} - ${isAway?m.gf:m.gc}</td>
-      <td><span class="res-tag ${resClass(m.resultado)}">${resLabel(m.resultado)}</span></td>
-    </tr>`;
-  }).join('');
-}
-
-function renderNflTable(){
-  const body = document.getElementById('nflTableBody');
-  let rows = matches.filter(m=>TEAMS[m.team].sport==='nfl');
-  rows = rows.slice().sort((a,b)=>(b.mes*100+b.dia)-(a.mes*100+a.dia));
-  if(!rows.length){
-    body.innerHTML = `<tr class="empty-row"><td colspan="7">No hay partidos de NFL registrados todavía.</td></tr>`;
-    return;
-  }
-  body.innerHTML = rows.map(m=>`
-    <tr>
-      <td>${miniLogoHtml(m.team)}</td>
-      <td class="mono">${m.dia} ${MONTHS[m.mes]}</td>
-      <td>${rivalLogoHtml(m.rival)}</td>
-      <td class="${venueLabel(m)==='—'?'muted':''}">${venueLabel(m)}</td>
-      <td>${m.torneo}${m.fase?' · '+m.fase:''}</td>
-      <td class="mono">${isAway?m.gc:m.gf} - ${isAway?m.gf:m.gc}</td>
-      <td><span class="res-tag ${resClass(m.resultado)}">${resLabel(m.resultado)}</span></td>
-    </tr>`).join('');
-}
-
-function fillTeamSelect(){
-  const sel = document.getElementById('f_team');
-  sel.innerHTML = Object.entries(TEAMS).map(([id,t])=>`<option value="${id}">${t.name}${t.sport==='nfl'?' (NFL)':''}</option>`).join('');
-  sel.addEventListener('change', updateFieldLabels);
-  updateFieldLabels();
-}
-function updateFieldLabels(){
-  const team = document.getElementById('f_team').value;
-  const isNfl = TEAMS[team] && TEAMS[team].sport==='nfl';
-  document.getElementById('lbl_gf').textContent = isNfl ? 'Puntos a favor' : 'Goles a favor';
-  document.getElementById('lbl_gc').textContent = isNfl ? 'Puntos en contra' : 'Goles en contra';
-
-  const datalist = document.getElementById('torneoOptions');
-  const known = TOURNAMENTS_CONFIG[team] || [];
-  datalist.innerHTML = known.map(t=>`<option value="${t.name}"></option>`).join('');
-}
-
-function updateResultPreview(){
-  const gf = Number(document.getElementById('f_gf').value)||0;
-  const gc = Number(document.getElementById('f_gc').value)||0;
-  const hasInput = document.getElementById('f_gf').value!=='' && document.getElementById('f_gc').value!=='';
-  const pill = document.getElementById('resultPreview');
-  if(!hasInput){ pill.textContent='—'; pill.className='result-pill e'; return; }
-  const r = computeResult(gf,gc);
-  pill.textContent = resLabel(r);
-  pill.className = 'result-pill ' + resClass(r);
-}
-
-function renderRecentTable(){
-  const body=document.getElementById('recentTableBody');
-  const recent=matches.filter(m=>m.userAdded).slice().reverse().slice(0,12);
-  if(!recent.length){body.innerHTML=`<tr class="empty-row"><td colspan="10">Todavía no agregas marcadores nuevos.</td></tr>`;return;}
-  body.innerHTML=recent.map(m=>{
-    const t=TEAMS[m.team],isAway=m.venueSide==='away';
-    const localName=isAway?m.rival:t.name, visitName=isAway?t.name:m.rival;
-    return `<tr>
-      <td><span class="followed-team-dot" style="--team-color:${t.color}" title="${t.name}"></span></td>
-      <td class="mono">${m.dia} ${MONTHS[m.mes]}</td>
-      <td>${isAway?rivalLogoHtml(m.rival):miniLogoHtml(m.team)} ${localName}</td>
-      <td class="mono">${isAway?m.gc:m.gf} - ${isAway?m.gf:m.gc}</td>
-      <td>${isAway?miniLogoHtml(m.team):rivalLogoHtml(m.rival)} ${visitName}</td>
-      <td>${venueLabel(m)}</td><td>${m.torneo||'—'}</td><td>${m.fase||'—'}</td>
-      <td><span class="res-tag ${resClass(m.resultado)}">${resLabel(m.resultado)}</span></td>
-      <td><button class="del-btn" data-id="${m.id}">Eliminar</button></td></tr>`;
-  }).join('');
-  body.querySelectorAll('.del-btn').forEach(btn=>btn.addEventListener('click',async()=>{matches=matches.filter(m=>m.id!==btn.dataset.id);await persist();renderAll();toast('Marcador eliminado');}));
-}
-async function handleAdd(){
-  const team = document.getElementById('f_team').value;
-  const rival = document.getElementById('f_rival').value.trim();
-  const dia = Number(document.getElementById('f_dia').value);
-  const mes = Number(document.getElementById('f_mes').value);
-  const torneo = document.getElementById('f_torneo').value.trim();
-  const fase = document.getElementById('f_fase').value.trim();
-  const estadio = document.getElementById('f_estadio').value.trim();
-  const ciudad = document.getElementById('f_ciudad').value.trim();
-  const gf = document.getElementById('f_gf').value;
-  const gc = document.getElementById('f_gc').value;
-  const aggLocal = document.getElementById('f_aggLocal').value;
-  const aggVisit = document.getElementById('f_aggVisit').value;
-  const penLocal = document.getElementById('f_penLocal').value;
-  const penVisit = document.getElementById('f_penVisit').value;
-  const extraTime = document.getElementById('f_extraTime').checked;
-
-  if(!rival || gf==='' || gc==='' || !dia){ toast('Falta rival, día o marcador'); return; }
-  const resultado = computeResult(Number(gf), Number(gc));
-  const id = 'u_' + Date.now() + '_' + Math.random().toString(36).slice(2,7);
-  const esTitulo = document.getElementById('f_esTitulo').checked;
-  const tituloResultado = document.getElementById('f_tituloResultado').value;
-  const venueSide = document.getElementById('f_venueSide')?.value || 'home';
-  const teamName=TEAMS[team].name;
-  const localName=venueSide==='away'?rival:teamName;
-  const visitName=venueSide==='away'?teamName:rival;
-  const localScore=venueSide==='away'?Number(gc):Number(gf);
-  const visitScore=venueSide==='away'?Number(gf):Number(gc);
-  matches.push({id, team, dia, mes, rival, torneo, fase, estadio, ciudad, sede:'', gf:Number(gf), gc:Number(gc), resultado, userAdded:true,
-    localName,visitName,localScore,visitScore,originLocal:'—',originVisit:'—',
-    aggregateLocal:aggLocal===''?null:Number(aggLocal),aggregateVisit:aggVisit===''?null:Number(aggVisit),
-    penaltyLocal:penLocal===''?null:Number(penLocal),penaltyVisit:penVisit===''?null:Number(penVisit),extraTime,
-    titleDecision:esTitulo, titleStatus:esTitulo?tituloResultado:null, titleWon:esTitulo&&tituloResultado==='ganado', tournamentId:esTitulo?normalizeKey(torneo):null, venueSide});
-  await persist();
-
-  if(esTitulo && torneo){
-    await setTournamentStatus(team, torneo, tituloResultado);
-  }
-
-  renderAll(); toast('Marcador agregado ✓'); clearForm();
-}
-
-function clearForm(){
-  ['f_rival','f_dia','f_torneo','f_fase','f_estadio','f_ciudad','f_gf','f_gc','f_aggLocal','f_aggVisit','f_penLocal','f_penVisit'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('f_esTitulo').checked = false;
-  document.getElementById('f_extraTime').checked = false;
-  document.getElementById('f_tituloResultado').classList.add('hidden');
-  updateResultPreview();
-}
-
-function switchTab(tab){
-  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active', b.dataset.tab===tab));
-  document.getElementById('tab-seguimiento').classList.toggle('hidden', tab!=='seguimiento');
-  document.getElementById('tab-registrar').classList.toggle('hidden', tab!=='registrar');
-}
-
-function renderAll(){
-  populateCompetitionFilter();
-  renderScoreboard();
-  renderChips();
-  renderTeamCards();
-  renderTitles();
-  renderWeekly();
-  renderMatchTable();
-  renderNflTable();
-  renderRecentTable();
-}
-
-function applyBackgroundPhoto(){
-  if(!BACKGROUND_IMAGE) return;
-  const layer = document.getElementById('bgPhotoLayer');
-  const img = new Image();
-  img.onload = ()=>{
-    const dark=document.documentElement.dataset.theme==='dark';
-    layer.style.backgroundImage = dark ? `linear-gradient(rgba(15,18,16,0.38), rgba(15,18,16,0.52)), url('${BACKGROUND_IMAGE}')` : `linear-gradient(rgba(250,246,238,0.24), rgba(250,246,238,0.38)), url('${BACKGROUND_IMAGE}')`;
-    layer.classList.add('active');
-  };
-  img.onerror = ()=>{ /* archivo aún no existe: nos quedamos con el fondo claro + balón */ };
-  img.src = BACKGROUND_IMAGE;
-}
-
-async function init(){
-  applyTheme(localStorage.getItem('ratiosports_theme') || (matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'));
-  fillTeamSelect();
-  applyBackgroundPhoto();
-  await loadMatches();
-  await loadTitleOverrides();
-  renderAll();
-  document.querySelectorAll('.tab-btn[data-tab]').forEach(b=>b.addEventListener('click', ()=>switchTab(b.dataset.tab)));
-  document.getElementById('searchInput').addEventListener('input', ()=>{ matchTableVisible = PAGE_SIZE; renderMatchTable(); });
-  document.getElementById('sortSelect').addEventListener('change', ()=>{ matchTableVisible = PAGE_SIZE; renderMatchTable(); });
-  document.getElementById('competitionFilter').addEventListener('change', ()=>{ matchTableVisible = PAGE_SIZE; renderMatchTable(); });
-  document.getElementById('clearFiltersBtn').addEventListener('click', ()=>{ document.getElementById('searchInput').value=''; document.getElementById('competitionFilter').value='all'; activeTeamFilter='all'; matchTableVisible=PAGE_SIZE; renderAll(); });
-  document.getElementById('themeToggle').addEventListener('click', toggleTheme);
-  const sidebarToggle=document.getElementById('sidebarToggle');
-  if(sidebarToggle){
-    const collapsed=localStorage.getItem('ratiosports_sidebar_collapsed')==='1';
-    document.body.classList.toggle('sidebar-collapsed',collapsed);
-    sidebarToggle.addEventListener('click',()=>{const next=!document.body.classList.contains('sidebar-collapsed');document.body.classList.toggle('sidebar-collapsed',next);localStorage.setItem('ratiosports_sidebar_collapsed',next?'1':'0');});
-  }
-  document.querySelectorAll('.tabbar a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const target=document.querySelector(a.getAttribute('href'));if(target) target.scrollIntoView({behavior:'smooth',block:'start'});}));
-  document.querySelectorAll('.tabbar a').forEach(a=>a.addEventListener('click',()=>{document.querySelectorAll('.tabbar a').forEach(x=>x.classList.remove('active'));a.classList.add('active');}));
-  document.getElementById('verMasBtn').addEventListener('click', ()=>{ matchTableVisible += PAGE_SIZE; renderMatchTable(); });
-  document.getElementById('weeklyMoreBtn').addEventListener('click', ()=>{ weeklyVisible += WEEK_PAGE_SIZE; renderWeekly(); });
-  document.getElementById('f_gf').addEventListener('input', updateResultPreview);
-  document.getElementById('f_gc').addEventListener('input', updateResultPreview);
-  document.getElementById('addBtn').addEventListener('click', handleAdd);
-  document.getElementById('clearBtn').addEventListener('click', clearForm);
-  document.getElementById('f_esTitulo').addEventListener('change', (e)=>{
-    document.getElementById('f_tituloResultado').classList.toggle('hidden', !e.target.checked);
-  });
-}
-init();
-window.addEventListener("DOMContentLoaded",()=>{setTimeout(()=>{document.getElementById("tab-seguimiento")?.classList.add("hidden");document.getElementById("tab-registrar")?.classList.remove("hidden");},0)});
-</script>
+<script defer src="assets/js/config/logos.js"></script>
+<script defer src="assets/js/data/sports-data.js"></script>
+<script defer src="assets/js/core/state.js"></script>
+<script defer src="assets/js/core/ui.js"></script>
+<script defer src="assets/js/core/backup.js"></script>
+<script defer src="assets/js/pages/partidos.js"></script>
 </body>
 </html>
 
-<style id="v15-priority-fixes">
-/* v15 priority fixes: full-width stats, compact left-aligned team data, intact USA flag, visible collapsed nav icons */
-.general-stats{
-  width:100%!important;
-  display:grid!important;
-  grid-template-columns:repeat(12,minmax(0,1fr))!important;
-  gap:8px!important;
-  overflow:visible!important;
-  padding:0!important;
-  margin:0 0 22px!important;
-}
-.general-stat{
-  min-width:0!important;
-  width:auto!important;
-  flex:none!important;
-  min-height:72px!important;
-  padding:10px 9px!important;
-}
-.general-stat>strong{font-size:20px!important;white-space:nowrap!important}
-.general-stat>small{font-size:8px!important;line-height:1.15!important}
-
-/* Keep all team metrics compact and anchored to the left */
-.team-card{overflow:hidden!important;min-height:236px!important;padding:13px 12px 12px!important}
-.team-card-top,.pj-left,.team-stat-row,.pct-track,.team-honours,.team-card .team-meta,.form-strip,.gf-gc-row{
-  width:calc(100% - 76px)!important;
-  max-width:calc(100% - 76px)!important;
-  margin-left:0!important;
-  margin-right:auto!important;
-  box-sizing:border-box!important;
-}
-.team-card-top{padding-right:0!important}
-.pj-left{justify-content:flex-start!important;gap:4px!important;margin-top:0!important}
-.pj-left b{font-size:20px!important}
-.team-stat-row{justify-content:flex-start!important}
-.team-record{display:flex!important;align-items:baseline!important;justify-content:flex-start!important;gap:4px!important;flex-wrap:nowrap!important;font-size:9px!important}
-.team-record b{font-size:17px!important}
-.team-record .muted{font-size:8px!important;margin-right:3px!important}
-.form-strip{gap:3px!important;flex-wrap:nowrap!important;overflow:visible!important}
-.form-pip{width:18px!important;height:18px!important;flex:0 0 18px!important;font-size:8px!important}
-.team-honours{font-size:9px!important;gap:8px!important;white-space:nowrap!important}
-.gf-gc-row{font-size:8px!important;gap:4px!important;white-space:nowrap!important}
-.team-card .watermark{width:92px!important;height:92px!important;right:-8px!important;bottom:-10px!important;opacity:.16!important}
-
-/* USA flag must be fully visible, never cropped */
-.team-card[data-team="cowboys"] .team-flag{
-  width:40px!important;height:28px!important;padding:0!important;overflow:hidden!important;background:transparent!important;
-  display:inline-flex!important;align-items:center!important;justify-content:center!important;
-}
-.team-card[data-team="cowboys"] .team-flag svg,
-.team-card[data-team="cowboys"] .team-flag img{
-  width:100%!important;height:100%!important;max-width:100%!important;max-height:100%!important;
-  transform:none!important;object-fit:contain!important;display:block!important;
-}
-
-/* Collapsed sidebar: keep every icon centered and visible */
-body.sidebar-collapsed .tabbar{
-  width:var(--sidebar-collapsed)!important;
-  padding-left:6px!important;padding-right:6px!important;
-  overflow-x:hidden!important;
-}
-body.sidebar-collapsed .tab-btn{
-  width:100%!important;min-width:0!important;box-sizing:border-box!important;
-  display:flex!important;justify-content:center!important;align-items:center!important;
-  padding:10px 0!important;margin:0!important;overflow:visible!important;
-}
-body.sidebar-collapsed .nav-icon{
-  display:flex!important;align-items:center!important;justify-content:center!important;
-  width:32px!important;min-width:32px!important;height:28px!important;
-  margin:0!important;padding:0!important;overflow:visible!important;
-  color:#fff!important;font-size:17px!important;line-height:1!important;
-}
-body.sidebar-collapsed .sidebar-theme-wrap{padding-left:0!important;padding-right:0!important}
-body.sidebar-collapsed .sidebar-theme-toggle{width:100%!important;padding:9px 0!important;justify-content:center!important}
-body.sidebar-collapsed .sidebar-theme-toggle #themeIcon{display:block!important;margin:0!important}
-
-@media(max-width:1350px){.general-stats{grid-template-columns:repeat(6,minmax(0,1fr))!important}}
-@media(max-width:900px){
-  .general-stats{grid-template-columns:repeat(4,minmax(0,1fr))!important}
-  .team-card-top,.pj-left,.team-stat-row,.pct-track,.team-honours,.team-card .team-meta,.form-strip,.gf-gc-row{width:calc(100% - 66px)!important;max-width:calc(100% - 66px)!important}
-}
-@media(max-width:620px){
-  .general-stats{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;overflow:visible!important}
-  .general-stat{min-width:0!important}
-  .team-card-top,.pj-left,.team-stat-row,.pct-track,.team-honours,.team-card .team-meta,.form-strip,.gf-gc-row{width:calc(100% - 58px)!important;max-width:calc(100% - 58px)!important}
-}
-</style>
