@@ -201,6 +201,78 @@ barca: 'logos/rivales/fcbarcelona.png',
 
   "Levante": "levante.png",
   "Levante UD": "levante.png"
+
+  // ===== LIGA MX =====
+"América": "america.png",
+"Club América": "america.png",
+
+"Atlas": "atlas.png",
+"Atlas FC": "atlas.png",
+
+"Guadalajara": "guadalajara.png",
+"Chivas": "guadalajara.png",
+"Chivas Guadalajara": "guadalajara.png",
+"CD Guadalajara": "guadalajara.png",
+"Club Deportivo Guadalajara": "guadalajara.png",
+
+"FC Juárez": "juarez.png",
+"Juárez": "juarez.png",
+"Juarez": "juarez.png",
+"Bravos": "juarez.png",
+
+"León": "leon.png",
+"Leon": "leon.png",
+"Club León": "leon.png",
+
+"Mazatlán": "mazatlan.png",
+"Mazatlan": "mazatlan.png",
+"Mazatlán FC": "mazatlan.png",
+
+"Monterrey": "monterrey.png",
+"CF Monterrey": "monterrey.png",
+"Rayados": "monterrey.png",
+"Rayados de Monterrey": "monterrey.png",
+
+"Necaxa": "necaxa.png",
+"Club Necaxa": "necaxa.png",
+
+"Pachuca": "pachuca.png",
+"CF Pachuca": "pachuca.png",
+"Tuzos": "pachuca.png",
+
+"Puebla": "puebla.png",
+"Club Puebla": "puebla.png",
+
+"Querétaro": "qro.png",
+"Queretaro": "qro.png",
+"Querétaro FC": "qro.png",
+"Queretaro FC": "qro.png",
+"Gallos Blancos": "qro.png",
+
+"Atlético San Luis": "san_luis.png",
+"Atletico San Luis": "san_luis.png",
+"San Luis": "san_luis.png",
+"Atl. San Luis": "san_luis.png",
+
+"Santos Laguna": "santos_laguna.png",
+"Santos": "santos_laguna.png",
+"Club Santos Laguna": "santos_laguna.png",
+
+"Toluca": "toluca.png",
+"Deportivo Toluca": "toluca.png",
+"Deportivo Toluca FC": "toluca.png",
+"Toluca FC": "toluca.png",
+
+  "Tigres": "tigres.png",
+"Tigres UANL": "tigres.png",
+"UANL": "tigres.png",
+
+"Tijuana": "tijuana.png",
+"Club Tijuana": "tijuana.png",
+"Xolos": "tijuana.png",
+"Xolos de Tijuana": "tijuana.png",
+"Club Tijuana Xoloitzcuintles": "tijuana.png"
+
 };
 
 /* =====================================================================
