@@ -250,5 +250,6 @@ function fmtDayRange(minD, maxD){
 function escapeHtml(value=''){
   return String(value).replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
 }
+function escapeAttribute(value=''){ return escapeHtml(value); }
 function setSafeText(element,value){ if(element) element.textContent=String(value??''); }
-window.SportsCore={exportLedger,importLedgerFile,escapeHtml,storageEnvelope,STORAGE_SCHEMA_VERSION};
+window.SportsCore={exportLedger,importLedgerFile,escapeHtml,escapeAttribute,setSafeText,storageEnvelope,STORAGE_SCHEMA_VERSION};

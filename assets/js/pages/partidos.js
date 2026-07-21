@@ -1,5 +1,3 @@
-const escapeHtml = window.SportsCore?.escapeHtml || ((value='') => String(value));
-const escapeAttr = escapeHtml;
 
 
 function renderScoreboard(){
@@ -21,7 +19,7 @@ function renderChips(){
   let html = `<div class="chip ${activeTeamFilter==='all'?'active':''}" data-team="all"><span class="dot" style="background:var(--accent)"></span>Todos (fútbol)</div>`;
   futbolTeamIds.forEach(id=>{
     const t = TEAMS[id];
-    html += `<div class="chip ${activeTeamFilter===id?'active':''}" data-team="${id}"><span class="dot" style="background:${escapeAttr(t.color)}"></span>${escapeHtml(t.name)}</div>`;
+    html += `<div class="chip ${activeTeamFilter===id?'active':''}" data-team="${id}"><span class="dot" style="background:${t.color}"></span>${t.name}</div>`;
   });
   el.innerHTML = html;
   el.querySelectorAll('.chip').forEach(chip=>{
@@ -73,13 +71,13 @@ function renderTitles(){
       const logo=resolveTeamLogo(id, TEAMS[id]?.name);
       const state=status==='ganado'?'GANADO':status==='perdido'?'PERDIDO':'EN DISPUTA';
       const cls=status==='ganado'?'won':status==='perdido'?'lost':'';
-      const finalHtml=m?`<div class="achievement-final">${escapeHtml(m.fase||'Final')} vs ${escapeHtml(m.rival)}<div class="achievement-score">${m.gf} - ${m.gc}</div>${m.dia} ${MONTHS[m.mes]}</div>`:`<div class="achievement-final">Torneo en disputa</div>`;
+      const finalHtml=m?`<div class="achievement-final">${m.fase||'Final'} vs ${m.rival}<div class="achievement-score">${m.gf} - ${m.gc}</div>${m.dia} ${MONTHS[m.mes]}</div>`:`<div class="achievement-final">Torneo en disputa</div>`;
       cards.push(`<article class="achievement-card ${cls}" title="Vinculado por torneo + fase final">
         <span class="achievement-status">${state}</span>
-        <div class="achievement-name">${escapeHtml(tt.name)}</div>
-        <div class="achievement-logo">${logo?`<img src="${logo}" alt="${escapeAttr(t.name)}">`:`<span style="font-size:44px">🏆</span>`}</div>
-        <div class="achievement-team">${escapeHtml(t.name)}</div>
-        <div class="achievement-meta">${escapeHtml(t.type)} · ${escapeHtml(t.country)}</div>
+        <div class="achievement-name">${tt.name}</div>
+        <div class="achievement-logo">${logo?`<img src="${logo}" alt="${t.name}">`:`<span style="font-size:44px">🏆</span>`}</div>
+        <div class="achievement-team">${t.name}</div>
+        <div class="achievement-meta">${t.type} · ${t.country}</div>
         ${finalHtml}
       </article>`);
     });
@@ -164,7 +162,7 @@ function populateCompetitionFilter(){
   const sel=document.getElementById('competitionFilter');
   const current=sel.value || 'all';
   const names=[...new Set(matches.filter(m=>TEAMS[m.team]?.sport==='futbol').map(m=>m.torneo).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'es'));
-  sel.innerHTML='<option value="all">Todas las competiciones</option>'+names.map(n=>`<option value="${escapeAttr(n)}">${escapeHtml(n)}</option>`).join('');
+  sel.innerHTML='<option value="all">Todas las competiciones</option>'+names.map(n=>`<option value="${escapeAttribute(n)}">${escapeHtml(n)}</option>`).join('');
   sel.value=names.includes(current)?current:'all';
 }
 
@@ -206,9 +204,10 @@ function renderMatchTable(){
 
   body.innerHTML = visibleRows.map(m=>{
     const t = TEAMS[m.team];
+    const isAway=m.venueSide==='away';
     return `<tr>
       <td class="mono">${m.dia} ${MONTHS[m.mes]}</td>
-      <td><span class="match-team-name"><span class="match-team-dot" style="background:${escapeAttr(t.accent||t.color)}"></span><span>${escapeHtml(t.name)}</span></span></td>
+      <td><span class="match-team-name"><span class="match-team-dot" style="background:${t.accent||t.color}"></span><span>${escapeHtml(t.name)}</span></span></td>
       <td>${rivalLogoHtml(m.rival)}</td>
       <td class="${venueLabel(m)==='—'?'muted':''}">${escapeHtml(venueLabel(m))}</td>
       <td>${escapeHtml(m.torneo)}${m.fase?' · '+escapeHtml(m.fase):''}</td>
@@ -226,7 +225,7 @@ function renderNflTable(){
     body.innerHTML = `<tr class="empty-row"><td colspan="7">No hay partidos de NFL registrados todavía.</td></tr>`;
     return;
   }
-  body.innerHTML = rows.map(m=>`
+  body.innerHTML = rows.map(m=>{ const isAway=m.venueSide==='away'; return `
     <tr>
       <td>${miniLogoHtml(m.team)}</td>
       <td class="mono">${m.dia} ${MONTHS[m.mes]}</td>
@@ -235,12 +234,12 @@ function renderNflTable(){
       <td>${escapeHtml(m.torneo)}${m.fase?' · '+escapeHtml(m.fase):''}</td>
       <td class="mono">${isAway?m.gc:m.gf} - ${isAway?m.gf:m.gc}</td>
       <td><span class="res-tag ${resClass(m.resultado)}">${resLabel(m.resultado)}</span></td>
-    </tr>`).join('');
+    </tr>`; }).join('');
 }
 
 function fillTeamSelect(){
   const sel = document.getElementById('f_team');
-  sel.innerHTML = Object.entries(TEAMS).map(([id,t])=>`<option value="${escapeAttr(id)}">${escapeHtml(t.name)}${t.sport==='nfl'?' (NFL)':''}</option>`).join('');
+  sel.innerHTML = Object.entries(TEAMS).map(([id,t])=>`<option value="${escapeAttribute(id)}">${escapeHtml(t.name)}${t.sport==='nfl'?' (NFL)':''}</option>`).join('');
   sel.addEventListener('change', updateFieldLabels);
   updateFieldLabels();
 }
@@ -252,7 +251,7 @@ function updateFieldLabels(){
 
   const datalist = document.getElementById('torneoOptions');
   const known = TOURNAMENTS_CONFIG[team] || [];
-  datalist.innerHTML = known.map(t=>`<option value="${escapeAttr(t.name)}"></option>`).join('');
+  datalist.innerHTML = known.map(t=>`<option value="${escapeAttribute(t.name)}"></option>`).join('');
 }
 
 function updateResultPreview(){
@@ -274,14 +273,14 @@ function renderRecentTable(){
     const t=TEAMS[m.team],isAway=m.venueSide==='away';
     const localName=isAway?m.rival:t.name, visitName=isAway?t.name:m.rival;
     return `<tr>
-      <td><span class="followed-team-dot" style="--team-color:${escapeAttr(t.color)}" title="${escapeAttr(t.name)}"></span></td>
+      <td><span class="followed-team-dot" style="--team-color:${t.color}" title="${escapeAttribute(t.name)}"></span></td>
       <td class="mono">${m.dia} ${MONTHS[m.mes]}</td>
       <td>${isAway?rivalLogoHtml(m.rival):miniLogoHtml(m.team)} ${escapeHtml(localName)}</td>
       <td class="mono">${isAway?m.gc:m.gf} - ${isAway?m.gf:m.gc}</td>
       <td>${isAway?miniLogoHtml(m.team):rivalLogoHtml(m.rival)} ${escapeHtml(visitName)}</td>
-      <td>${escapeHtml(venueLabel(m))}</td><td>${escapeHtml(m.torneo||'—')}</td><td>${escapeHtml(m.fase||'—')}</td>
+      <td>${escapeHtml(venueLabel(m))}</td><td>${m.torneo||'—'}</td><td>${m.fase||'—'}</td>
       <td><span class="res-tag ${resClass(m.resultado)}">${resLabel(m.resultado)}</span></td>
-      <td><button class="del-btn" data-id="${escapeAttr(m.id)}">Eliminar</button></td></tr>`;
+      <td><button class="del-btn" data-id="${escapeAttribute(m.id)}">Eliminar</button></td></tr>`;
   }).join('');
   body.querySelectorAll('.del-btn').forEach(btn=>btn.addEventListener('click',async()=>{matches=matches.filter(m=>m.id!==btn.dataset.id);await persist();renderAll();toast('Marcador eliminado');}));
 }

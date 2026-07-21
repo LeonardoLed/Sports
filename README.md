@@ -1,81 +1,87 @@
-# Ratio Sports — Centro de seguimiento deportivo
+# Ratio Sports Dashboard
 
-Dashboard estático para GitHub Pages que centraliza equipos, torneos y una bitácora editable de partidos.
+Dashboard estático para consultar y administrar la bitácora deportiva de los equipos seguidos. El proyecto funciona en GitHub Pages y conserva los partidos históricos incluidos en `SEED_MATCHES`.
 
 ## Arquitectura
 
 ```text
+Datos iniciales (sports-data.js)
+          │
+          ▼
+ Estado y persistencia (core/state.js)
+          │
+          ├── MatchService
+          ├── StatisticsService
+          └── LogoService
+          │
+          ▼
+ Helpers visuales seguros (core/ui.js)
+          │
+          ▼
+ Controladores de página (pages/)
+```
+
+## Estructura
+
+```text
 assets/js/
-├── config/logos.js          # rutas, alias y estado de torneos
-├── data/sports-data.js      # catálogo y partidos semilla
+├── config/logos.js
+├── data/sports-data.js
 ├── core/
-│   ├── state.js             # modelo, almacenamiento versionado y estadísticas
-│   ├── ui.js                # tema, logos, banderas y helpers compartidos
-│   └── backup.js            # importar/exportar JSON
+│   ├── state.js
+│   ├── ui.js
+│   └── backup.js
+├── services/
+│   ├── match-service.js
+│   ├── statistics-service.js
+│   └── logo-service.js
 └── pages/
-    ├── dashboard.js         # controlador exclusivo del resumen
-    └── partidos.js          # controlador exclusivo de la bitácora
+    ├── dashboard.js
+    └── partidos.js
 ```
 
-```mermaid
-flowchart LR
-  D[sports-data.js] --> S[state.js]
-  C[logos.js] --> U[ui.js]
-  S --> A[dashboard.js]
-  S --> B[partidos.js]
-  U --> A
-  U --> B
-  A --> LS[(localStorage v2)]
-  B --> LS
-  LS --> J[Exportar / importar JSON]
+## Fuente de verdad
+
+- Los partidos históricos viven en `assets/js/data/sports-data.js` como `SEED_MATCHES`.
+- Los partidos capturados por el usuario se guardan en `localStorage`.
+- Al iniciar, el sistema siempre carga los partidos históricos y después agrega los registros manuales.
+- El seguimiento semanal se calcula dinámicamente desde `matches`; no existe un arreglo semanal independiente.
+
+## Finales y títulos
+
+Un partido se considera decisivo únicamente cuando contiene:
+
+```js
+titleDecision: true
 ```
 
-## Mejoras de esta versión
+No se usan prefijos ni listas de IDs hardcodeadas. El resultado del torneo puede indicarse con `titleStatus: "ganado" | "perdido" | "eliminado"`.
 
-- La lógica compartida ya no está duplicada entre páginas.
-- El seguimiento semanal se calcula desde `matches`; no existe `EXCEL_WEEKS` hardcodeado.
-- Almacenamiento con `schemaVersion: 2` y migración de claves anteriores.
-- Botones de **Exportar JSON** e **Importar JSON** para respaldar la bitácora.
-- Función central `escapeHtml()` para valores dinámicos.
-- CSS común en `base.css`; cada página conserva únicamente sus ajustes específicos.
-- Un solo `<!DOCTYPE html>` por página.
+## Seguridad de la vista
 
-## Flujo de datos
-
-1. `sports-data.js` proporciona los partidos iniciales.
-2. `state.js` carga esos datos y combina altas manuales guardadas.
-3. Las estadísticas generales y semanales se recalculan desde la bitácora actual.
-4. Al agregar o eliminar un partido se actualiza `localStorage`.
-5. Exportar JSON genera un respaldo con partidos, estados de torneos y versión del esquema.
+Los valores dinámicos procedentes de la bitácora se insertan usando `escapeHtml()` o `textContent`. Los helpers de logos ya no reemplazan `innerHTML` desde eventos `onerror`; muestran un fallback ya presente en el DOM.
 
 ## Respaldo
 
-Use **Exportar JSON** antes de limpiar el navegador o cambiar de dispositivo. Para restaurar, pulse **Importar JSON** y seleccione ese archivo.
+La exportación genera un JSON con `schemaVersion`, fecha, partidos y estados de torneos. La importación valida los registros antes de persistirlos. Esto evita depender exclusivamente del navegador actual.
 
-## Logos y alias
+## Ejecutar
 
-Los nombres de la bitácora se normalizan con minúsculas, sin acentos y guiones bajos. Los alias manuales en `assets/js/config/logos.js` tienen prioridad; si no hay alias se intenta automáticamente:
-
-```text
-logos/rivales/<nombre_normalizado>.png
-```
-
-Ejemplo: `Atlético de Madrid` → `logos/rivales/atletico_de_madrid.png`.
-
-## GitHub Pages
-
-1. Suba todo el contenido a la rama publicada.
-2. Abra **Settings → Pages**.
-3. Seleccione **Deploy from a branch** y la carpeta raíz `/`.
-4. No abra los HTML con `file://`; use GitHub Pages o un servidor local.
-
-Servidor local opcional:
+Para evitar restricciones de `file://`, abre el proyecto mediante un servidor local:
 
 ```bash
 python -m http.server 8000
 ```
 
-## Validación rápida
+Después visita `http://localhost:8000`.
+
+## Publicar en GitHub Pages
+
+1. Sube el contenido a la rama publicada.
+2. En **Settings → Pages**, selecciona la rama y la carpeta raíz.
+3. Verifica que las rutas de logos respeten mayúsculas y minúsculas.
+
+## Verificación rápida
 
 ```bash
 node --check assets/js/core/state.js
@@ -83,12 +89,3 @@ node --check assets/js/core/ui.js
 node --check assets/js/pages/dashboard.js
 node --check assets/js/pages/partidos.js
 ```
-
-
-## Seguridad de renderizado
-
-Los valores dinámicos capturados en la bitácora (rival, torneo, fase, sede y nombres visibles) se procesan con `SportsCore.escapeHtml()` antes de insertarse mediante plantillas HTML. Los fallbacks de imágenes ya no escriben HTML dinámico desde `onerror`; muestran elementos hermanos pre-renderizados.
-
-## Detección de partidos por título
-
-La detección ya no depende de prefijos de identificadores hardcodeados. Un partido se considera decisivo para un título únicamente mediante el campo explícito `titleDecision: true`, evitando tener que actualizar una lista cada vez que se agregan nuevas finales.

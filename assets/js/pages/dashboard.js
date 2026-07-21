@@ -1,5 +1,3 @@
-const escapeHtml = window.SportsCore?.escapeHtml || ((value='') => String(value));
-const escapeAttr = escapeHtml;
 
 
 function renderScoreboard(){
@@ -23,7 +21,7 @@ function renderChips(){
   let html = `<div class="chip ${activeTeamFilter==='all'?'active':''}" data-team="all"><span class="dot" style="background:var(--accent)"></span>Todos (fútbol)</div>`;
   futbolTeamIds.forEach(id=>{
     const t = TEAMS[id];
-    html += `<div class="chip ${activeTeamFilter===id?'active':''}" data-team="${id}"><span class="dot" style="background:${escapeAttr(t.color)}"></span>${escapeHtml(t.name)}</div>`;
+    html += `<div class="chip ${activeTeamFilter===id?'active':''}" data-team="${id}"><span class="dot" style="background:${t.color}"></span>${escapeHtml(t.name)}</div>`;
   });
   el.innerHTML = html;
   el.querySelectorAll('.chip').forEach(chip=>{
@@ -36,15 +34,14 @@ function renderChips(){
 
 
 function rivalLogoOnlyHtml(name){
-  const safeName = escapeHtml(name);
-  const safeInitials = escapeHtml(initials(name));
-  const logo = resolveRivalLogo(name);
+  const logo=resolveRivalLogo(name);
+  const safeName=escapeAttribute(name||'—');
+  const fallback=escapeHtml(initials(name));
   if(logo){
-    return `<span class="rival-logo"><img src="${escapeAttr(logo)}" alt="${safeName}" onerror="this.hidden=true;this.nextElementSibling.hidden=false"><span class="rival-fallback" hidden>${safeInitials}</span></span>`;
+    return `<span class="rival-logo"><img src="${escapeAttribute(logo)}" alt="${safeName}" onerror="this.hidden=true;this.nextElementSibling.hidden=false"><span class="rival-fallback" hidden>${fallback}</span></span>`;
   }
-  return `<span class="rival-logo"><span class="rival-fallback">${safeInitials}</span></span>`;
+  return `<span class="rival-logo"><span class="rival-fallback">${fallback}</span></span>`;
 }
-
 
 
 
@@ -79,7 +76,7 @@ function tournamentBg(tt){
   return resolveTournamentLogo(tt.name||'');
 }
 
-function isTitleMatchRecord(m){ return Boolean(m.titleDecision); }
+function isTitleMatchRecord(m){ return Boolean(m?.titleDecision); }
 function isRunnerUp(m){ return m.resultado==='Perdido' && /gran final/i.test(m.fase||''); }
 function isWonTitle(m){ return m.resultado==='Ganado' && (m.titleWon || m.titleStatus==='ganado'); }
 function titleCountsForTeam(teamId){
@@ -112,12 +109,12 @@ function renderTitles(){
     return `<article class="achievement-card ${isWonTitle(m)?'won':'lost'}">
       <span class="achievement-status">${titleStatusText(m)}</span>
       <div class="achievement-name">${escapeHtml(m.torneo)}</div>
-      <div class="achievement-logo">${teamLogo?`<img src="${teamLogo}" alt="${escapeAttr(t.name)}">`:'🏆'}</div>
+      <div class="achievement-logo">${teamLogo?`<img src="${teamLogo}" alt="${t.name}">`:'🏆'}</div>
       <div class="achievement-team">${escapeHtml(t.name)}</div>
       <div class="achievement-opponent"><span class="achievement-rival-logo">${rivalLogoHtml(rival)}</span><span>${escapeHtml(outcome)}</span></div>
       <div class="achievement-final">${escapeHtml(m.fase||'—')}<div class="achievement-score">${formatMatchScore(m)}</div>${m.dia} ${MONTHS[m.mes]}</div>
       <span class="ball-watermark" aria-hidden="true">⚽</span>
-      ${comp?`<img class="competition-logo-corner" src="${comp}" alt="${escapeAttr(m.torneo)}" onerror="this.style.display='none'">`:''}
+      ${comp?`<img class="competition-logo-corner" src="${escapeAttribute(comp)}" alt="${escapeAttribute(m.torneo)}" onerror="this.style.display='none'">`:''}
     </article>`;
   }).join('');
   const won=sorted.filter(isWonTitle).length;
@@ -205,7 +202,7 @@ function populateCompetitionFilter(){
   const sel=document.getElementById('competitionFilter');
   const current=sel.value || 'all';
   const names=[...new Set(matches.filter(m=>TEAMS[m.team]?.sport==='futbol').map(m=>m.torneo).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'es'));
-  sel.innerHTML='<option value="all">Todas las competiciones</option>'+names.map(n=>`<option value="${escapeAttr(n)}">${escapeHtml(n)}</option>`).join('');
+  sel.innerHTML='<option value="all">Todas las competiciones</option>'+names.map(n=>`<option value="${escapeAttribute(n)}">${escapeHtml(n)}</option>`).join('');
   sel.value=names.includes(current)?current:'all';
 }
 
@@ -239,7 +236,7 @@ function isDomesticMatch(m){
   if(String(m.scope||m.alcance||'').toUpperCase()==='INTERNACIONAL') return false;
   return DOMESTIC_TOURNAMENTS.some(rx=>rx.test(m.torneo||''));
 }
-function originHtml(origin,m){ return isDomesticMatch(m)?'':`<small>${escapeHtml(origin||'—')}</small>`; }
+function originHtml(origin,m){ return isDomesticMatch(m)?'':`<small>${origin||'—'}</small>`; }
 function teamCellHtml(name,origin,m,teamId){
   const isFollowed=name===TEAMS[teamId]?.name;
   const logo=isFollowed?miniLogoHtml(teamId):rivalLogoOnlyHtml(name);
@@ -254,8 +251,8 @@ function renderMatchTable(){
  if(!rows.length){body.innerHTML='<tr class="empty-row"><td colspan="8">No hay partidos con estos filtros.</td></tr>';document.getElementById('matchTableCount').textContent='';document.getElementById('verMasBtn').classList.add('hidden');return;}
  const visible=rows.slice(0,matchTableVisible);document.getElementById('matchTableCount').textContent=`Mostrando ${visible.length} de ${rows.length} partidos`;document.getElementById('verMasBtn').classList.toggle('hidden',visible.length>=rows.length);
  body.innerHTML=visible.map(m=>`<tr class="ledger-row">
- <td><span class="followed-team-dot" style="--team-color:${escapeAttr(TEAMS[m.team]?.color||'#999')}" title="${escapeAttr(TEAMS[m.team]?.name||'')}"></span></td>
- <td class="mono ledger-date">${escapeHtml(m.dia||'—')} ${escapeHtml(MONTHS[m.mes]||'')}</td>
+ <td><span class="followed-team-dot" style="--team-color:${TEAMS[m.team]?.color||'#999'}" title="${escapeAttribute(TEAMS[m.team]?.name||'')}"></span></td>
+ <td class="mono ledger-date">${m.dia||'—'} ${MONTHS[m.mes]||''}</td>
  <td>${teamCellHtml(m.localName,m.originLocal,m,m.team)}</td>
  <td class="score-cell">${scoreDisplay(m)}</td>
  <td>${teamCellHtml(m.visitName,m.originVisit,m,m.team)}</td>
@@ -270,13 +267,13 @@ function renderNflTable(){
   body.innerHTML=rows.map(m=>{
     const isAway=m.venueSide==='away';
     const rivalOrigin=isAway?(m.originLocal||'—'):(m.originVisit||'—');
-    return `<tr><td>${miniLogoHtml(m.team)}</td><td class="mono">${m.dia} ${MONTHS[m.mes]}</td><td><div class="nfl-rival">${rivalLogoHtml(m.rival)}<small class="origin-note">${escapeHtml(rivalOrigin)}</small></div></td><td class="${venueLabel(m)==='—'?'muted':''}">${escapeHtml(venueLabel(m))}</td><td>${escapeHtml(m.torneo)}${m.fase?' · '+escapeHtml(m.fase):''}</td><td class="mono">${formatMatchScore(m)}</td><td><span class="res-tag ${resClass(m.resultado)}">${resLabel(m.resultado)}</span></td></tr>`;
+    return `<tr><td>${miniLogoHtml(m.team)}</td><td class="mono">${m.dia} ${MONTHS[m.mes]}</td><td><div class="nfl-rival">${rivalLogoHtml(m.rival)}<small class="origin-note">${rivalOrigin}</small></div></td><td class="${venueLabel(m)==='—'?'muted':''}">${escapeHtml(venueLabel(m))}</td><td>${escapeHtml(m.torneo)}${m.fase?' · '+escapeHtml(m.fase):''}</td><td class="mono">${formatMatchScore(m)}</td><td><span class="res-tag ${resClass(m.resultado)}">${resLabel(m.resultado)}</span></td></tr>`;
   }).join('');
 }
 
 function fillTeamSelect(){
   const sel = document.getElementById('f_team');
-  sel.innerHTML = Object.entries(TEAMS).map(([id,t])=>`<option value="${escapeAttr(id)}">${escapeHtml(t.name)}${t.sport==='nfl'?' (NFL)':''}</option>`).join('');
+  sel.innerHTML = Object.entries(TEAMS).map(([id,t])=>`<option value="${escapeAttribute(id)}">${escapeHtml(t.name)}${t.sport==='nfl'?' (NFL)':''}</option>`).join('');
   sel.addEventListener('change', updateFieldLabels);
   updateFieldLabels();
 }
@@ -288,7 +285,7 @@ function updateFieldLabels(){
 
   const datalist = document.getElementById('torneoOptions');
   const known = TOURNAMENTS_CONFIG[team] || [];
-  datalist.innerHTML = known.map(t=>`<option value="${escapeAttr(t.name)}"></option>`).join('');
+  datalist.innerHTML = known.map(t=>`<option value="${escapeAttribute(t.name)}"></option>`).join('');
 }
 
 function updateResultPreview(){
@@ -311,13 +308,14 @@ function renderRecentTable(){
   }
   body.innerHTML = recent.map(m=>{
     const t = TEAMS[m.team];
+    const isAway=m.venueSide==='away';
     return `<tr>
       <td class="mono">${m.dia} ${MONTHS[m.mes]}</td>
-      <td><span class="match-team-name"><span class="match-team-dot" style="background:${escapeAttr(t.accent||t.color)}"></span><span>${escapeHtml(t.name)}</span></span></td>
+      <td><span class="match-team-name"><span class="match-team-dot" style="background:${t.accent||t.color}"></span><span>${escapeHtml(t.name)}</span></span></td>
       <td>${rivalLogoHtml(m.rival)}</td>
       <td class="mono">${isAway?m.gc:m.gf} - ${isAway?m.gf:m.gc}</td>
       <td><span class="res-tag ${resClass(m.resultado)}">${resLabel(m.resultado)}</span></td>
-      <td><button class="del-btn" data-id="${escapeAttr(m.id)}">Eliminar</button></td>
+      <td><button class="del-btn" data-id="${escapeAttribute(m.id)}">Eliminar</button></td>
     </tr>`;
   }).join('');
   body.querySelectorAll('.del-btn').forEach(btn=>{
@@ -383,7 +381,7 @@ function renderGeneralStats(){
     ['GF',gf,'Goles a favor'],['GC',gc,'Goles en contra'],['DG',`${gf-gc>=0?'+':''}${gf-gc}`,'Diferencia de goles'],
     ['%',`${pj?(pg/pj*100).toFixed(1):'0.0'}%`,'Porcentaje de victorias'],['G/P',pj?(gf/pj).toFixed(2):'0.00','Goles por partido']
   ];
-  el.innerHTML=items.map(([i,v,label,tone=''])=>`<button class="general-stat ${tone}" type="button" aria-label="${escapeAttr(label)}: ${escapeAttr(v)}" data-tooltip="${escapeAttr(label)}"><span>${i}</span><strong>${v}</strong></button>`).join('');
+  el.innerHTML=items.map(([i,v,label,tone=''])=>`<button class="general-stat ${tone}" type="button" aria-label="${label}: ${v}" data-tooltip="${label}"><span>${i}</span><strong>${v}</strong></button>`).join('');
 }
 function renderExtraStats(){
   const football=matches.filter(m=>TEAMS[m.team]?.sport==='futbol');
