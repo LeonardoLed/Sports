@@ -153,8 +153,54 @@ bilbao: 'logos/rivales/abilbao.png',
 'Barca': 'logos/rivales/fcbarcelona.png',
 fc_barcelona: 'logos/rivales/fcbarcelona.png',
 barcelona: 'logos/rivales/fcbarcelona.png',
-barca: 'logos/rivales/fcbarcelona.png'
-  
+barca: 'logos/rivales/fcbarcelona.png',
+
+  "Albacete": "albacete.png",
+  "Albacete Balompié": "albacete.png",
+
+  "Real Betis": "real_betis.png",
+  "Betis": "real_betis.png",
+  "Real Betis Balompié": "real_betis.png",
+
+  "Alavés": "alaves.png",
+  "Deportivo Alavés": "alaves.png",
+
+  "Girona": "girona.png",
+  "Girona FC": "girona.png",
+
+  "Elche": "elche.png",
+  "Elche CF": "elche.png",
+
+  "Mallorca": "mallorca.png",
+  "RCD Mallorca": "mallorca.png",
+  "Real Mallorca": "mallorca.png",
+
+  "Celta": "celta_vigo.png",
+  "Celta de Vigo": "celta_vigo.png",
+  "RC Celta": "celta_vigo.png",
+  "RC Celta de Vigo": "celta_vigo.png",
+
+  "Getafe": "getafe.png",
+  "Getafe CF": "getafe.png",
+
+  "Osasuna": "osasuna.png",
+  "CA Osasuna": "osasuna.png",
+
+  "Real Sociedad": "real_sociedad.png",
+  "Real Sociedad de Fútbol": "real_sociedad.png",
+
+  "Valencia": "valencia.png",
+  "Valencia CF": "valencia.png",
+
+  "Villarreal": "villareal.png",
+  "Villarreal CF": "villareal.png",
+
+  "Rayo Vallecano": "rayo_vallecano.png",
+  "Rayo Vallecano de Madrid": "rayo_vallecano.png",
+  "Rayo": "rayo_vallecano.png",
+
+  "Levante": "levante.png",
+  "Levante UD": "levante.png"
 };
 
 /* =====================================================================
