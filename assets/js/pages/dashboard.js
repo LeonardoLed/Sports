@@ -77,13 +77,6 @@ function tournamentBg(tt){
   return resolveTournamentLogo(tt.name||'');
 }
 
-function isTitleMatchRecord(m){ return Boolean(m.titleDecision); }
-function isRunnerUp(m){ return m.resultado==='Perdido' && /gran final/i.test(m.fase||''); }
-function isWonTitle(m){ return m.resultado==='Ganado' && (m.titleWon || m.titleStatus==='ganado'); }
-function titleCountsForTeam(teamId){
-  const rows=matches.filter(m=>m.team===teamId && isTitleMatchRecord(m));
-  return {titles:rows.filter(isWonTitle).length,runners:rows.filter(isRunnerUp).length};
-}
 function tournamentLogoFor(name){
   const map=window.TOURNAMENT_LOGOS||{};
   return map[name] || (/^UEFA Champions League/i.test(name)?'logos/torneos/champions_league.png':resolveTournamentLogo(name));
@@ -167,7 +160,7 @@ function renderWeekly(){
       yCursor -= segH;
       if(seg.n>0) bars += `<rect x="${x}" y="${yCursor}" width="${barW}" height="${segH}" fill="${seg.color}"/>`;
     });
-    bars += `<text x="${x+barW/2}" y="${padT+chartH+18}" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#a39a86">S${wk.week}</text>`;
+    bars += `<text x="${x+barW/2}" y="${padT+chartH+18}" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#a39a86">${escapeHtml(wk.shortLabel)}</text>`;
     const lineY = padT + chartH - (wk.pct/100)*chartH;
     linePts.push([x+barW/2, lineY]);
   });
@@ -189,7 +182,7 @@ function renderWeekly(){
 
   body.innerHTML = detailWeeks.map(wk=>`
     <tr>
-      <td class="mono">Semana ${wk.week}</td>
+      <td class="mono">${escapeHtml(wk.label)}${wk.isAuto?' <span title="Esta semana aún no está definida manualmente" style="color:var(--loss)">&#9888;</span>':''}</td>
       <td>${wk.rangeLabel}</td>
       <td class="mono">${wk.pj}</td>
       <td class="mono" style="color:var(--win)">${wk.g}</td>

@@ -31,12 +31,46 @@ const TEAM_FLAG = {
   cowboys: FLAG_SVG.us,
 };
 
-const STORAGE_SCHEMA_VERSION = 2;
+const STORAGE_SCHEMA_VERSION = 3;
 const STORAGE_KEY = 'ratiosports:data:v2';
 const LEGACY_STORAGE_KEYS = ['ratiosports_matches_v13_fixed','ratiosports_matches_v5_excel'];
 const TITLES_STORAGE_KEY = 'ratiosports_title_status_v1';
 const MONTHS = ['','Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
 const CUM_DAYS = [0,31,59,90,120,151,181,212,243,273,304,334];
+
+/* =========================================================
+   SEMANAS DEPORTIVAS — no son semanas de calendario de 7 días.
+   Son rangos de fechas irregulares definidos a mano (igual que en
+   el Excel fuente: RatioSports.xlsx), agrupando partidos entre
+   pausas/fechas FIFA/descansos reales, no cada 7 días exactos.
+   Esta lista es el punto de partida (extraída del Excel) y es
+   100% editable desde la pestaña "Semanas" en partidos.html —
+   se puede agregar, editar o borrar una semana en cualquier momento.
+   ========================================================= */
+const DEFAULT_WEEK_DEFS = [
+  {id:"w1", label:"Semana 1", startDay:1, startMonth:1, endDay:11, endMonth:1},
+  {id:"w2", label:"Semana 2", startDay:12, startMonth:1, endDay:18, endMonth:1},
+  {id:"w3", label:"Semana 3", startDay:19, startMonth:1, endDay:31, endMonth:1},
+  {id:"w4", label:"Semana 4", startDay:1, startMonth:2, endDay:8, endMonth:2},
+  {id:"w5", label:"Semana 5", startDay:9, startMonth:2, endDay:15, endMonth:2},
+  {id:"w6", label:"Semana 6", startDay:16, startMonth:2, endDay:22, endMonth:2},
+  {id:"w7", label:"Semana 7", startDay:23, startMonth:2, endDay:28, endMonth:2},
+  {id:"w8", label:"Semana 8", startDay:1, startMonth:3, endDay:8, endMonth:3},
+  {id:"w9", label:"Semana 9", startDay:9, startMonth:3, endDay:15, endMonth:3},
+  {id:"w10", label:"Semana 10", startDay:16, startMonth:3, endDay:22, endMonth:3},
+  {id:"w11", label:"Semana 11", startDay:23, startMonth:3, endDay:31, endMonth:3},
+  {id:"w12", label:"Semana 12", startDay:1, startMonth:4, endDay:12, endMonth:4},
+  {id:"w13", label:"Semana 13", startDay:13, startMonth:4, endDay:19, endMonth:4},
+  {id:"w14", label:"Semana 14", startDay:20, startMonth:4, endDay:30, endMonth:4},
+  {id:"w15", label:"Semana 15", startDay:1, startMonth:5, endDay:10, endMonth:5},
+  {id:"w16", label:"Semana 16", startDay:11, startMonth:5, endDay:17, endMonth:5},
+  {id:"w17", label:"Semana 17", startDay:18, startMonth:5, endDay:31, endMonth:5},
+  {id:"w18", label:"Semana 18", startDay:1, startMonth:6, endDay:14, endMonth:6},
+  {id:"w19", label:"Semana 19", startDay:15, startMonth:6, endDay:21, endMonth:6},
+  {id:"w20", label:"Semana 20", startDay:22, startMonth:6, endDay:31, endMonth:6},
+  {id:"w21", label:"Semana 21", startDay:1, startMonth:7, endDay:19, endMonth:7},
+  {id:"w22", label:"Semana 22", startDay:20, startMonth:7, endDay:31, endMonth:7},
+];
 
 /* =========================================================
    DATA LAYER — nothing here touches the DOM.
@@ -54,6 +88,7 @@ const CUM_DAYS = [0,31,59,90,120,151,181,212,243,273,304,334];
    ========================================================= */
 let matches = [];
 let titleOverrides = {};
+let weekDefs = [];
 let activeTeamFilter = 'all';
 const PAGE_SIZE = 15;
 const WEEK_PAGE_SIZE = 5;
@@ -101,13 +136,21 @@ function normalizedMatch(raw, seed){
 }
 
 function storageEnvelope(){
-  return { schemaVersion:STORAGE_SCHEMA_VERSION, updatedAt:new Date().toISOString(), matches, titleOverrides };
+  return { schemaVersion:STORAGE_SCHEMA_VERSION, updatedAt:new Date().toISOString(), matches, titleOverrides, weekDefs };
 }
 function migrateStoredData(raw){
-  if(Array.isArray(raw)) return {schemaVersion:1,matches:raw,titleOverrides:{}};
-  if(!raw || typeof raw!=='object') return {schemaVersion:STORAGE_SCHEMA_VERSION,matches:[],titleOverrides:{}};
-  if(raw.schemaVersion===STORAGE_SCHEMA_VERSION) return raw;
-  return {schemaVersion:STORAGE_SCHEMA_VERSION,matches:Array.isArray(raw.matches)?raw.matches:[],titleOverrides:raw.titleOverrides||{}};
+  if(Array.isArray(raw)) return {schemaVersion:1,matches:raw,titleOverrides:{},weekDefs:DEFAULT_WEEK_DEFS.map(w=>({...w}))};
+  if(!raw || typeof raw!=='object') return {schemaVersion:STORAGE_SCHEMA_VERSION,matches:[],titleOverrides:{},weekDefs:DEFAULT_WEEK_DEFS.map(w=>({...w}))};
+  if(raw.schemaVersion===STORAGE_SCHEMA_VERSION && Array.isArray(raw.weekDefs)) return raw;
+  return {
+    schemaVersion:STORAGE_SCHEMA_VERSION,
+    matches:Array.isArray(raw.matches)?raw.matches:[],
+    titleOverrides:raw.titleOverrides||{},
+    // Si venimos de un esquema viejo (v2) que no tenía semanas deportivas,
+    // sembramos las semanas por default extraídas del Excel — así nadie
+    // pierde su bitácora al actualizar, solo se agregan las semanas.
+    weekDefs:Array.isArray(raw.weekDefs) && raw.weekDefs.length ? raw.weekDefs : DEFAULT_WEEK_DEFS.map(w=>({...w})),
+  };
 }
 function validateMatch(m){
   return !!m && typeof m==='object' && typeof m.team==='string' && Number.isFinite(Number(m.mes)) && Number.isFinite(Number(m.dia));
@@ -129,6 +172,7 @@ async function loadMatches(){
   const manual=storedMatches.filter(m=>m.userAdded && !seedMap[m.id]).map(m=>normalizedMatch(m,null));
   matches=SEED_MATCHES.map(m=>normalizedMatch(m,m)).concat(manual);
   titleOverrides=saved?.titleOverrides||{};
+  weekDefs=(saved?.weekDefs && saved.weekDefs.length) ? saved.weekDefs : DEFAULT_WEEK_DEFS.map(w=>({...w}));
   await persist();
 }
 async function persist(){
@@ -152,7 +196,9 @@ function exportLedger(){
 async function importLedgerFile(file){
   const parsed=migrateStoredData(JSON.parse(await file.text()));
   if(!Array.isArray(parsed.matches) || !parsed.matches.every(validateMatch)) throw new Error('El archivo no contiene una bitácora válida.');
-  matches=parsed.matches.map(m=>normalizedMatch(m,null)); titleOverrides=parsed.titleOverrides||{}; await persist();
+  matches=parsed.matches.map(m=>normalizedMatch(m,null)); titleOverrides=parsed.titleOverrides||{};
+  weekDefs=(parsed.weekDefs && parsed.weekDefs.length) ? parsed.weekDefs : DEFAULT_WEEK_DEFS.map(w=>({...w}));
+  await persist();
 }
 // Junta el status por default (logos-config.js) con lo que el usuario
 // haya capturado desde el formulario (titleOverrides), y agrega
@@ -206,6 +252,70 @@ function venueLabel(m){
   return '—';
 }
 
+function isTitleMatchRecord(m){ return Boolean(m.titleDecision); }
+function isRunnerUp(m){ return m.resultado==='Perdido' && /gran final/i.test(m.fase||''); }
+function isWonTitle(m){ return m.resultado==='Ganado' && (m.titleWon || m.titleStatus==='ganado'); }
+function titleCountsForTeam(teamId){
+  const rows=matches.filter(m=>m.team===teamId && isTitleMatchRecord(m));
+  return {titles:rows.filter(isWonTitle).length,runners:rows.filter(isRunnerUp).length};
+}
+
+/* =========================================================
+   CRUD de semanas deportivas — usado por el mini-módulo de
+   administración en partidos.js (pestaña "Semanas"). Cada semana
+   es un rango [startMonth/startDay .. endMonth/endDay] que se
+   compara contra la fecha de cada partido usando dayOfYear(), así
+   que puede tener cualquier longitud (no necesariamente 7 días) e
+   incluso cruzar de un mes a otro.
+   ========================================================= */
+function weekDefRange(w){
+  return { start: dayOfYear(w.startMonth,w.startDay), end: dayOfYear(w.endMonth,w.endDay) };
+}
+function sortedWeekDefs(){
+  return weekDefs.slice().sort((a,b)=>weekDefRange(a).start - weekDefRange(b).start);
+}
+function findWeekDef(mes,dia){
+  const doy = dayOfYear(mes,dia);
+  return weekDefs.find(w=>{ const r=weekDefRange(w); return doy>=r.start && doy<=r.end; }) || null;
+}
+// Semanas ya existentes que se traslaparían con este rango (para avisar
+// en la UI antes de guardar, sin bloquear — el usuario puede tener un
+// motivo válido para traslapar, p.ej. corrigiendo un rango previo).
+function overlappingWeekDefs(def, excludeId){
+  const {start,end} = weekDefRange(def);
+  return weekDefs.filter(w=>{
+    if(w.id===excludeId) return false;
+    const r=weekDefRange(w);
+    return start<=r.end && end>=r.start;
+  });
+}
+async function addWeekDef(def){
+  const id = 'w_'+Date.now().toString(36)+Math.random().toString(36).slice(2,5);
+  weekDefs.push({id, label:def.label, startDay:Number(def.startDay), startMonth:Number(def.startMonth), endDay:Number(def.endDay), endMonth:Number(def.endMonth)});
+  await persist();
+  return id;
+}
+async function updateWeekDef(id, changes){
+  const w = weekDefs.find(x=>x.id===id);
+  if(!w) return;
+  if(changes.label!==undefined) w.label=changes.label;
+  if(changes.startDay!==undefined) w.startDay=Number(changes.startDay);
+  if(changes.startMonth!==undefined) w.startMonth=Number(changes.startMonth);
+  if(changes.endDay!==undefined) w.endDay=Number(changes.endDay);
+  if(changes.endMonth!==undefined) w.endMonth=Number(changes.endMonth);
+  await persist();
+}
+async function deleteWeekDef(id){
+  weekDefs = weekDefs.filter(w=>w.id!==id);
+  await persist();
+}
+async function resetWeekDefsToDefault(){
+  weekDefs = DEFAULT_WEEK_DEFS.map(w=>({...w}));
+  await persist();
+}
+function weekRangeLabel(w){ const r=weekDefRange(w); return fmtDayRange(r.start,r.end); }
+function shortWeekLabel(label){ const m=/(\d+)/.exec(label||''); return m ? 'S'+m[1] : String(label||'?').slice(0,3).toUpperCase(); }
+
 function statsForTeam(teamId){
   const rows = matches.filter(m=>m.team===teamId);
   const s = {pj:0,pg:0,pe:0,pp:0,gf:0,gc:0};
@@ -222,21 +332,30 @@ function statsForTeam(teamId){
 }
 
 function buildWeeklyData(){
-  const byWeek = {};
+  const byKey = {};
   matches.forEach(m=>{
-    const wk = weekOfYear(m.mes, m.dia);
-    if(!byWeek[wk]) byWeek[wk] = {week:wk, matches:[], g:0, e:0, p:0};
-    const bucket = byWeek[wk];
+    const def = findWeekDef(m.mes, m.dia);
+    // Si el partido no cae en ninguna semana definida (p.ej. porque aún
+    // no se ha dado de alta esa semana), lo agrupamos con la vieja
+    // fórmula de calendario como respaldo temporal y lo marcamos como
+    // "isAuto" para que la UI avise que esa semana falta por definir.
+    const key = def ? def.id : `auto_${weekOfYear(m.mes,m.dia)}`;
+    if(!byKey[key]){
+      byKey[key] = { key, def, label: def ? def.label : `Semana ${weekOfYear(m.mes,m.dia)} (sin definir)`, matches:[], g:0, e:0, p:0 };
+    }
+    const bucket = byKey[key];
     bucket.matches.push(m);
     if(m.resultado === 'Ganado') bucket.g++;
     else if(m.resultado === 'Perdido') bucket.p++;
     else bucket.e++;
   });
-  return Object.values(byWeek).sort((a,b)=>a.week-b.week).map(w=>{
-    const days=w.matches.map(m=>dayOfYear(m.mes,m.dia));
-    const pj=w.matches.length;
-    return {...w,pj,pct:pj?Math.round((w.g/pj)*100):0,rangeLabel:fmtDayRange(Math.min(...days),Math.max(...days))};
-  });
+  return Object.values(byKey).map(w=>{
+    const days = w.matches.map(m=>dayOfYear(m.mes,m.dia));
+    const pj = w.matches.length;
+    const rangeLabel = w.def ? weekRangeLabel(w.def) : fmtDayRange(Math.min(...days), Math.max(...days));
+    const sortKey = w.def ? weekDefRange(w.def).start : Math.min(...days);
+    return {...w, pj, pct:pj?Math.round((w.g/pj)*100):0, rangeLabel, shortLabel:shortWeekLabel(w.label), isAuto:!w.def, sortKey};
+  }).sort((a,b)=>a.sortKey-b.sortKey);
 }
 function smoothPath(pts){
   if(pts.length < 2) return '';

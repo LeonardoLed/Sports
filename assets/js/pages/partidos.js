@@ -126,7 +126,7 @@ function renderWeekly(){
       yCursor -= segH;
       if(seg.n>0) bars += `<rect x="${x}" y="${yCursor}" width="${barW}" height="${segH}" fill="${seg.color}"/>`;
     });
-    bars += `<text x="${x+barW/2}" y="${padT+chartH+18}" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#a39a86">S${wk.week}</text>`;
+    bars += `<text x="${x+barW/2}" y="${padT+chartH+18}" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#a39a86">${escapeHtml(wk.shortLabel)}</text>`;
     const lineY = padT + chartH - (wk.pct/100)*chartH;
     linePts.push([x+barW/2, lineY]);
   });
@@ -148,7 +148,7 @@ function renderWeekly(){
 
   body.innerHTML = detailWeeks.map(wk=>`
     <tr>
-      <td class="mono">Semana ${wk.week}</td>
+      <td class="mono">${escapeHtml(wk.label)}${wk.isAuto?' <span title="Esta semana aún no está definida manualmente" style="color:var(--loss)">&#9888;</span>':''}</td>
       <td>${wk.rangeLabel}</td>
       <td class="mono">${wk.pj}</td>
       <td class="mono" style="color:var(--win)">${wk.g}</td>
@@ -350,6 +350,7 @@ function renderAll(){
   renderTeamCards();
   renderTitles();
   renderWeekly();
+  renderWeeksAdmin();
   renderMatchTable();
   renderNflTable();
   renderRecentTable();
@@ -384,6 +385,7 @@ async function init(){
   document.getElementById('f_gc').addEventListener('input', updateResultPreview);
   document.getElementById('addBtn').addEventListener('click', handleAdd);
   document.getElementById('clearBtn').addEventListener('click', clearForm);
+  initWeeksAdmin();
   document.getElementById('f_esTitulo').addEventListener('change', (e)=>{
     document.getElementById('f_tituloResultado').classList.toggle('hidden', !e.target.checked);
   });

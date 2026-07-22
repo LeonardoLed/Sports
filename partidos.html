@@ -199,6 +199,56 @@
 </div>
 </div>
 </div>
+
+<!-- ============ MINI-MÓDULO: SEMANAS DEPORTIVAS ============ -->
+<div class="panel" id="weeksAdminPanel">
+<h2>Semanas deportivas</h2>
+<p class="sub">No son semanas de calendario de 7 días — son los rangos de fechas reales que uses para agrupar partidos (igual que en tu Excel). Da de alta, edita o borra los rangos aquí; los partidos se agrupan solos según en qué rango caiga su fecha.</p>
+
+<div class="form-grid">
+<div class="field span2">
+<label>Nombre de la semana</label>
+<input id="wk_label" placeholder="Ej. Semana 23" type="text"/>
+</div>
+<div class="field">
+<label>Día inicio</label>
+<input id="wk_diaIni" max="31" min="1" placeholder="1" type="number"/>
+</div>
+<div class="field">
+<label>Mes inicio</label>
+<select id="wk_mesIni">
+<option value="1">Enero</option><option value="2">Febrero</option><option value="3">Marzo</option>
+<option value="4">Abril</option><option value="5">Mayo</option><option value="6">Junio</option>
+<option value="7">Julio</option><option value="8">Agosto</option><option value="9">Septiembre</option>
+<option value="10">Octubre</option><option value="11">Noviembre</option><option value="12">Diciembre</option>
+</select>
+</div>
+<div class="field">
+<label>Día fin</label>
+<input id="wk_diaFin" max="31" min="1" placeholder="19" type="number"/>
+</div>
+<div class="field">
+<label>Mes fin</label>
+<select id="wk_mesFin">
+<option value="1">Enero</option><option value="2">Febrero</option><option value="3">Marzo</option>
+<option value="4">Abril</option><option value="5">Mayo</option><option value="6">Junio</option>
+<option value="7">Julio</option><option value="8">Agosto</option><option value="9">Septiembre</option>
+<option value="10">Octubre</option><option value="11">Noviembre</option><option value="12">Diciembre</option>
+</select>
+</div>
+</div>
+<div class="form-actions">
+<button class="btn btn-ghost" id="weekResetBtn" type="button">Restaurar semanas originales</button>
+<button class="btn btn-ghost hidden" id="weekCancelBtn" type="button">Cancelar edición</button>
+<button class="btn btn-primary" id="weekSaveBtn" type="button">Agregar semana</button>
+</div>
+
+<table>
+<thead><tr><th>Semana</th><th>Rango</th><th>Partidos</th><th>G</th><th>E</th><th>P</th><th></th></tr></thead>
+<tbody id="weeksAdminTableBody"></tbody>
+</table>
+</div>
+
 <div class="panel">
 <h2>Agregados recientemente</h2>
 <p class="sub">Últimos partidos capturados en esta bitácora</p>
@@ -218,6 +268,7 @@
 <script defer src="assets/js/core/state.js"></script>
 <script defer src="assets/js/core/ui.js"></script>
 <script defer src="assets/js/core/backup.js"></script>
+<script defer src="assets/js/pages/weeks-admin.js"></script>
 <script defer src="assets/js/pages/partidos.js"></script>
 </body>
 </html>
