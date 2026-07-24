@@ -18,7 +18,7 @@ const FLAG_SVG = {
   pt: `<svg viewBox="0 0 30 20" width="22" height="15"><rect width="30" height="20" fill="#ff0000"/><rect width="12" height="20" fill="#006600"/><circle cx="12" cy="10" r="4" fill="#ffcc00" stroke="#ff0000" stroke-width="0.6"/></svg>`,
   us: `<svg viewBox="0 0 30 20" width="22" height="15">
         <rect width="30" height="20" fill="#fff"/>
-        ${[0,1,2,3,4,5,6].map(i=>`<rect y="${i*20/13}" width="30" height="${20/13}" fill="#b22234"/>`).join('')}
+        ${[0,1,2,3,4,5,6].map(i=>`<rect y="${i*2*20/13}" width="30" height="${20/13}" fill="#b22234"/>`).join('')}
         <rect width="14" height="10.8" fill="#3c3b6e"/>
       </svg>`,
 };

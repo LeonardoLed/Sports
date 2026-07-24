@@ -271,7 +271,197 @@ barca: 'logos/rivales/fcbarcelona.png',
 "Club Tijuana": "logos/rivales/tijuana.png",
 "Xolos": "logos/rivales/tijuana.png",
 "Xolos de Tijuana": "logos/rivales/tijuana.png",
-"Club Tijuana Xoloitzcuintles": "logos/rivales/tijuana.png"
+"Club Tijuana Xoloitzcuintles": "logos/rivales/tijuana.png",
+
+// ===== NFL (rivales de Dallas Cowboys) =====
+"49ers": "logos/rivales/49ers.png",
+"San Francisco 49ers": "logos/rivales/49ers.png",
+
+"Buccaneers": "logos/rivales/buccaneers.png",
+"Tampa Bay Buccaneers": "logos/rivales/buccaneers.png",
+
+"Cardinals": "logos/rivales/cardinals.png",
+"Arizona Cardinals": "logos/rivales/cardinals.png",
+
+"Colts": "logos/rivales/colts.png",
+"Indianapolis Colts": "logos/rivales/colts.png",
+
+"Commanders": "logos/rivales/commanders.png",
+"Washington Commanders": "logos/rivales/commanders.png",
+
+"Eagles": "logos/rivales/eagles.png",
+"Philadelphia Eagles": "logos/rivales/eagles.png",
+
+"Giants": "logos/rivales/giants.png",
+"New York Giants": "logos/rivales/giants.png",
+
+"Jaguars": "logos/rivales/jaguars.png",
+"Jacksonville Jaguars": "logos/rivales/jaguars.png",
+
+"Rams": "logos/rivales/la_rams.png",
+"LA Rams": "logos/rivales/la_rams.png",
+"Los Angeles Rams": "logos/rivales/la_rams.png",
+
+"Packers": "logos/rivales/packers.png",
+"Green Bay Packers": "logos/rivales/packers.png",
+
+"Ravens": "logos/rivales/ravens.png",
+"Baltimore Ravens": "logos/rivales/ravens.png",
+
+"Seahawks": "logos/rivales/seahawks.png",
+"Seattle Seahawks": "logos/rivales/seahawks.png",
+
+"Texans": "logos/rivales/texans.png",
+"Houston Texans": "logos/rivales/texans.png",
+
+"Titans": "logos/rivales/titans.png",
+"Tennessee Titans": "logos/rivales/titans.png",
+
+// ===== LaLiga (equipos que faltaban) =====
+"Málaga": "logos/rivales/malaga.png",
+"Malaga": "logos/rivales/malaga.png",
+"Málaga CF": "logos/rivales/malaga.png",
+
+"Racing de Santander": "logos/rivales/racing_santander.png",
+"Racing Santander": "logos/rivales/racing_santander.png",
+"Real Racing Club": "logos/rivales/racing_santander.png",
+
+"Deportivo de La Coruña": "logos/rivales/deportivo_cor.png",
+"Deportivo La Coruña": "logos/rivales/deportivo_cor.png",
+"RC Deportivo": "logos/rivales/deportivo_cor.png",
+"Deportivo": "logos/rivales/deportivo_cor.png",
+
+// ===== MLS =====
+"Charlotte FC": "logos/rivales/charlotte.png",
+"Charlotte": "logos/rivales/charlotte.png",
+
+"FC Cincinnati": "logos/rivales/cincinnati.png",
+"Cincinnati": "logos/rivales/cincinnati.png",
+
+"Columbus Crew": "logos/rivales/columbus_crew.png",
+"Crew": "logos/rivales/columbus_crew.png",
+
+"San Diego FC": "logos/rivales/san_diego.png",
+"San Diego": "logos/rivales/san_diego.png",
+
+// ===== AFC (Asia) =====
+"Al Ahli Doha": "logos/rivales/al_ahli_ddoha.png",
+"Al Ahli SC Doha": "logos/rivales/al_ahli_ddoha.png",
+"Al Ahli Qatar": "logos/rivales/al_ahli_ddoha.png",
+
+"Al Wasl": "logos/rivales/al_wasl.png",
+"Al Wasl FC": "logos/rivales/al_wasl.png",
+
+"Arkadag": "logos/rivales/arkadag.png",
+"Arkadag FK": "logos/rivales/arkadag.png",
+
+"Gamba Osaka": "logos/rivales/gamba_osaka.png",
+
+// ===== Saudi Pro League (rivales de Al Nassr) =====
+"NEOM": "logos/rivales/NEOM.png",
+"NEOM SC": "logos/rivales/NEOM.png",
+
+"Al Ahli": "logos/rivales/al_ahli_saudi.png",
+"Al Ahli Saudi": "logos/rivales/al_ahli_saudi.png",
+"Al-Ahli": "logos/rivales/al_ahli_saudi.png",
+"Al Ahli SFC": "logos/rivales/al_ahli_saudi.png",
+
+"Al Ettifaq": "logos/rivales/al_ettifaq.png",
+"Al-Ettifaq": "logos/rivales/al_ettifaq.png",
+
+"Al Faiha": "logos/rivales/al_faiha.png",
+"Al-Faiha": "logos/rivales/al_faiha.png",
+
+"Al Fateh": "logos/rivales/al_fateh.png",
+"Al-Fateh": "logos/rivales/al_fateh.png",
+
+"Al Hazem": "logos/rivales/al_hazem.png",
+"Al-Hazem": "logos/rivales/al_hazem.png",
+
+"Al Hilal": "logos/rivales/al_hilal.png",
+"Al-Hilal": "logos/rivales/al_hilal.png",
+
+"Al Ittihad": "logos/rivales/al_ittihad.png",
+"Al-Ittihad": "logos/rivales/al_ittihad.png",
+
+"Al Khaleej": "logos/rivales/al_khaleej.png",
+"Al-Khaleej": "logos/rivales/al_khaleej.png",
+
+"Al Najma": "logos/rivales/al_najma.png",
+"Al-Najma": "logos/rivales/al_najma.png",
+
+"Al Okhdood": "logos/rivales/al_okhdood.png",
+"Al-Okhdood": "logos/rivales/al_okhdood.png",
+
+"Al Qadisiyah": "logos/rivales/al_qadisiyah.png",
+"Al-Qadisiyah": "logos/rivales/al_qadisiyah.png",
+
+"Al Shabab": "logos/rivales/al_shabab.png",
+"Al-Shabab": "logos/rivales/al_shabab.png",
+
+// ===== Champions League (rivales de Real Madrid) =====
+"AS Monaco": "logos/rivales/as_monaco.png",
+"Mónaco": "logos/rivales/as_monaco.png",
+"Monaco": "logos/rivales/as_monaco.png",
+
+"Atalanta": "logos/rivales/atalanta.png",
+"Atalanta BC": "logos/rivales/atalanta.png",
+
+"Benfica": "logos/rivales/benfica.png",
+"SL Benfica": "logos/rivales/benfica.png",
+
+"Manchester City": "logos/rivales/manchester_city.png",
+"Man City": "logos/rivales/manchester_city.png",
+
+// ===== Selecciones — Copa Mundial FIFA 2026 (rivales de Sel. México / Sel. Portugal) =====
+"Australia": "logos/rivales/australia.png",
+
+"Bélgica": "logos/rivales/belgica.png",
+"Belgica": "logos/rivales/belgica.png",
+
+"Bolivia": "logos/rivales/bolivia.png",
+
+"Chile": "logos/rivales/chile.png",
+
+"Colombia": "logos/rivales/colombia.png",
+
+"Corea del Sur": "logos/rivales/corea_sur.png",
+"Corea Del Sur": "logos/rivales/corea_sur.png",
+
+"Croacia": "logos/rivales/croacia.png",
+
+"Ecuador": "logos/rivales/ecuador.png",
+
+"Inglaterra": "logos/rivales/england.png",
+"England": "logos/rivales/england.png",
+
+"España": "logos/rivales/espana.png",
+
+"Ghana": "logos/rivales/ghana.png",
+
+"Islandia": "logos/rivales/islandia.png",
+
+"Nigeria": "logos/rivales/nigeria.png",
+
+"Panamá": "logos/rivales/panama.png",
+"Panama": "logos/rivales/panama.png",
+
+"RD Congo": "logos/rivales/rdcongo.png",
+"República Democrática del Congo": "logos/rivales/rdcongo.png",
+
+"República Checa": "logos/rivales/rep_checa.png",
+"Chequia": "logos/rivales/rep_checa.png",
+
+"Serbia": "logos/rivales/serbia.png",
+
+"Sudáfrica": "logos/rivales/sudafrica.png",
+"Sudafrica": "logos/rivales/sudafrica.png",
+
+"Estados Unidos": "logos/rivales/usa.png",
+"USA": "logos/rivales/usa.png",
+
+"Uzbekistán": "logos/rivales/uzbekistan.png",
+"Uzbekistan": "logos/rivales/uzbekistan.png"
 
 };
 
