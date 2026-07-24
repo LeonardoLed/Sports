@@ -299,14 +299,14 @@ tbody tr:hover td{background:var(--panel-2);}
 .del-btn:hover{color:var(--loss); border-color:var(--loss);}
 .empty-row td{text-align:center; padding:30px; color:var(--text-faint); font-style:italic;}
 .mini-logo-slot{
-  width:26px; height:26px; border-radius:6px; border:1.5px dashed var(--border);
+  width:34px; height:34px; border-radius:8px; border:1.5px dashed var(--border);
   background:var(--panel-2); display:flex; align-items:center; justify-content:center; overflow:hidden;
 }
-.mini-logo-slot img{width:100%; height:100%; object-fit:contain; padding:2px;}
+.mini-logo-slot img{width:100%; height:100%; object-fit:contain; padding:1px;}
 .mini-logo-slot .slot-placeholder{font:700 10px var(--font-body); color:var(--text-dim);}
 .rival-cell{display:inline-flex;align-items:center;gap:8px;font-weight:600;color:var(--text);}
-.rival-logo{width:28px;height:28px;border-radius:50%;background:var(--panel-2);border:1px solid var(--border);display:inline-flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0;}
-.rival-logo img{width:100%;height:100%;object-fit:contain;padding:3px;}
+.rival-logo{width:34px;height:34px;border-radius:8px;background:var(--panel-2);border:1px solid var(--border);display:inline-flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0;}
+.rival-logo img{width:100%;height:100%;object-fit:contain;padding:1px;}
 .rival-logo .rival-fallback{font:700 11px var(--font-body);color:var(--text-dim);}
 .nfl-flag{display:inline-block; font-size:10px; font-weight:800; letter-spacing:0.5px; background:var(--panel-3); color:var(--text-dim); padding:3px 8px; border-radius:5px; margin-left:8px; vertical-align:middle;}
 .muted{color:var(--text-faint); font-style:italic;}
@@ -430,8 +430,8 @@ html[data-theme="dark"] .tab-btn.active{background:#30291b;color:#fff;}
 table{font-size:11px!important;}
 thead th{background:var(--panel-2)!important;color:var(--text)!important;font-size:9px!important;font-weight:800!important;letter-spacing:.35px!important;}
 tbody tr:hover{background:var(--panel-2)!important;}
-.mini-logo-slot{width:25px!important;height:25px!important;border-radius:50%!important;background:#fff!important;box-shadow:0 0 0 1px var(--border);}
-.mini-logo-slot img{width:21px!important;height:21px!important;object-fit:contain!important;}
+.mini-logo-slot{width:34px!important;height:34px!important;border-radius:8px!important;background:#fff!important;box-shadow:0 0 0 1px var(--border);}
+.mini-logo-slot img{width:100%!important;height:100%!important;object-fit:contain!important;padding:1px!important;}
 .team-tag{gap:7px!important;}
 .table-controls{gap:8px!important;}
 .table-controls input,.table-controls select{border-radius:9px!important;background:var(--panel-2)!important;}

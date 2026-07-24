@@ -461,7 +461,26 @@ barca: 'logos/rivales/fcbarcelona.png',
 "USA": "logos/rivales/usa.png",
 
 "Uzbekistán": "logos/rivales/uzbekistan.png",
-"Uzbekistan": "logos/rivales/uzbekistan.png"
+"Uzbekistan": "logos/rivales/uzbekistan.png",
+
+// Selecciones propias usadas también como RIVAL cuando se cruzan entre sí
+// (ej. México vs Portugal en el Mundial)
+"México": "logos/rivales/seleccion_mexico.png",
+"Mexico": "logos/rivales/seleccion_mexico.png",
+"Selección Mexicana": "logos/rivales/seleccion_mexico.png",
+"Selección de México": "logos/rivales/seleccion_mexico.png",
+
+"Portugal": "logos/rivales/seleccion_portugal.png",
+"Selección de Portugal": "logos/rivales/seleccion_portugal.png",
+"Selección Portuguesa": "logos/rivales/seleccion_portugal.png",
+
+// Variantes exactas que se estaban escribiendo y no calzaban con los alias
+// cortos de arriba (nombre completo con sufijo de club/país)
+"Al Ahli Doha SC": "logos/rivales/al_ahli_ddoha.png",
+"Al Shabab KSA": "logos/rivales/al_shabab.png",
+"Al Fateh SC": "logos/rivales/al_fateh.png",
+"Al-Ittihad Jeddah": "logos/rivales/al_ittihad.png",
+"Al Ittihad Jeddah": "logos/rivales/al_ittihad.png"
 
 };
 
@@ -492,15 +511,30 @@ window.logoSlug = function(value){
     .replace(/^_+|_+$/g, '');
 };
 
+// Índice normalizado: además de buscar por el texto EXACTO de las llaves
+// de arriba, también se puede encontrar el logo si el nombre viene con
+// distintas mayúsculas/acentos/espacios pero su versión normalizada
+// coincide con la de alguna llave ya cargada (evita duplicados por typo).
+function buildSlugIndex(dict){
+  const idx = {};
+  Object.keys(dict).forEach(key=>{
+    const slug = window.logoSlug(key);
+    if(!idx[slug]) idx[slug] = dict[key];
+  });
+  return idx;
+}
+window.RIVAL_LOGOS_SLUG_INDEX = buildSlugIndex(window.RIVAL_LOGOS);
+window.TOURNAMENT_LOGOS_SLUG_INDEX = buildSlugIndex(window.TOURNAMENT_LOGOS);
+
 window.resolveRivalLogo = function(name){
   const slug = window.logoSlug(name);
-  return window.RIVAL_LOGOS[name] || window.RIVAL_LOGOS[slug] ||
+  return window.RIVAL_LOGOS[name] || window.RIVAL_LOGOS_SLUG_INDEX[slug] || window.RIVAL_LOGOS[slug] ||
          `logos/rivales/${slug}.png`;
 };
 
 window.resolveTournamentLogo = function(name){
   const slug = window.logoSlug(name);
-  return window.TOURNAMENT_LOGOS[name] || window.TOURNAMENT_LOGOS[slug] ||
+  return window.TOURNAMENT_LOGOS[name] || window.TOURNAMENT_LOGOS_SLUG_INDEX[slug] || window.TOURNAMENT_LOGOS[slug] ||
          `logos/torneos/${slug}.png`;
 };
 
