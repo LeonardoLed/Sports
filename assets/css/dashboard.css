@@ -471,3 +471,14 @@ html[data-theme="dark"] .ledger-table th{background:rgba(22,28,35,.98)!important
 @media(max-width:620px){.general-stats{grid-template-columns:repeat(4,minmax(0,1fr))!important}.general-stat{height:42px!important;min-height:42px!important}.general-stat>span{font-size:9px!important}.general-stat>strong{font-size:13px!important}.general-stat::after,.general-stat::before{display:none}.table-controls-v20{grid-template-columns:1fr!important}.search-box{grid-column:auto}.table-controls-v20>*{grid-row:auto!important}.ledger-table{min-width:820px!important}}
 @media(prefers-reduced-motion:reduce){.general-stat,.team-card,.achievement-card,.tab-btn,.form-pip,.ledger-table td,.score-cell{transition:none!important}.general-stat:hover,.team-card:hover,.achievement-card:hover,.tab-btn:hover{transform:none!important}}
 
+
+/* v17: centrar la tira de "últimos 8" bajo su etiqueta y agrandar los pips */
+.team-card-v16 .team-v16-core{grid-template-columns:1fr!important;}
+.team-card-v16 .team-v16-form-label{grid-column:1!important;text-align:center!important;font-size:12px!important;font-weight:800!important;margin-bottom:5px!important;}
+.team-card-v16 .form-strip{grid-column:1!important;justify-content:center!important;display:flex!important;flex-wrap:wrap!important;}
+.team-card-v16 .form-pip{width:27px!important;height:27px!important;font-size:12px!important;border-radius:7px!important;flex:0 0 27px!important;}
+
+/* v17: agrandar el logo del rival dentro de la tarjeta de título */
+.achievement-rival-logo{flex:0 0 30px!important;width:30px!important;height:30px!important;}
+.achievement-rival-logo .rival-logo{width:30px!important;height:30px!important;}
+.achievement-rival-logo .rival-logo img{padding:2px!important;}

@@ -100,6 +100,7 @@ window.RIVAL_LOGOS = {
   'FC Bayern München': 'logos/rivales/fc_bayern_munich.png',
   'Bayern Munich': 'logos/rivales/fc_bayern_munich.png',
   'Bayern Múnich': 'logos/rivales/fc_bayern_munich.png',
+  'Bayer Munich': 'logos/rivales/fc_bayern_munich.png',
   fc_bayern_munchen: 'logos/rivales/fc_bayern_munich.png',
   bayern_munich: 'logos/rivales/fc_bayern_munich.png',
 
@@ -251,6 +252,8 @@ barca: 'logos/rivales/fcbarcelona.png',
 
 "Atlético San Luis": "logos/rivales/san_luis.png",
 "Atletico San Luis": "logos/rivales/san_luis.png",
+"Atlético de San Luis": "logos/rivales/san_luis.png",
+"Atletico de San Luis": "logos/rivales/san_luis.png",
 "San Luis": "logos/rivales/san_luis.png",
 "Atl. San Luis": "logos/rivales/san_luis.png",
 
