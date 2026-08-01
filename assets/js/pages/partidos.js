@@ -360,6 +360,8 @@ function renderAll(){
 
 async function init(){
   applyTheme(localStorage.getItem('ratiosports_theme') || (matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'));
+  applyStyle(localStorage.getItem('ratiosports_style') || 'ticket');
+  document.getElementById('styleToggle')?.addEventListener('click', toggleStyle);
   fillTeamSelect();
   applyBackgroundPhoto();
   await loadMatches();

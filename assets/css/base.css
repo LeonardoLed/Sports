@@ -1,31 +1,31 @@
 /* ===== base ===== */
 
 :root{
-  --bg: #faf6ee;
+  --bg: #EFEDE7;
   --bg-flood:
-    radial-gradient(900px 480px at 100% -6%, rgba(10,106,62,0.07), transparent 60%),
-    radial-gradient(800px 420px at -6% 10%, rgba(200,16,46,0.06), transparent 55%);
+    radial-gradient(900px 480px at 100% -6%, rgba(27,42,74,0.06), transparent 60%),
+    radial-gradient(800px 420px at -6% 10%, rgba(192,57,43,0.05), transparent 55%);
   --panel: #ffffff;
-  --panel-2: #f3efe4;
-  --panel-3: #ece6d8;
-  --border: #e4dcc9;
-  --border-soft: #ece6d8;
-  --text: #211d18;
-  --text-dim: #6b6455;
-  --text-faint: #a39a86;
-  --win: #1f9d55;
-  --win-dim: #e5f6ec;
-  --loss: #d6434c;
-  --loss-dim: #fbe9ea;
-  --draw: #c1860f;
-  --draw-dim: #faf1de;
-  --accent: #0a6a3e;
-  --accent-2: #c8102e;
-  --accent-3: #c1860f;
-  --radius: 14px;
-  --font-display: 'Teko', sans-serif;
+  --panel-2: #e9e5d9;
+  --panel-3: #ddd7c6;
+  --border: #d8d2c1;
+  --border-soft: #e2ddd0;
+  --text: #1B2A4A;
+  --text-dim: #5C6478;
+  --text-faint: #9498a6;
+  --win: #1F7A4D;
+  --win-dim: #e4f2ea;
+  --loss: #C0392B;
+  --loss-dim: #fbe8e6;
+  --draw: #B8860B;
+  --draw-dim: #f8f0dc;
+  --accent: #1B2A4A;
+  --accent-2: #C0392B;
+  --accent-3: #B8860B;
+  --radius: 10px;
+  --font-display: 'Oswald', sans-serif;
   --font-body: 'Inter', sans-serif;
-  --font-mono: 'JetBrains Mono', monospace;
+  --font-mono: 'Space Mono', monospace;
 }
 html[data-theme="dark"]{
   --bg:#0f1210;
@@ -43,7 +43,31 @@ html[data-theme="dark"]{
   --win:#54c983; --win-dim:#173624;
   --loss:#ef6a72; --loss-dim:#3a1d20;
   --draw:#e2ad43; --draw-dim:#3b301b;
-  --accent:#168654; --accent-2:#df3650; --accent-3:#d3a23b;
+  --accent:#e8ecef; --accent-2:#df3650; --accent-3:#d3a23b;
+}
+/* Estilo alterno "Marcador LED de estadio" — independiente de claro/oscuro,
+   se activa con el botón de estilo (📺) junto al de tema. Siempre oscuro,
+   como un marcador real, sin importar si el modo claro/oscuro está activo. */
+html[data-style="led"]{
+  --bg:#0B0E0C;
+  --bg-flood:
+    radial-gradient(900px 480px at 100% -6%, rgba(255,176,32,0.08), transparent 60%),
+    radial-gradient(800px 420px at -6% 10%, rgba(62,207,110,0.06), transparent 55%);
+  --panel:#12100a;
+  --panel-2:#181c19;
+  --panel-3:#20241f;
+  --border:#2b322d;
+  --border-soft:#242a26;
+  --text:#E8ECEF;
+  --text-dim:#9AA39C;
+  --text-faint:#6c756e;
+  --win:#3ECF6E; --win-dim:#123320;
+  --loss:#FF4D4D; --loss-dim:#3a1414;
+  --draw:#FFB020; --draw-dim:#3a2b0a;
+  --accent:#FFB020; --accent-2:#FF4D4D; --accent-3:#3ECF6E;
+  --radius: 6px;
+  --font-display: 'Rajdhani', sans-serif;
+  --font-mono: 'Share Tech Mono', monospace;
 }
 *{box-sizing:border-box;}
 html,body{margin:0;padding:0;}
@@ -635,3 +659,40 @@ html[data-theme="dark"] .achievement-card::before{background:rgba(23,27,34,.78)!
 }
 
 
+
+/* ===== v18: tema "Boleto de partido" + estilo alterno "Marcador LED" ===== */
+
+/* Transparencia de paneles para que el fondo (foto) se alcance a ver */
+.panel,.team-card,.achievement-card,.masthead,.extra-stat{
+  background:rgba(255,255,255,.55)!important;
+  backdrop-filter:blur(7px) saturate(1.05)!important;
+}
+html[data-theme="dark"] .panel,html[data-theme="dark"] .team-card,html[data-theme="dark"] .achievement-card,html[data-theme="dark"] .masthead,html[data-theme="dark"] .extra-stat{
+  background:rgba(18,22,19,.58)!important;
+}
+html[data-style="led"] .panel,html[data-style="led"] .team-card,html[data-style="led"] .achievement-card,html[data-style="led"] .masthead,html[data-style="led"] .extra-stat{
+  background:rgba(10,13,11,.62)!important;
+  border-color:rgba(255,176,32,.18)!important;
+}
+.bg-photo-layer.active{opacity:.5!important;}
+html[data-theme="dark"] .bg-photo-layer.active{opacity:.4!important;}
+html[data-style="led"] .bg-photo-layer.active{opacity:.28!important;filter:saturate(.7) contrast(1.1) brightness(.8)!important;}
+
+/* Firma visual del boleto: borde punteado superior, como una perforación */
+html:not([data-style="led"]) .panel{
+  border-top:2px dashed var(--border)!important;
+}
+
+/* Los logos necesitan un respaldo sólido para no perderse contra la foto */
+.rival-logo,.mini-logo-slot{background:rgba(255,255,255,.82)!important;}
+html[data-theme="dark"] .rival-logo,html[data-theme="dark"] .mini-logo-slot{background:rgba(233,229,217,.14)!important;}
+html[data-style="led"] .rival-logo,html[data-style="led"] .mini-logo-slot{background:rgba(232,236,239,.10)!important;border-color:rgba(255,176,32,.22)!important;}
+
+/* Números como "contador de boleto/marcador" en vez de heredar el body */
+.achievement-score{font-family:var(--font-mono)!important;letter-spacing:.02em;}
+
+/* El marcador LED brilla un poco, como un display real */
+html[data-style="led"] .score-cell,html[data-style="led"] .achievement-score{
+  color:var(--accent)!important;
+  text-shadow:0 0 8px rgba(255,176,32,.35);
+}

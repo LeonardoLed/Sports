@@ -482,3 +482,11 @@ html[data-theme="dark"] .ledger-table th{background:rgba(22,28,35,.98)!important
 .achievement-rival-logo{flex:0 0 30px!important;width:30px!important;height:30px!important;}
 .achievement-rival-logo .rival-logo{width:30px!important;height:30px!important;}
 .achievement-rival-logo .rival-logo img{padding:2px!important;}
+
+/* v18 (final, gana por orden de carga): transparencia real para ver el fondo */
+.panel,.team-card,.achievement-card,.masthead,.extra-stat{background:rgba(255,255,255,.55)!important;backdrop-filter:blur(7px) saturate(1.05)!important;}
+html[data-theme="dark"] .panel,html[data-theme="dark"] .team-card,html[data-theme="dark"] .achievement-card,html[data-theme="dark"] .masthead,html[data-theme="dark"] .extra-stat{background:rgba(18,22,19,.58)!important;}
+html[data-style="led"] .panel,html[data-style="led"] .team-card,html[data-style="led"] .achievement-card,html[data-style="led"] .masthead,html[data-style="led"] .extra-stat{background:rgba(10,13,11,.62)!important;border-color:rgba(255,176,32,.18)!important;}
+.bg-photo-layer.active{opacity:.5!important;}
+html[data-theme="dark"] .bg-photo-layer.active{opacity:.4!important;}
+html[data-style="led"] .bg-photo-layer.active{opacity:.28!important;filter:saturate(.7) contrast(1.1) brightness(.8)!important;}

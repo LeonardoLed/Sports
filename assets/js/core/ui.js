@@ -158,6 +158,19 @@ function applyTheme(theme){
 
 function toggleTheme(){ applyTheme(document.documentElement.dataset.theme==='dark'?'light':'dark'); }
 
+// Estilo visual de la app: "ticket" (boleto de partido, default) o "led" (marcador de estadio).
+// Es independiente del claro/oscuro: cambia tipografías y paleta, no solo colores.
+function applyStyle(style){
+  document.documentElement.dataset.style = style;
+  localStorage.setItem('ratiosports_style', style);
+  const led = style==='led';
+  const icon = document.getElementById('styleIcon');
+  const label = document.getElementById('styleLabel');
+  if(icon) icon.textContent = led ? '🎟️' : '📺';
+  if(label) label.textContent = led ? 'Boleto de partido' : 'Marcador LED';
+}
+function toggleStyle(){ applyStyle(document.documentElement.dataset.style==='led'?'ticket':'led'); }
+
 function applyBackgroundPhoto(){
   if(!BACKGROUND_IMAGE) return;
   const layer = document.getElementById('bgPhotoLayer');
