@@ -490,3 +490,20 @@ html[data-style="led"] .panel,html[data-style="led"] .team-card,html[data-style=
 .bg-photo-layer.active{opacity:.5!important;}
 html[data-theme="dark"] .bg-photo-layer.active{opacity:.4!important;}
 html[data-style="led"] .bg-photo-layer.active{opacity:.28!important;filter:saturate(.7) contrast(1.1) brightness(.8)!important;}
+
+/* v19 (final, gana por orden de carga): letras más grandes, tarjeta más compacta, más transparencia */
+.team-card,.team-card-v16{min-height:214px!important;padding:14px 14px 13px!important;}
+.team-card .team-meta{font-size:11px!important;}
+.team-card .record-pj span,.team-card .record-line span{font-size:10px!important;}
+.team-card .record-line small{font-size:9.5px!important;}
+.team-card .team-v16-goals{font-size:10px!important;}
+.team-card .team-v16-goals b{font-size:10.5px!important;}
+.team-card .record-pj strong,.team-card .record-line strong{font-size:17px!important;}
+
+/* más transparencia: se ve más el fondo */
+.panel,.team-card,.achievement-card,.masthead,.extra-stat{background:rgba(255,255,255,.38)!important;backdrop-filter:blur(6px) saturate(1.05)!important;}
+html[data-theme="dark"] .panel,html[data-theme="dark"] .team-card,html[data-theme="dark"] .achievement-card,html[data-theme="dark"] .masthead,html[data-theme="dark"] .extra-stat{background:rgba(15,18,15,.42)!important;}
+html[data-style="led"] .panel,html[data-style="led"] .team-card,html[data-style="led"] .achievement-card,html[data-style="led"] .masthead,html[data-style="led"] .extra-stat{background:rgba(8,10,9,.48)!important;}
+.bg-photo-layer.active{opacity:.62!important;}
+html[data-theme="dark"] .bg-photo-layer.active{opacity:.52!important;}
+html[data-style="led"] .bg-photo-layer.active{opacity:.36!important;}
