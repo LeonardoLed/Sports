@@ -75,7 +75,7 @@ function renderTitles(){
       cards.push(`<article class="achievement-card ${cls}" title="Vinculado por torneo + fase final">
         <span class="achievement-status">${state}</span>
         <div class="achievement-name">${escapeHtml(tt.name)}</div>
-        <div class="achievement-logo">${logo?`<img src="${logo}" alt="${escapeAttr(t.name)}">`:`<span style="font-size:44px">🏆</span>`}</div>
+        <div class="achievement-logo">${logo?`<img src="${logo}" alt="${escapeAttr(t.name)}">`:`<span style="font-size:44px">${icon('trophy')}</span>`}</div>
         <div class="achievement-team">${escapeHtml(t.name)}</div>
         <div class="achievement-meta">${escapeHtml(t.type)} · ${escapeHtml(t.country)}</div>
         ${finalHtml}
@@ -205,12 +205,14 @@ function renderMatchTable(){
   body.innerHTML = visibleRows.map(m=>{
     const t = TEAMS[m.team];
     const isAway = m.venueSide === 'away';
+    const countryTag = m.rivalCountry ? `<span class="muted" style="font-size:10.5px; display:block;">${escapeHtml(m.rivalCountry)}</span>` : '';
+    const intlTag = m.internacional ? `<span class="nfl-flag" style="background:var(--panel-2);" title="Partido internacional">${icon('globe')} Internacional</span>` : '';
     return `<tr>
       <td class="mono">${m.dia} ${MONTHS[m.mes]}</td>
       <td><span class="match-team-name"><span class="match-team-dot" style="background:${escapeAttr(t.accent||t.color)}"></span><span>${escapeHtml(t.name)}</span></span></td>
-      <td>${rivalLogoHtml(m.rival)}</td>
+      <td>${rivalLogoHtml(m.rival)}${countryTag}</td>
       <td class="${venueLabel(m)==='—'?'muted':''}">${escapeHtml(venueLabel(m))}</td>
-      <td>${escapeHtml(m.torneo)}${m.fase?' · '+escapeHtml(m.fase):''}</td>
+      <td>${escapeHtml(m.torneo)}${m.fase?' · '+escapeHtml(m.fase):''} ${intlTag}</td>
       <td class="mono">${isAway?m.gc:m.gf} - ${isAway?m.gf:m.gc}</td>
       <td><span class="res-tag ${resClass(m.resultado)}">${resLabel(m.resultado)}</span></td>
     </tr>`;
@@ -245,6 +247,12 @@ function fillTeamSelect(){
   sel.innerHTML = Object.entries(TEAMS).map(([id,t])=>`<option value="${escapeAttr(id)}">${escapeHtml(t.name)}${t.sport==='nfl'?' (NFL)':''}</option>`).join('');
   sel.addEventListener('change', updateFieldLabels);
   updateFieldLabels();
+
+  const countryList = document.getElementById('rivalCountryOptions');
+  if(countryList){
+    const countries = ['España','México','Arabia Saudita','Portugal','Estados Unidos','Inglaterra','Francia','Alemania','Italia','Bélgica','Croacia','Colombia','Chile','Ecuador','Panamá','Sudáfrica','Nigeria','Uzbekistán','Corea del Sur','Australia','Marruecos','Japón'];
+    countryList.innerHTML = countries.map(c=>`<option value="${escapeAttr(c)}"></option>`).join('');
+  }
 }
 function updateFieldLabels(){
   const team = document.getElementById('f_team').value;
@@ -296,6 +304,8 @@ async function handleAdd(){
   const fase = document.getElementById('f_fase').value.trim();
   const estadio = document.getElementById('f_estadio').value.trim();
   const ciudad = document.getElementById('f_ciudad').value.trim();
+  const rivalCountry = document.getElementById('f_rivalCountry').value.trim();
+  const internacional = document.getElementById('f_internacional').checked;
   const gf = document.getElementById('f_gf').value;
   const gc = document.getElementById('f_gc').value;
   const aggLocal = document.getElementById('f_aggLocal').value;
@@ -317,6 +327,7 @@ async function handleAdd(){
   const visitScore=venueSide==='away'?Number(gf):Number(gc);
   matches.push({id, team, dia, mes, rival, torneo, fase, estadio, ciudad, sede:'', gf:Number(gf), gc:Number(gc), resultado, userAdded:true,
     localName,visitName,localScore,visitScore,originLocal:'—',originVisit:'—',
+    rivalCountry, internacional,
     aggregateLocal:aggLocal===''?null:Number(aggLocal),aggregateVisit:aggVisit===''?null:Number(aggVisit),
     penaltyLocal:penLocal===''?null:Number(penLocal),penaltyVisit:penVisit===''?null:Number(penVisit),extraTime,
     titleDecision:esTitulo, titleStatus:esTitulo?tituloResultado:null, titleWon:esTitulo&&tituloResultado==='ganado', tournamentId:esTitulo?normalizeKey(torneo):null, venueSide});
@@ -330,8 +341,9 @@ async function handleAdd(){
 }
 
 function clearForm(){
-  ['f_rival','f_dia','f_torneo','f_fase','f_estadio','f_ciudad','f_gf','f_gc','f_aggLocal','f_aggVisit','f_penLocal','f_penVisit'].forEach(id=>document.getElementById(id).value='');
+  ['f_rival','f_rivalCountry','f_dia','f_torneo','f_fase','f_estadio','f_ciudad','f_gf','f_gc','f_aggLocal','f_aggVisit','f_penLocal','f_penVisit'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('f_esTitulo').checked = false;
+  document.getElementById('f_internacional').checked = false;
   document.getElementById('f_extraTime').checked = false;
   document.getElementById('f_tituloResultado').classList.add('hidden');
   updateResultPreview();

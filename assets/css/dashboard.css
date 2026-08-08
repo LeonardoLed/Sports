@@ -507,3 +507,29 @@ html[data-style="led"] .panel,html[data-style="led"] .team-card,html[data-style=
 .bg-photo-layer.active{opacity:.62!important;}
 html[data-theme="dark"] .bg-photo-layer.active{opacity:.52!important;}
 html[data-style="led"] .bg-photo-layer.active{opacity:.36!important;}
+
+/* =====================================================================
+   Ajustes a petición del usuario:
+   1) Iconos en un solo color (SVG con currentColor) en vez de emoji.
+   2) Letra más grande en las fichas de equipo.
+   ===================================================================== */
+.mono-icon{display:inline-flex; align-items:center; justify-content:center; color:var(--accent-3); vertical-align:-2px;}
+.mono-icon svg{display:block;}
+.achievement-logo .mono-icon{color:var(--accent-3); font-size:40px;}
+.general-stat .mono-icon{font-size:15px;}
+
+.team-card-v16 .team-name{font-size:18px!important; font-weight:800!important;}
+.team-card-v16 .team-meta{font-size:11.5px!important;}
+.record-pj strong{font-size:26px!important;}
+.record-pj span{font-size:9.5px!important;}
+.record-line strong{font-size:19px!important;}
+.record-line span{font-size:10.5px!important;}
+.record-line small{font-size:9.5px!important;}
+.team-card-v16 .team-honours{font-size:11.5px!important;}
+.team-honours b{font-size:17px!important;}
+.team-card-v16 .team-honours small{font-size:9.5px!important;}
+.team-v16-form-label{font-size:10.5px!important;}
+.team-card-v16 .form-pip{font-size:11px!important; width:23px!important; height:23px!important; flex:0 0 23px!important;}
+.team-v16-eff{font-size:10.5px!important;}
+.team-v16-eff b{font-size:12px!important;}
+.team-card-v16 .team-v16-goals{font-size:11px!important;}

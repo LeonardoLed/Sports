@@ -103,7 +103,7 @@ function renderTitles(){
     return `<article class="achievement-card ${isWonTitle(m)?'won':'lost'}">
       <span class="achievement-status">${titleStatusText(m)}</span>
       <div class="achievement-name">${escapeHtml(m.torneo)}</div>
-      <div class="achievement-logo">${teamLogo?`<img src="${teamLogo}" alt="${escapeAttr(t.name)}">`:'🏆'}</div>
+      <div class="achievement-logo">${teamLogo?`<img src="${teamLogo}" alt="${escapeAttr(t.name)}">`:icon('trophy')}</div>
       <div class="achievement-team">${escapeHtml(t.name)}</div>
       <div class="achievement-opponent"><span class="achievement-rival-logo">${rivalLogoHtml(rival)}</span><span>${escapeHtml(outcome)}</span></div>
       <div class="achievement-final">${escapeHtml(m.fase||'—')}<div class="achievement-score">${formatMatchScore(m)}</div>${m.dia} ${MONTHS[m.mes]}</div>
@@ -370,7 +370,7 @@ function renderGeneralStats(){
   const tournaments=new Set(titleRows.map(m=>m.tournamentId||normalizeKey(m.torneo))).size;
   const el=document.getElementById('generalStats'); if(!el)return;
   const items=[
-    ['🏆',titles,'Títulos ganados'],['🥈',runners,'Subcampeonatos'],['◉',tournaments,'Torneos competidos'],['⚽',pj,'Partidos jugados'],
+    [icon('trophy'),titles,'Títulos ganados'],[icon('medal'),runners,'Subcampeonatos'],[icon('flag'),tournaments,'Torneos competidos'],[icon('ball'),pj,'Partidos jugados'],
     ['●',pg,'Partidos ganados','win'],['●',pe,'Partidos empatados','draw'],['●',pp,'Partidos perdidos','loss'],
     ['GF',gf,'Goles a favor'],['GC',gc,'Goles en contra'],['DG',`${gf-gc>=0?'+':''}${gf-gc}`,'Diferencia de goles'],
     ['%',`${pj?(pg/pj*100).toFixed(1):'0.0'}%`,'Porcentaje de victorias'],['G/P',pj?(gf/pj).toFixed(2):'0.00','Goles por partido']

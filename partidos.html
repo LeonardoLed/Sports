@@ -133,6 +133,12 @@
 <input id="f_rival" placeholder="Ej. FC Barcelona" type="text"/>
 </div>
 <div class="field">
+<label>País del rival</label>
+<input id="f_rivalCountry" list="rivalCountryOptions" placeholder="Ej. Estados Unidos" type="text"/>
+<datalist id="rivalCountryOptions"></datalist>
+<span class="muted" style="font-size:10.5px;">De tu equipo ya sabemos el país — este es el del rival</span>
+</div>
+<div class="field">
 <label>Condición del equipo seguido</label>
 <select id="f_venueSide"><option value="home">Local</option><option value="away">Visitante</option></select>
 </div>
@@ -178,6 +184,12 @@
 <div class="preview-badge">
 <span>Resultado (se calcula solo):</span>
 <span class="result-pill e" id="resultPreview">—</span>
+</div>
+<div class="preview-badge" style="flex-wrap:wrap;">
+<label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-weight:600;">
+<input id="f_internacional" style="width:16px; height:16px;" type="checkbox"/>
+            🌐 Partido internacional (torneo entre países/ligas distintas)
+          </label>
 </div>
 <div class="preview-badge" style="flex-wrap:wrap;">
 <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-weight:600;">
