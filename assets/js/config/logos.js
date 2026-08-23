@@ -57,6 +57,8 @@ window.TOURNAMENTS = {
   al_nassr: [
     {name:'Saudi Pro League',           logo:'logos/torneos/saudi_pro_league.png',        status:'ganado'},
     {name:'AFC Champions League Two',   logo:'logos/torneos/afc_champions_league_2.png',  status:'en_curso'},
+	{name: 'King\'s Cup',               logo: 'logos/torneos/king_cup.png', status: 'en_curso', matchTerms: ['King\'s Cup', 'King Cup']
+},
   ],
   sel_mex: [
     {name:'Fecha FIFA',           logo:'logos/torneos/fecha_fifa.png',          status:'en_curso'},
@@ -82,6 +84,8 @@ window.TOURNAMENT_LOGOS = {
   'Liga BBVA MX Clausura 2026': 'logos/torneos/liga_mx.png',
   'Copa Mundial FIFA USA-MEX-CAN 2026': 'logos/torneos/copa_mundial_2026.png',
   'Leagues Cup': 'logos/torneos/leagues_cup.png',
+  'King\'s Cup': 'logos/torneos/king_cup.png',
+  'Kings Cup': 'logos/torneos/king_cup.png',
 };
 
 // Foto de fondo para toda la página (tu foto de Cristiano Ronaldo).
