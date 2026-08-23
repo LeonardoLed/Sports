@@ -326,8 +326,8 @@ async function handleAdd(){
   const localScore=venueSide==='away'?Number(gc):Number(gf);
   const visitScore=venueSide==='away'?Number(gf):Number(gc);
   const followedCountry=TEAMS[team].type==='Selección' ? TEAMS[team].name : (TEAMS[team].country||'');
-  const originLocal=venueSide==='away' ? (rivalCountry||'—') : (followedCountry||'—');
-  const originVisit=venueSide==='away' ? (followedCountry||'—') : (rivalCountry||'—');
+  const originLocal=internacional ? (venueSide==='away' ? (rivalCountry||'—') : (followedCountry||'—')) : '—';
+  const originVisit=internacional ? (venueSide==='away' ? (followedCountry||'—') : (rivalCountry||'—')) : '—';
   try{
     await MatchService.add({id, team, dia, mes, rival, torneo, fase, estadio, ciudad, sede:'', gf:Number(gf), gc:Number(gc), resultado, userAdded:true,
     localName,visitName,localScore,visitScore,originLocal,originVisit,

@@ -1,6 +1,7 @@
 -- Ratio Sports: backfill de países/orígenes en partidos gestionados.
 -- Ejecutar UNA vez como rol postgres en Supabase SQL Editor.
--- Solo toca filas que tienen rival_country y algún origen vacío/—/-.
+-- Completa orígenes SOLO en partidos internacionales.
+-- En partidos nacionales limpia cualquier origen almacenado por error.
 
 with derived as (
   select
@@ -17,6 +18,7 @@ with derived as (
       else null
     end as followed_country
   from public.matches
+  where international = true
 )
 update public.matches m
 set
@@ -31,6 +33,7 @@ set
   updated_at = now()
 from derived d
 where m.id = d.id
+  and m.international = true
   and d.rival_country is not null
   and d.followed_country is not null
   and (
@@ -38,9 +41,15 @@ where m.id = d.id
     or coalesce(nullif(trim(m.visitor_origin), ''), '—') in ('—','-')
   );
 
+-- Regla de negocio: los partidos nacionales no almacenan orígenes.
+update public.matches
+set local_origin = null, visitor_origin = null, updated_at = now()
+where international = false
+  and (local_origin is not null or visitor_origin is not null);
+
 -- Verificación: estas filas deberían quedar con países reales.
 select id, tracked_team_id, rival, rival_country, venue_side,
        local_name, local_origin, visitor_name, visitor_origin
 from public.matches
-where rival_country is not null
+where international = true and rival_country is not null
 order by match_date desc, id desc;

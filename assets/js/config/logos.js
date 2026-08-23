@@ -537,10 +537,41 @@ window.resolveRivalLogo = function(name){
          `logos/rivales/${slug}.png`;
 };
 
+function tournamentLogoCandidates(){
+  const candidates = [];
+  const seen = new Set();
+  const add = (term, logo) => {
+    const normalized = window.logoSlug(term || '');
+    if(!normalized || !logo || seen.has(normalized)) return;
+    seen.add(normalized);
+    candidates.push({ term: normalized, logo });
+  };
+
+  // Las llaves del mapa también funcionan como nombres base. Esto permite
+  // reutilizar el mismo logo para temporadas como "Leagues Cup 2026" o
+  // "Saudi Professional League 2026-2027" sin crear una entrada por año.
+  Object.entries(window.TOURNAMENT_LOGOS || {}).forEach(([term, logo]) => add(term, logo));
+
+  // Reutiliza los nombres y matchTerms del catálogo visual. Así, por ejemplo,
+  // cualquier "Liga BBVA MX ..." hereda el logo general de Liga MX.
+  Object.values(window.TOURNAMENTS || {}).flat().forEach(tournament => {
+    add(tournament.name, tournament.logo);
+    (tournament.matchTerms || []).forEach(term => add(term, tournament.logo));
+  });
+
+  // El término más específico debe ganar si dos candidatos coinciden.
+  return candidates.sort((a,b)=>b.term.length-a.term.length);
+}
+
 window.resolveTournamentLogo = function(name){
   const slug = window.logoSlug(name);
-  return window.TOURNAMENT_LOGOS[name] || window.TOURNAMENT_LOGOS_SLUG_INDEX[slug] || window.TOURNAMENT_LOGOS[slug] ||
-         `logos/torneos/${slug}.png`;
+  const exact = window.TOURNAMENT_LOGOS[name] || window.TOURNAMENT_LOGOS_SLUG_INDEX[slug] || window.TOURNAMENT_LOGOS[slug];
+  if(exact) return exact;
+
+  const partial = tournamentLogoCandidates().find(candidate => slug.includes(candidate.term));
+  if(partial) return partial.logo;
+
+  return `logos/torneos/${slug}.png`;
 };
 
 window.resolveTeamLogo = function(id, displayName){

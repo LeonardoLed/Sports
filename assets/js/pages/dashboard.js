@@ -231,7 +231,7 @@ function isDomesticMatch(m){
   if(String(m.scope||m.alcance||'').toUpperCase()==='INTERNACIONAL') return false;
   return DOMESTIC_TOURNAMENTS.some(rx=>rx.test(m.torneo||''));
 }
-function originHtml(origin,m){ return isDomesticMatch(m)?'':`<small>${escapeHtml(origin||'—')}</small>`; }
+function originHtml(origin,m){ return m.internacional===true?`<small>${escapeHtml(origin||'—')}</small>`:''; }
 function teamCellHtml(name,origin,m,teamId){
   const isFollowed=name===TEAMS[teamId]?.name;
   const logo=isFollowed?miniLogoHtml(teamId):rivalLogoOnlyHtml(name);
@@ -262,7 +262,7 @@ function renderNflTable(){
   body.innerHTML=rows.map(m=>{
     const isAway=m.venueSide==='away';
     const rivalOrigin=isAway?(m.originLocal||'—'):(m.originVisit||'—');
-    return `<tr><td>${miniLogoHtml(m.team)}</td><td class="mono">${m.dia} ${MONTHS[m.mes]}</td><td><div class="nfl-rival">${rivalLogoHtml(m.rival)}<small class="origin-note">${escapeHtml(rivalOrigin)}</small></div></td><td class="${venueLabel(m)==='—'?'muted':''}">${escapeHtml(venueLabel(m))}</td><td>${escapeHtml(m.torneo)}${m.fase?' · '+escapeHtml(m.fase):''}</td><td class="mono">${formatMatchScore(m)}</td><td><span class="res-tag ${resClass(m.resultado)}">${resLabel(m.resultado)}</span></td></tr>`;
+    return `<tr><td>${miniLogoHtml(m.team)}</td><td class="mono">${m.dia} ${MONTHS[m.mes]}</td><td><div class="nfl-rival">${rivalLogoHtml(m.rival)}${m.internacional===true?`<small class="origin-note">${escapeHtml(rivalOrigin)}</small>`:''}</div></td><td class="${venueLabel(m)==='—'?'muted':''}">${escapeHtml(venueLabel(m))}</td><td>${escapeHtml(m.torneo)}${m.fase?' · '+escapeHtml(m.fase):''}</td><td class="mono">${formatMatchScore(m)}</td><td><span class="res-tag ${resClass(m.resultado)}">${resLabel(m.resultado)}</span></td></tr>`;
   }).join('');
 }
 
@@ -351,8 +351,8 @@ async function handleAdd(){
   const localScore=venueSide==='away'?Number(gc):Number(gf);
   const visitScore=venueSide==='away'?Number(gf):Number(gc);
   const followedCountry=TEAMS[team].type==='Selección' ? TEAMS[team].name : (TEAMS[team].country||'');
-  const originLocal=venueSide==='away' ? (rivalCountry||'—') : (followedCountry||'—');
-  const originVisit=venueSide==='away' ? (followedCountry||'—') : (rivalCountry||'—');
+  const originLocal=internacional ? (venueSide==='away' ? (rivalCountry||'—') : (followedCountry||'—')) : '—';
+  const originVisit=internacional ? (venueSide==='away' ? (followedCountry||'—') : (rivalCountry||'—')) : '—';
   try{
     await MatchService.add({id, team, dia, mes, rival, torneo, fase, estadio, ciudad, sede:'', gf:Number(gf), gc:Number(gc), resultado, userAdded:true,
     localName,visitName,localScore,visitScore,originLocal,originVisit,

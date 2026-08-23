@@ -128,19 +128,24 @@ function normalizedMatch(raw, seed){
   m.localScore=away?m.gc:m.gf;
   m.visitScore=away?m.gf:m.gc;
   m.resultado=m.resultado||computeResult(m.gf,m.gc);
-  // New user-added matches store rivalCountry separately. Derive the two
-  // display origins whenever older rows have null/'—' origins so that
-  // international fixtures immediately show both countries.
+  // Origins belong exclusively to fixtures explicitly marked international.
+  // Domestic matches must never display inferred countries, even if the team
+  // catalogue or an older seed row contains that information.
   const followed=TEAMS[m.team]||{};
   const followedCountry=followed.type==='Selección' ? followed.name : (followed.country||'');
   const rivalCountry=(m.rivalCountry||'').trim();
   const missingOrigin=v=>!v || v==='—';
-  if(away){
-    if(missingOrigin(m.originLocal)) m.originLocal=rivalCountry||'—';
-    if(missingOrigin(m.originVisit)) m.originVisit=followedCountry||'—';
+  if(m.internacional===true){
+    if(away){
+      if(missingOrigin(m.originLocal)) m.originLocal=rivalCountry||'—';
+      if(missingOrigin(m.originVisit)) m.originVisit=followedCountry||'—';
+    }else{
+      if(missingOrigin(m.originLocal)) m.originLocal=followedCountry||'—';
+      if(missingOrigin(m.originVisit)) m.originVisit=rivalCountry||'—';
+    }
   }else{
-    if(missingOrigin(m.originLocal)) m.originLocal=followedCountry||'—';
-    if(missingOrigin(m.originVisit)) m.originVisit=rivalCountry||'—';
+    m.originLocal='—';
+    m.originVisit='—';
   }
   m.torneo=m.torneo||'Sin competición';
   m.fase=m.fase||'—';

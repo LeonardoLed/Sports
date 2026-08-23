@@ -41,15 +41,19 @@
   }
 
   function deriveOrigins(m){
+    // Los orígenes solo tienen significado visual/analítico en partidos
+    // marcados explícitamente como internacionales. En encuentros nacionales
+    // se guardan como NULL aunque conozcamos los países de ambos equipos.
+    if(!m.internacional){
+      return {localOrigin:null, visitorOrigin:null};
+    }
+
     const away=m.venueSide === 'away';
     const rivalCountry=String(m.rivalCountry || '').trim();
     const team=window.TEAMS?.[m.team];
     const followedCountry=team ? (team.type==='Selección' ? team.name : (team.country || '')) : '';
     let localOrigin=m.originLocal;
     let visitorOrigin=m.originVisit;
-    // Persist the actual countries for new/user-managed matches whenever the
-    // form provides rivalCountry. This is deliberately done at the DB boundary
-    // so every caller (not just one page/form) writes a complete row.
     if(rivalCountry){
       if(away){
         if(missingOrigin(localOrigin)) localOrigin=rivalCountry;
