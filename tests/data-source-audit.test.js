@@ -7,20 +7,23 @@ const partidos=fs.readFileSync(path.join(root,'assets/js/pages/partidos.js'),'ut
 function test(name,fn){try{fn();console.log('PASS',name)}catch(e){console.error('FAIL',name,'\n ',e.message);process.exitCode=1}}
 
 test('Supabase empty table remains authoritative',()=>{
-  assert(state.includes("if(Array.isArray(dbMatches)){"));
+  assert(state.includes('const dbMatches=await DatabaseService.listMatches()'));
+  assert(state.includes("if(!Array.isArray(dbMatches)) throw new Error"));
   assert(!state.includes('dbMatches.length'));
   assert(state.includes("matchDataSource='supabase'"));
+  assert(state.includes('matchesLoaded=true'));
 });
 
 test('localStorage is only read fallback after Supabase attempt',()=>{
-  const dbPos=state.indexOf('if(window.DatabaseService?.isConfigured())');
-  const fallbackPos=state.indexOf("matchDataSource='local-fallback'");
+  const dbPos=state.indexOf('if(dbConfigured)');
+  const fallbackPos=state.indexOf('if(!matchesLoaded)');
   assert(dbPos>=0 && fallbackPos>dbPos);
 });
 
 test('fallback restores complete snapshot without re-merging seed',()=>{
-  assert(state.includes('matches=storedMatches.map'));
-  assert(state.includes('if(storedMatches.length)'));
+  assert(state.includes('storedMatches.length'));
+  assert(state.includes('storedMatches.map(m=>normalizedMatch'));
+  assert(!state.includes('...SEED_MATCHES,...storedMatches'));
 });
 
 test('tournament dynamic status derives from matches only',()=>{

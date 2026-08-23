@@ -84,6 +84,37 @@
     return (data||[]).map(fromRow);
   }
 
+
+  function weekFromRow(r){
+    return {
+      id:r.id,
+      label:r.label,
+      startDay:Number(r.start_day),
+      startMonth:Number(r.start_month),
+      endDay:Number(r.end_day),
+      endMonth:Number(r.end_month)
+    };
+  }
+
+  function weekToRow(w){
+    return {
+      id:w.id,
+      label:w.label,
+      start_day:Number(w.startDay),
+      start_month:Number(w.startMonth),
+      end_day:Number(w.endDay),
+      end_month:Number(w.endMonth)
+    };
+  }
+
+  async function listWeeks(){
+    const c=getClient();
+    if(!c) return null;
+    const {data,error}=await c.from('sports_weeks').select('*').order('start_month',{ascending:true}).order('start_day',{ascending:true}).order('id',{ascending:true});
+    if(error) throw error;
+    return (data||[]).map(weekFromRow);
+  }
+
   async function ensureAuthenticated(){
     const c=getClient();
     if(!c) return false;
@@ -116,5 +147,45 @@
     return true;
   }
 
-  window.DatabaseService={isConfigured,getClient,listMatches,upsertMatch,deleteMatch,ensureAuthenticated,toRow,fromRow};
+  async function upsertWeek(week){
+    const c=getClient();
+    if(!c) return false;
+    if(!await ensureAuthenticated()) throw new Error('Se requiere iniciar sesión para guardar semanas.');
+    const {error}=await c.from('sports_weeks').upsert(weekToRow(week),{onConflict:'id'});
+    if(error) throw error;
+    return true;
+  }
+
+  async function deleteWeek(id){
+    const c=getClient();
+    if(!c) return false;
+    if(!await ensureAuthenticated()) throw new Error('Se requiere iniciar sesión para eliminar semanas.');
+    const {error}=await c.from('sports_weeks').delete().eq('id',id);
+    if(error) throw error;
+    return true;
+  }
+
+  async function replaceWeeks(weeks){
+    const c=getClient();
+    if(!c) return false;
+    if(!await ensureAuthenticated()) throw new Error('Se requiere iniciar sesión para restaurar semanas.');
+    const rows=(weeks||[]).map(weekToRow);
+    if(rows.length){
+      const {error:upsertError}=await c.from('sports_weeks').upsert(rows,{onConflict:'id'});
+      if(upsertError) throw upsertError;
+      const ids=rows.map(r=>r.id);
+      const {error:deleteError}=await c.from('sports_weeks').delete().not('id','in',`(${ids.map(id=>'"'+String(id).replaceAll('"','\"')+'"').join(',')})`);
+      if(deleteError) throw deleteError;
+    }else{
+      const {error}=await c.from('sports_weeks').delete().neq('id','');
+      if(error) throw error;
+    }
+    return true;
+  }
+
+  window.DatabaseService={
+    isConfigured,getClient,ensureAuthenticated,
+    listMatches,upsertMatch,deleteMatch,toRow,fromRow,
+    listWeeks,upsertWeek,deleteWeek,replaceWeeks,weekToRow,weekFromRow
+  };
 })();

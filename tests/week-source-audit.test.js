@@ -1,0 +1,12 @@
+const fs=require('fs'), assert=require('assert');
+const state=fs.readFileSync('assets/js/core/state.js','utf8');
+const sql=fs.readFileSync('supabase/schema_and_seed.sql','utf8');
+assert(state.includes('DatabaseService.listWeeks()'));
+assert(state.includes("weekDataSource='supabase'"));
+assert(state.includes('DatabaseService.upsertWeek(week)'));
+assert(state.includes('DatabaseService.deleteWeek(id)'));
+assert(state.includes('DatabaseService.replaceWeeks(restored)'));
+assert(sql.includes('create table if not exists public.sports_weeks'));
+assert(!sql.includes('create table if not exists public.tracked_teams'));
+const seed=(sql.match(/\('w\d+','Semana \d+'/g)||[]); assert.strictEqual(seed.length,22);
+console.log('PASS sports_weeks source-of-truth audit');

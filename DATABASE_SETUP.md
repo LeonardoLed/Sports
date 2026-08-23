@@ -10,12 +10,13 @@ Esta versión reemplaza `localStorage` como fuente principal de partidos por una
 
 El script crea:
 
-- `tracked_teams`: los 6 equipos seguidos.
 - `matches`: bitácora completa y validada de partidos.
+- `sports_weeks`: rangos dinámicos usados por el seguimiento semanal.
 - índices para fecha, equipo, competición y títulos.
 - restricciones de integridad para marcadores y estados.
 - RLS: lectura pública y escritura solo para usuarios autenticados.
 - los 106 partidos históricos que ya existían en el proyecto.
+- las 22 semanas deportivas actuales como carga inicial.
 
 El script es idempotente para los IDs existentes: usa `ON CONFLICT ... DO UPDATE`, por lo que puede volver a ejecutarse sin duplicar partidos.
 
@@ -23,7 +24,7 @@ El script es idempotente para los IDs existentes: usa `ON CONFLICT ... DO UPDATE
 
 En Supabase abre **Authentication > Users** y crea el usuario que administrará Ratio Sports. Para un sitio personal se recomienda desactivar el registro público de nuevos usuarios.
 
-La primera vez que agregues o elimines un partido, el navegador pedirá el correo y la contraseña del administrador. Supabase conservará la sesión de manera segura en el navegador.
+La primera vez que agregues, edites o elimines un partido o una semana deportiva, el navegador pedirá el correo y la contraseña del administrador. Supabase conservará la sesión de manera segura en el navegador.
 
 ## 3. Conectar el frontend
 
@@ -46,9 +47,11 @@ No uses nunca la `service_role key` en GitHub Pages ni en ningún JavaScript pú
 ## 4. Flujo resultante
 
 - Dashboard y Gestión cargan los partidos desde `public.matches`.
+- Seguimiento y Gestión de semanas cargan sus rangos desde `public.sports_weeks`.
 - Agregar marcador -> autenticación si hace falta -> `UPSERT` en PostgreSQL -> refresco del estado local.
 - Eliminar marcador -> autenticación si hace falta -> `DELETE` en PostgreSQL -> refresco del estado local.
-- Si Supabase no está configurado, la aplicación conserva el flujo previo con semilla + `localStorage`.
+- Si Supabase no está configurado o una lectura falla, la aplicación usa la última copia disponible en `localStorage` como fallback.
+- Cuando Supabase está configurado, una escritura fallida no se guarda solo localmente; así se evita desincronizar la base.
 
 ## Modelo de partido
 
@@ -82,3 +85,7 @@ La tabla contempla lo que actualmente usa el módulo de Gestión:
 - `assets/js/pages/dashboard.js`
 - `partidos.html`
 - `index.html`
+
+
+## Datos dinámicos
+Supabase almacena únicamente `matches` y `sports_weeks`. Los catálogos de equipos, torneos y logos permanecen estáticos en el frontend. `localStorage` conserva una copia espejo de ambos datasets y solo se usa como fallback de lectura cuando Supabase no está disponible.

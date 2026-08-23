@@ -1,21 +1,11 @@
 -- Ratio Sports · PostgreSQL / Supabase
+-- Fuente dinámica: SOLO partidos y semanas deportivas.
+-- Equipos, logos y torneos permanecen como catálogos estáticos en el frontend.
 -- Ejecutar completo en Supabase > SQL Editor.
-
-create table if not exists public.tracked_teams (
-  id text primary key,
-  name text not null,
-  sport text not null check (sport in ('futbol','nfl')),
-  country text,
-  team_type text,
-  color text,
-  accent text,
-  created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now()
-);
 
 create table if not exists public.matches (
   id text primary key,
-  tracked_team_id text not null references public.tracked_teams(id) on update cascade on delete restrict,
+  tracked_team_id text not null,
   match_date date not null,
   rival text not null,
   rival_country text,
@@ -54,10 +44,26 @@ create table if not exists public.matches (
   )
 );
 
+-- Migración desde la versión anterior: el catálogo de equipos ya no vive en Supabase.
+alter table public.matches drop constraint if exists matches_tracked_team_id_fkey;
+drop table if exists public.tracked_teams;
+
+create table if not exists public.sports_weeks (
+  id text primary key,
+  label text not null,
+  start_month integer not null check (start_month between 1 and 12),
+  start_day integer not null check (start_day between 1 and 31),
+  end_month integer not null check (end_month between 1 and 12),
+  end_day integer not null check (end_day between 1 and 31),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
 create index if not exists idx_matches_date on public.matches(match_date desc);
 create index if not exists idx_matches_team_date on public.matches(tracked_team_id, match_date desc);
 create index if not exists idx_matches_competition on public.matches(competition);
 create index if not exists idx_matches_title on public.matches(title_decision) where title_decision = true;
+create index if not exists idx_sports_weeks_start on public.sports_weeks(start_month,start_day);
 
 create or replace function public.set_updated_at()
 returns trigger language plpgsql as $$
@@ -67,43 +73,66 @@ begin
 end;
 $$;
 
-drop trigger if exists tracked_teams_set_updated_at on public.tracked_teams;
-create trigger tracked_teams_set_updated_at before update on public.tracked_teams
-for each row execute function public.set_updated_at();
-
 drop trigger if exists matches_set_updated_at on public.matches;
 create trigger matches_set_updated_at before update on public.matches
 for each row execute function public.set_updated_at();
 
-alter table public.tracked_teams enable row level security;
-alter table public.matches enable row level security;
+drop trigger if exists sports_weeks_set_updated_at on public.sports_weeks;
+create trigger sports_weeks_set_updated_at before update on public.sports_weeks
+for each row execute function public.set_updated_at();
 
--- Todo visitante puede leer el dashboard.
-drop policy if exists "public read tracked teams" on public.tracked_teams;
-create policy "public read tracked teams" on public.tracked_teams for select using (true);
+alter table public.matches enable row level security;
+alter table public.sports_weeks enable row level security;
 
 drop policy if exists "public read matches" on public.matches;
 create policy "public read matches" on public.matches for select using (true);
 
--- Solo usuarios autenticados pueden administrar partidos.
+drop policy if exists "public read sports weeks" on public.sports_weeks;
+create policy "public read sports weeks" on public.sports_weeks for select using (true);
+
 drop policy if exists "authenticated insert matches" on public.matches;
 create policy "authenticated insert matches" on public.matches for insert to authenticated with check (true);
-
 drop policy if exists "authenticated update matches" on public.matches;
 create policy "authenticated update matches" on public.matches for update to authenticated using (true) with check (true);
-
 drop policy if exists "authenticated delete matches" on public.matches;
 create policy "authenticated delete matches" on public.matches for delete to authenticated using (true);
 
+drop policy if exists "authenticated insert sports weeks" on public.sports_weeks;
+create policy "authenticated insert sports weeks" on public.sports_weeks for insert to authenticated with check (true);
+drop policy if exists "authenticated update sports weeks" on public.sports_weeks;
+create policy "authenticated update sports weeks" on public.sports_weeks for update to authenticated using (true) with check (true);
+drop policy if exists "authenticated delete sports weeks" on public.sports_weeks;
+create policy "authenticated delete sports weeks" on public.sports_weeks for delete to authenticated using (true);
 
-insert into public.tracked_teams (id,name,sport,country,team_type,color,accent) values
-  ('real_madrid','Real Madrid','futbol','España','Club','#ffffff','#1a1a2e'),
-  ('pumas','Pumas UNAM','futbol','México','Club','#0a2f5c','#f5d800'),
-  ('al_nassr','Al Nassr','futbol','Arabia Saudita','Club','#fbe122','#0033a0'),
-  ('sel_mex','México','futbol','Selección Nacional','Selección','#00843D','#ce1126'),
-  ('sel_por','Portugal','futbol','Selección Nacional','Selección','#C8102E','#ff0000'),
-  ('cowboys','Dallas Cowboys','nfl','USA','NFL','#041e42','#869397')
-on conflict (id) do update set name=excluded.name, sport=excluded.sport, country=excluded.country, team_type=excluded.team_type, color=excluded.color, accent=excluded.accent;
+insert into public.sports_weeks (id,label,start_month,start_day,end_month,end_day) values
+  ('w1','Semana 1',1,1,1,11),
+  ('w2','Semana 2',1,12,1,18),
+  ('w3','Semana 3',1,19,1,31),
+  ('w4','Semana 4',2,1,2,8),
+  ('w5','Semana 5',2,9,2,15),
+  ('w6','Semana 6',2,16,2,22),
+  ('w7','Semana 7',2,23,2,28),
+  ('w8','Semana 8',3,1,3,8),
+  ('w9','Semana 9',3,9,3,15),
+  ('w10','Semana 10',3,16,3,22),
+  ('w11','Semana 11',3,23,3,31),
+  ('w12','Semana 12',4,1,4,12),
+  ('w13','Semana 13',4,13,4,19),
+  ('w14','Semana 14',4,20,4,30),
+  ('w15','Semana 15',5,1,5,10),
+  ('w16','Semana 16',5,11,5,17),
+  ('w17','Semana 17',5,18,5,31),
+  ('w18','Semana 18',6,1,6,14),
+  ('w19','Semana 19',6,15,6,21),
+  ('w20','Semana 20',6,22,6,31),
+  ('w21','Semana 21',7,1,7,19),
+  ('w22','Semana 22',7,20,7,31)
+on conflict (id) do update set
+  label=excluded.label,
+  start_month=excluded.start_month,
+  start_day=excluded.start_day,
+  end_month=excluded.end_month,
+  end_day=excluded.end_day;
 
 insert into public.matches (id,tracked_team_id,match_date,rival,rival_country,competition,phase,stadium,city,venue_side,goals_for,goals_against,result,local_name,visitor_name,local_origin,visitor_origin,local_score,visitor_score,score_annotation,aggregate_local,aggregate_visitor,penalty_local,penalty_visitor,extra_time,international,title_decision,title_status,title_won,tournament_id,user_added) values
   ('m1_al_nassr','al_nassr','2026-01-02','Al-Ahli',NULL,'Saudi Professional League','Jornada 12','','','away',2,3,'Perdido','Al-Ahli','Al Nassr','Arabia Saudita','Arabia Saudita',3,2,'-',NULL,NULL,NULL,NULL,FALSE,FALSE,FALSE,NULL,FALSE,NULL,FALSE),

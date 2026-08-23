@@ -88,6 +88,7 @@ const DEFAULT_WEEK_DEFS = [
    ========================================================= */
 let matches = [];
 let matchDataSource = 'initializing'; // 'supabase' | 'local-fallback'
+let weekDataSource = 'initializing';  // 'supabase' | 'local-fallback'
 let titleOverrides = {}; // compatibilidad con backups antiguos; no gobierna resultados cuando hay partidos
 let weekDefs = [];
 let activeTeamFilter = 'all';
@@ -171,40 +172,53 @@ async function loadMatches(){
   }catch(e){ console.warn('No se pudieron cargar datos guardados',e); }
 
   titleOverrides=saved?.titleOverrides||{};
-  weekDefs=(saved?.weekDefs && saved.weekDefs.length) ? saved.weekDefs : DEFAULT_WEEK_DEFS.map(w=>({...w}));
+  const storedMatches=(saved?.matches||[]).filter(validateMatch);
+  const storedWeeks=Array.isArray(saved?.weekDefs) ? saved.weekDefs : [];
+  const dbConfigured=Boolean(window.DatabaseService?.isConfigured());
 
-  // Fuente de verdad: PostgreSQL/Supabase. IMPORTANTE: una respuesta válida
-  // de [] significa que la tabla está vacía y se respeta como tal; NO activa
-  // la semilla local. localStorage solo entra cuando Supabase no está
-  // configurado o cuando la consulta falla (respaldo de disponibilidad).
-  if(window.DatabaseService?.isConfigured()){
+  // Partidos y semanas son fuentes dinámicas independientes. Si Supabase
+  // responde con [] se respeta como estado vacío; localStorage solo se usa
+  // cuando esa consulta concreta no está disponible o falla.
+  let matchesLoaded=false;
+  let weeksLoaded=false;
+
+  if(dbConfigured){
     try{
       const dbMatches=await DatabaseService.listMatches();
-      if(Array.isArray(dbMatches)){
-        matches=dbMatches.filter(validateMatch).map(m=>normalizedMatch(m,null));
-        matchDataSource='supabase';
-        // Guardamos una copia espejo para poder mostrar el último estado
-        // conocido si Supabase no está disponible en una visita posterior.
-        await persist();
-        return;
-      }
-      throw new Error('Supabase devolvió una respuesta de partidos no válida.');
+      if(!Array.isArray(dbMatches)) throw new Error('Supabase devolvió una respuesta de partidos no válida.');
+      matches=dbMatches.filter(validateMatch).map(m=>normalizedMatch(m,null));
+      matchDataSource='supabase';
+      matchesLoaded=true;
     }catch(e){
-      console.error('No se pudo leer Supabase; usando el último respaldo local disponible.',e);
+      console.error('No se pudo leer matches en Supabase; usando respaldo local.',e);
+    }
+
+    try{
+      const dbWeeks=await DatabaseService.listWeeks();
+      if(!Array.isArray(dbWeeks)) throw new Error('Supabase devolvió una respuesta de semanas no válida.');
+      weekDefs=dbWeeks.map(w=>({...w}));
+      weekDataSource='supabase';
+      weeksLoaded=true;
+    }catch(e){
+      console.error('No se pudo leer sports_weeks en Supabase; usando respaldo local.',e);
     }
   }
 
-  matchDataSource='local-fallback';
-  const storedMatches=(saved?.matches||[]).filter(validateMatch);
-  if(storedMatches.length){
-    // El respaldo es una instantánea completa del último estado conocido; no
-    // mezclamos otra vez la semilla porque podría resucitar partidos borrados.
-    matches=storedMatches.map(m=>normalizedMatch(m,seedMap[m.id]||null));
-  }else{
-    // Cold start sin Supabase ni respaldo previo: la semilla permite que el
-    // sitio siga siendo utilizable y coincide con la carga inicial entregada.
-    matches=SEED_MATCHES.map(m=>normalizedMatch(m,m));
+  if(!matchesLoaded){
+    matchDataSource='local-fallback';
+    matches=storedMatches.length
+      ? storedMatches.map(m=>normalizedMatch(m,seedMap[m.id]||null))
+      : SEED_MATCHES.map(m=>normalizedMatch(m,m));
   }
+
+  if(!weeksLoaded){
+    weekDataSource='local-fallback';
+    weekDefs=storedWeeks.length
+      ? storedWeeks.map(w=>({...w}))
+      : DEFAULT_WEEK_DEFS.map(w=>({...w}));
+  }
+
+  // Espejo de ambos datasets para disponibilidad offline / fallo temporal.
   await persist();
 }
 async function persist(){
@@ -323,26 +337,34 @@ function overlappingWeekDefs(def, excludeId){
 }
 async function addWeekDef(def){
   const id = 'w_'+Date.now().toString(36)+Math.random().toString(36).slice(2,5);
-  weekDefs.push({id, label:def.label, startDay:Number(def.startDay), startMonth:Number(def.startMonth), endDay:Number(def.endDay), endMonth:Number(def.endMonth)});
+  const week={id, label:def.label, startDay:Number(def.startDay), startMonth:Number(def.startMonth), endDay:Number(def.endDay), endMonth:Number(def.endMonth)};
+  if(window.DatabaseService?.isConfigured()) await DatabaseService.upsertWeek(week);
+  weekDefs.push(week);
   await persist();
   return id;
 }
 async function updateWeekDef(id, changes){
-  const w = weekDefs.find(x=>x.id===id);
-  if(!w) return;
-  if(changes.label!==undefined) w.label=changes.label;
-  if(changes.startDay!==undefined) w.startDay=Number(changes.startDay);
-  if(changes.startMonth!==undefined) w.startMonth=Number(changes.startMonth);
-  if(changes.endDay!==undefined) w.endDay=Number(changes.endDay);
-  if(changes.endMonth!==undefined) w.endMonth=Number(changes.endMonth);
+  const current = weekDefs.find(x=>x.id===id);
+  if(!current) return;
+  const next={...current};
+  if(changes.label!==undefined) next.label=changes.label;
+  if(changes.startDay!==undefined) next.startDay=Number(changes.startDay);
+  if(changes.startMonth!==undefined) next.startMonth=Number(changes.startMonth);
+  if(changes.endDay!==undefined) next.endDay=Number(changes.endDay);
+  if(changes.endMonth!==undefined) next.endMonth=Number(changes.endMonth);
+  if(window.DatabaseService?.isConfigured()) await DatabaseService.upsertWeek(next);
+  Object.assign(current,next);
   await persist();
 }
 async function deleteWeekDef(id){
+  if(window.DatabaseService?.isConfigured()) await DatabaseService.deleteWeek(id);
   weekDefs = weekDefs.filter(w=>w.id!==id);
   await persist();
 }
 async function resetWeekDefsToDefault(){
-  weekDefs = DEFAULT_WEEK_DEFS.map(w=>({...w}));
+  const restored=DEFAULT_WEEK_DEFS.map(w=>({...w}));
+  if(window.DatabaseService?.isConfigured()) await DatabaseService.replaceWeeks(restored);
+  weekDefs = restored;
   await persist();
 }
 function weekRangeLabel(w){ const r=weekDefRange(w); return fmtDayRange(r.start,r.end); }

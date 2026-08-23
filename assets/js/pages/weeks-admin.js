@@ -52,10 +52,14 @@ function renderWeeksAdmin(){
   body.querySelectorAll('.week-edit-btn').forEach(btn=>btn.addEventListener('click', ()=>startEditWeek(btn.dataset.id)));
   body.querySelectorAll('.week-del-btn').forEach(btn=>btn.addEventListener('click', async ()=>{
     if(!confirm('¿Borrar esta semana? Los partidos que caían en su rango pasarán a agruparse como "sin definir" hasta que definas otra semana que los cubra.')) return;
-    await deleteWeekDef(btn.dataset.id);
-    if(weekEditingId===btn.dataset.id) cancelEditWeek();
-    renderAll();
-    toast('Semana eliminada');
+    try{
+      await deleteWeekDef(btn.dataset.id);
+      if(weekEditingId===btn.dataset.id) cancelEditWeek();
+      renderAll();
+      toast('Semana eliminada');
+    }catch(e){
+      console.error(e); toast('No se pudo eliminar la semana: '+e.message);
+    }
   }));
 }
 
@@ -108,23 +112,31 @@ async function handleSaveWeek(){
   const overlaps = overlappingWeekDefs(def, weekEditingId);
   if(overlaps.length && !confirm(`Este rango se traslapa con "${overlaps.map(w=>w.label).join(', ')}". ¿Guardar de todas formas?`)) return;
 
-  if(weekEditingId){
-    await updateWeekDef(weekEditingId, def);
-    toast('Semana actualizada ✓');
-  } else {
-    await addWeekDef(def);
-    toast('Semana agregada ✓');
+  try{
+    if(weekEditingId){
+      await updateWeekDef(weekEditingId, def);
+      toast('Semana actualizada ✓');
+    } else {
+      await addWeekDef(def);
+      toast('Semana agregada ✓');
+    }
+    cancelEditWeek();
+    renderAll();
+  }catch(e){
+    console.error(e); toast('No se pudo guardar la semana: '+e.message);
   }
-  cancelEditWeek();
-  renderAll();
 }
 
 async function handleResetWeeks(){
   if(!confirm('Esto reemplaza TODAS tus semanas actuales por las 22 originales del Excel. ¿Continuar?')) return;
-  await resetWeekDefsToDefault();
-  cancelEditWeek();
-  renderAll();
-  toast('Semanas restauradas a los valores originales');
+  try{
+    await resetWeekDefsToDefault();
+    cancelEditWeek();
+    renderAll();
+    toast('Semanas restauradas a los valores originales');
+  }catch(e){
+    console.error(e); toast('No se pudieron restaurar las semanas: '+e.message);
+  }
 }
 
 function initWeeksAdmin(){

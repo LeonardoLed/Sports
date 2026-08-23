@@ -2,6 +2,8 @@
 set -e
 cd "$(dirname "$0")/.."
 node tests/database-service.test.js
+node tests/week-database.test.js
+node tests/week-source-audit.test.js
 node tests/form-contract.test.js
 node tests/data-source-audit.test.js
 node tests/match-service-fallback.test.js
