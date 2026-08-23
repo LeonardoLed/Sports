@@ -369,6 +369,7 @@ function renderAll(){
   renderMatchTable();
   renderNflTable();
   renderRecentTable();
+  window.AdminAuthUI?.refreshWriteControls();
 }
 
 
@@ -381,6 +382,7 @@ async function init(){
   applyBackgroundPhoto();
   await loadMatches();
   await loadTitleOverrides();
+  await window.AdminAuthUI?.init();
   renderAll();
   document.querySelectorAll('.tab-btn[data-tab]').forEach(b=>b.addEventListener('click', ()=>switchTab(b.dataset.tab)));
   document.getElementById('searchInput').addEventListener('input', ()=>{ matchTableVisible = PAGE_SIZE; renderMatchTable(); });

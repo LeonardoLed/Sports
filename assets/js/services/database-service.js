@@ -115,17 +115,56 @@
     return (data||[]).map(weekFromRow);
   }
 
-  async function ensureAuthenticated(){
+  function isAdminUser(user){
+    const adminUserId = String(cfg.adminUserId || '').trim();
+    return Boolean(user && adminUserId && String(user.id) === adminUserId);
+  }
+
+  async function getAuthState(){
     const c=getClient();
-    if(!c) return false;
-    const {data:{session}}=await c.auth.getSession();
-    if(session) return true;
-    const email=window.prompt('Correo de administrador de Ratio Sports:');
-    if(!email) return false;
-    const password=window.prompt('Contraseña de administrador:');
-    if(!password) return false;
-    const {error}=await c.auth.signInWithPassword({email,password});
-    if(error) throw new Error('No se pudo iniciar sesión: '+error.message);
+    if(!c) return {configured:false, authenticated:false, admin:false, user:null};
+    const {data:{session},error}=await c.auth.getSession();
+    if(error) throw error;
+    const user=session?.user || null;
+    return {configured:true, authenticated:Boolean(session && user), admin:isAdminUser(user), user};
+  }
+
+  async function signInAdmin(email,password){
+    const c=getClient();
+    if(!c) throw new Error('Supabase no está configurado.');
+    if(!email || !password) throw new Error('Escribe correo y contraseña.');
+    const {data,error}=await c.auth.signInWithPassword({email:String(email).trim(),password});
+    if(error) throw new Error('Acceso denegado: correo o contraseña incorrectos.');
+    const user=data?.user || data?.session?.user || null;
+    if(!isAdminUser(user)){
+      await c.auth.signOut();
+      throw new Error('Acceso denegado: este usuario no tiene permisos de administrador.');
+    }
+    return user;
+  }
+
+  async function signOutAdmin(){
+    const c=getClient();
+    if(!c) return;
+    const {error}=await c.auth.signOut();
+    if(error) throw error;
+  }
+
+  function onAuthStateChange(callback){
+    const c=getClient();
+    if(!c) return {unsubscribe(){}};
+    const {data}=c.auth.onAuthStateChange((_event,session)=>{
+      const user=session?.user || null;
+      callback({configured:true,authenticated:Boolean(session&&user),admin:isAdminUser(user),user});
+    });
+    return data?.subscription || {unsubscribe(){}};
+  }
+
+  async function ensureAuthenticated(){
+    const state=await getAuthState();
+    if(!state.configured) return false;
+    if(!state.authenticated) throw new Error('Inicia sesión como administrador para guardar cambios.');
+    if(!state.admin) throw new Error('Acceso denegado: esta cuenta no es el administrador autorizado.');
     return true;
   }
 
@@ -184,7 +223,7 @@
   }
 
   window.DatabaseService={
-    isConfigured,getClient,ensureAuthenticated,
+    isConfigured,getClient,isAdminUser,getAuthState,signInAdmin,signOutAdmin,onAuthStateChange,ensureAuthenticated,
     listMatches,upsertMatch,deleteMatch,toRow,fromRow,
     listWeeks,upsertWeek,deleteWeek,replaceWeeks,weekToRow,weekFromRow
   };

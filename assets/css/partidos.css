@@ -231,3 +231,22 @@ html[data-style="led"] .panel,html[data-style="led"] .team-card,html[data-style=
 .bg-photo-layer.active{opacity:.62!important;}
 html[data-theme="dark"] .bg-photo-layer.active{opacity:.52!important;}
 html[data-style="led"] .bg-photo-layer.active{opacity:.36!important;}
+
+/* ===== Acceso de administrador ===== */
+.admin-access-panel{border-style:solid}
+.admin-access-head{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin-bottom:18px}
+.admin-access-head h2{margin-bottom:4px}
+.admin-status-badge{display:inline-flex;align-items:center;gap:7px;padding:7px 11px;border-radius:999px;font-size:12px;font-weight:800;letter-spacing:.02em;background:var(--panel-2);color:var(--text-dim);border:1px solid var(--border)}
+.admin-status-badge.is-admin{color:var(--win);border-color:color-mix(in srgb,var(--win) 40%,var(--border));background:color-mix(in srgb,var(--win) 9%,var(--panel))}
+.admin-status-badge.is-locked{color:var(--loss);border-color:color-mix(in srgb,var(--loss) 35%,var(--border));background:color-mix(in srgb,var(--loss) 7%,var(--panel))}
+.admin-login-form{display:grid;grid-template-columns:minmax(220px,1fr) minmax(220px,1fr) auto;align-items:end;gap:12px}
+.admin-login-actions{padding-bottom:1px}
+.admin-auth-message{grid-column:1/-1;min-height:18px;margin:0;font-size:12px;font-weight:650;color:var(--text-dim)}
+.admin-auth-message.error{color:var(--loss)}
+.admin-auth-message.success{color:var(--win)}
+.admin-session{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 16px;border-radius:12px;background:var(--panel-2);border:1px solid var(--border)}
+.admin-session>div{display:flex;flex-direction:column;gap:3px}
+.admin-session-label{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--text-dim);font-weight:800}
+.admin-write-locked{opacity:.58;filter:saturate(.75)}
+.admin-write-locked button{cursor:not-allowed}
+@media(max-width:760px){.admin-login-form{grid-template-columns:1fr}.admin-login-actions{padding:0}.admin-login-actions .btn{width:100%}.admin-access-head{flex-direction:column}.admin-session{align-items:flex-start;flex-direction:column}}

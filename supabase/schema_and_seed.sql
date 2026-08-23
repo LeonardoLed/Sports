@@ -90,19 +90,35 @@ create policy "public read matches" on public.matches for select using (true);
 drop policy if exists "public read sports weeks" on public.sports_weeks;
 create policy "public read sports weeks" on public.sports_weeks for select using (true);
 
+-- Escritura: solo el usuario autenticado con UID 8e5aaf5a-4039-4668-b1a1-cdee0e0d47c2.
+-- El frontend valida el mismo UID; RLS es la protección autoritativa.
 drop policy if exists "authenticated insert matches" on public.matches;
-create policy "authenticated insert matches" on public.matches for insert to authenticated with check (true);
 drop policy if exists "authenticated update matches" on public.matches;
-create policy "authenticated update matches" on public.matches for update to authenticated using (true) with check (true);
 drop policy if exists "authenticated delete matches" on public.matches;
-create policy "authenticated delete matches" on public.matches for delete to authenticated using (true);
+drop policy if exists "admin insert matches" on public.matches;
+create policy "admin insert matches" on public.matches for insert to authenticated
+  with check (auth.uid() = '8e5aaf5a-4039-4668-b1a1-cdee0e0d47c2'::uuid);
+drop policy if exists "admin update matches" on public.matches;
+create policy "admin update matches" on public.matches for update to authenticated
+  using (auth.uid() = '8e5aaf5a-4039-4668-b1a1-cdee0e0d47c2'::uuid)
+  with check (auth.uid() = '8e5aaf5a-4039-4668-b1a1-cdee0e0d47c2'::uuid);
+drop policy if exists "admin delete matches" on public.matches;
+create policy "admin delete matches" on public.matches for delete to authenticated
+  using (auth.uid() = '8e5aaf5a-4039-4668-b1a1-cdee0e0d47c2'::uuid);
 
 drop policy if exists "authenticated insert sports weeks" on public.sports_weeks;
-create policy "authenticated insert sports weeks" on public.sports_weeks for insert to authenticated with check (true);
 drop policy if exists "authenticated update sports weeks" on public.sports_weeks;
-create policy "authenticated update sports weeks" on public.sports_weeks for update to authenticated using (true) with check (true);
 drop policy if exists "authenticated delete sports weeks" on public.sports_weeks;
-create policy "authenticated delete sports weeks" on public.sports_weeks for delete to authenticated using (true);
+drop policy if exists "admin insert sports weeks" on public.sports_weeks;
+create policy "admin insert sports weeks" on public.sports_weeks for insert to authenticated
+  with check (auth.uid() = '8e5aaf5a-4039-4668-b1a1-cdee0e0d47c2'::uuid);
+drop policy if exists "admin update sports weeks" on public.sports_weeks;
+create policy "admin update sports weeks" on public.sports_weeks for update to authenticated
+  using (auth.uid() = '8e5aaf5a-4039-4668-b1a1-cdee0e0d47c2'::uuid)
+  with check (auth.uid() = '8e5aaf5a-4039-4668-b1a1-cdee0e0d47c2'::uuid);
+drop policy if exists "admin delete sports weeks" on public.sports_weeks;
+create policy "admin delete sports weeks" on public.sports_weeks for delete to authenticated
+  using (auth.uid() = '8e5aaf5a-4039-4668-b1a1-cdee0e0d47c2'::uuid);
 
 insert into public.sports_weeks (id,label,start_month,start_day,end_month,end_day) values
   ('w1','Semana 1',1,1,1,11),

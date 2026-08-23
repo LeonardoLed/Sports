@@ -13,7 +13,7 @@ function query(table){
     then(resolve){resolve({data:[],error:null});}
   }; return q;
 }
-const sandbox={window:{RATIO_SPORTS_DB:{supabaseUrl:'x',supabaseAnonKey:'y'},supabase:{createClient:()=>({from:query,auth:{getSession:async()=>({data:{session:{}}})}})}}};
+const sandbox={window:{RATIO_SPORTS_DB:{supabaseUrl:'x',supabaseAnonKey:'y',adminUserId:'8e5aaf5a-4039-4668-b1a1-cdee0e0d47c2'},supabase:{createClient:()=>({from:query,auth:{getSession:async()=>({data:{session:{user:{id:'8e5aaf5a-4039-4668-b1a1-cdee0e0d47c2',email:'admin@test.com'}}}})}})}}};
 vm.createContext(sandbox);vm.runInContext(src,sandbox);
 const db=sandbox.window.DatabaseService;
 (async()=>{

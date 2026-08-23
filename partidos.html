@@ -119,6 +119,36 @@
 </section>
 <!-- ============ TAB: REGISTRAR ============ -->
 <section id="tab-registrar">
+<div class="panel admin-access-panel" id="adminAccessPanel">
+  <div class="admin-access-head">
+    <div>
+      <h2>Acceso de administrador</h2>
+      <p class="sub">La consulta de datos es pública. Para agregar, editar o eliminar información debes iniciar sesión.</p>
+    </div>
+    <span class="admin-status-badge" id="adminStatusBadge">Verificando…</span>
+  </div>
+  <div class="admin-login-form" id="adminLoginForm">
+    <div class="field">
+      <label for="adminEmail">Correo</label>
+      <input id="adminEmail" autocomplete="username" inputmode="email" placeholder="administrador@correo.com" type="email"/>
+    </div>
+    <div class="field">
+      <label for="adminPassword">Contraseña</label>
+      <input id="adminPassword" autocomplete="current-password" placeholder="••••••••" type="password"/>
+    </div>
+    <div class="admin-login-actions">
+      <button class="btn btn-primary" id="adminLoginBtn" type="button">Iniciar sesión</button>
+    </div>
+    <p class="admin-auth-message" id="adminAuthMessage" aria-live="polite"></p>
+  </div>
+  <div class="admin-session hidden" id="adminSession">
+    <div>
+      <span class="admin-session-label">Sesión iniciada</span>
+      <strong id="adminSessionEmail">—</strong>
+    </div>
+    <button class="btn btn-ghost" id="adminLogoutBtn" type="button">Cerrar sesión</button>
+  </div>
+</div>
 <div class="panel">
 <h2>Nuevo marcador</h2>
 <p class="sub">Llena los datos del partido y agrégalo a tu bitácora</p>
@@ -285,6 +315,7 @@
 <script defer src="assets/js/services/match-service.js"></script>
 <script defer src="assets/js/core/ui.js"></script>
 <script defer src="assets/js/core/backup.js"></script>
+<script defer src="assets/js/pages/admin-auth.js"></script>
 <script defer src="assets/js/pages/weeks-admin.js"></script>
 <script defer src="assets/js/pages/partidos.js"></script>
 </body>
