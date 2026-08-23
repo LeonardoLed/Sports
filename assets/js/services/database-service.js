@@ -35,12 +35,40 @@
     };
   }
 
+  function missingOrigin(v){
+    const x=String(v ?? '').trim();
+    return !x || x==='—' || x==='-';
+  }
+
+  function deriveOrigins(m){
+    const away=m.venueSide === 'away';
+    const rivalCountry=String(m.rivalCountry || '').trim();
+    const team=window.TEAMS?.[m.team];
+    const followedCountry=team ? (team.type==='Selección' ? team.name : (team.country || '')) : '';
+    let localOrigin=m.originLocal;
+    let visitorOrigin=m.originVisit;
+    // Persist the actual countries for new/user-managed matches whenever the
+    // form provides rivalCountry. This is deliberately done at the DB boundary
+    // so every caller (not just one page/form) writes a complete row.
+    if(rivalCountry){
+      if(away){
+        if(missingOrigin(localOrigin)) localOrigin=rivalCountry;
+        if(missingOrigin(visitorOrigin)) visitorOrigin=followedCountry || null;
+      }else{
+        if(missingOrigin(localOrigin)) localOrigin=followedCountry || null;
+        if(missingOrigin(visitorOrigin)) visitorOrigin=rivalCountry;
+      }
+    }
+    return {localOrigin:missingOrigin(localOrigin)?null:localOrigin, visitorOrigin:missingOrigin(visitorOrigin)?null:visitorOrigin};
+  }
+
   function toRow(m){
     const year = Number(m.year || 2026);
     const mm = String(Number(m.mes)).padStart(2,'0');
     const dd = String(Number(m.dia)).padStart(2,'0');
     const away = m.venueSide === 'away';
     const gf = Number(m.gf || 0), gc = Number(m.gc || 0);
+    const origins=deriveOrigins(m);
     return {
       id:m.id,
       tracked_team_id:m.team,
@@ -57,8 +85,8 @@
       result:m.resultado || (gf>gc?'Ganado':gf<gc?'Perdido':'Empatado'),
       local_name:m.localName || (away?m.rival:(window.TEAMS?.[m.team]?.name || m.team)),
       visitor_name:m.visitName || (away?(window.TEAMS?.[m.team]?.name || m.team):m.rival),
-      local_origin:m.originLocal || null,
-      visitor_origin:m.originVisit || null,
+      local_origin:origins.localOrigin,
+      visitor_origin:origins.visitorOrigin,
       local_score:away?gc:gf,
       visitor_score:away?gf:gc,
       score_annotation:m.scoreAnnotation || '-',

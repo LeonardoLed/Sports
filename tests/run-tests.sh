@@ -9,6 +9,7 @@ node tests/data-source-audit.test.js
 node tests/match-service-fallback.test.js
 node tests/admin-auth.test.js
 node tests/international-country.test.js
+node tests/origin-persistence.test.js
 python tests/seed-integrity.py
 node --check assets/js/services/database-service.js
 node --check assets/js/services/match-service.js
