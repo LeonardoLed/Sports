@@ -80,6 +80,7 @@ window.TOURNAMENT_LOGOS = {
   'AFC Champions League Two': 'logos/torneos/afc_champions_league_2.png',
   'Saudi Professional League': 'logos/torneos/saudi_pro_league.png',
   'Liga BBVA MX Clausura 2026': 'logos/torneos/liga_mx.png',
+  'Liga BBVA MX Apertura 2026': 'logos/torneos/liga_mx.png',
   'Copa Mundial FIFA USA-MEX-CAN 2026': 'logos/torneos/copa_mundial_2026.png',
   'Leagues Cup': 'logos/torneos/leagues_cup.png',
 };
