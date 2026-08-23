@@ -4,6 +4,6 @@
    3) Copia Project URL y Publishable/anon key aquí.
    Nunca pongas la service_role key en este archivo. */
 window.RATIO_SPORTS_DB = {
-  supabaseUrl: '',
-  supabaseAnonKey: ''
+  supabaseUrl: 'https://xvpwbuhcndjfhmtksqhz.supabase.co',
+  supabaseAnonKey: 'sb_publishable_piSRc8-pV2IkPjOesuzEDA_KHBRl2fe'
 };
