@@ -226,6 +226,7 @@ const DOMESTIC_TOURNAMENTS=[
   /la liga/i,/copa del rey/i,/supercopa de españa/i,/liga bbva mx/i,/liga mx/i,/saudi professional league/i,/nfl temporada/i
 ];
 function isDomesticMatch(m){
+  if(m.internacional===true) return false;
   if(String(m.scope||m.alcance||'').toUpperCase()==='LOCAL') return true;
   if(String(m.scope||m.alcance||'').toUpperCase()==='INTERNACIONAL') return false;
   return DOMESTIC_TOURNAMENTS.some(rx=>rx.test(m.torneo||''));
@@ -349,9 +350,12 @@ async function handleAdd(){
   const visitName=venueSide==='away'?teamName:rival;
   const localScore=venueSide==='away'?Number(gc):Number(gf);
   const visitScore=venueSide==='away'?Number(gf):Number(gc);
+  const followedCountry=TEAMS[team].type==='Selección' ? TEAMS[team].name : (TEAMS[team].country||'');
+  const originLocal=venueSide==='away' ? (rivalCountry||'—') : (followedCountry||'—');
+  const originVisit=venueSide==='away' ? (followedCountry||'—') : (rivalCountry||'—');
   try{
     await MatchService.add({id, team, dia, mes, rival, torneo, fase, estadio, ciudad, sede:'', gf:Number(gf), gc:Number(gc), resultado, userAdded:true,
-    localName,visitName,localScore,visitScore,originLocal:'—',originVisit:'—',
+    localName,visitName,localScore,visitScore,originLocal,originVisit,
     rivalCountry, internacional, venueSide,
     aggregateLocal:aggLocal===''?null:Number(aggLocal),aggregateVisit:aggVisit===''?null:Number(aggVisit),
     penaltyLocal:penLocal===''?null:Number(penLocal),penaltyVisit:penVisit===''?null:Number(penVisit),extraTime,
