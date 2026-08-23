@@ -533,3 +533,115 @@ html[data-style="led"] .bg-photo-layer.active{opacity:.36!important;}
 .team-v16-eff{font-size:10.5px!important;}
 .team-v16-eff b{font-size:12px!important;}
 .team-card-v16 .team-v16-goals{font-size:11px!important;}
+
+/* =====================================================================
+   v21 — Typography & CR7 background refinement
+   Preserves existing structure/layout. Only scale, contrast and color.
+   ===================================================================== */
+
+/* Team-card hierarchy: clearer names and readable numbers without resizing layout */
+.team-card-v16 .team-name{
+  font-size:clamp(19px,1.32vw,21px)!important;
+  font-weight:850!important;
+  letter-spacing:-.22px!important;
+  color:var(--text)!important;
+}
+.team-card-v16 .team-meta{
+  font-size:12.5px!important;
+  font-weight:600!important;
+  color:var(--text-dim)!important;
+}
+.team-card-v16 .record-pj strong{
+  font-size:29px!important;
+  font-weight:900!important;
+  letter-spacing:-.7px!important;
+}
+.team-card-v16 .record-pj span{
+  font-size:10.5px!important;
+  font-weight:800!important;
+  color:var(--text-dim)!important;
+}
+.team-card-v16 .record-line strong{
+  font-size:21px!important;
+  font-weight:900!important;
+}
+.team-card-v16 .record-line span{
+  font-size:11px!important;
+  font-weight:800!important;
+}
+.team-card-v16 .record-line small{
+  font-size:10px!important;
+  font-weight:700!important;
+  color:var(--text-dim)!important;
+}
+.team-card-v16 .team-honours{
+  font-size:12px!important;
+  color:var(--text-dim)!important;
+}
+.team-card-v16 .team-honours b{font-size:18px!important;font-weight:900!important;}
+.team-card-v16 .team-honours small{font-size:10px!important;color:var(--text-dim)!important;}
+.team-card-v16 .team-v16-form-label{
+  font-size:11.5px!important;
+  font-weight:850!important;
+  color:var(--text-dim)!important;
+}
+.team-card-v16 .form-pip{
+  font-size:11.5px!important;
+  font-weight:900!important;
+}
+.team-card-v16 .team-v16-goals{
+  font-size:12px!important;
+  font-weight:700!important;
+  color:var(--text-dim)!important;
+}
+.team-card-v16 .team-v16-goals b{
+  font-size:13px!important;
+  font-weight:900!important;
+  color:var(--text)!important;
+}
+
+/* Section/panel text: same composition, slightly stronger hierarchy */
+.section-title{
+  font-size:clamp(20px,1.35vw,22px)!important;
+  font-weight:850!important;
+  color:var(--text)!important;
+}
+.panel h2{
+  font-size:18px!important;
+  font-weight:850!important;
+  color:var(--text)!important;
+}
+.panel .sub{font-size:12.5px!important;color:var(--text-dim)!important;}
+
+/* More legible neutral text while preserving the current palette */
+.team-card-v16{color:var(--text)!important;}
+html:not([data-theme="dark"]) .team-card-v16 .team-meta,
+html:not([data-theme="dark"]) .team-card-v16 .record-pj span,
+html:not([data-theme="dark"]) .team-card-v16 .record-line small,
+html:not([data-theme="dark"]) .team-card-v16 .team-honours,
+html:not([data-theme="dark"]) .team-card-v16 .team-v16-goals{color:#53606c!important;}
+html[data-theme="dark"] .team-card-v16 .team-meta,
+html[data-theme="dark"] .team-card-v16 .record-pj span,
+html[data-theme="dark"] .team-card-v16 .record-line small,
+html[data-theme="dark"] .team-card-v16 .team-honours,
+html[data-theme="dark"] .team-card-v16 .team-v16-goals{color:#c1cad2!important;}
+
+/* CR7: same image, same placement, substantially more visible */
+.bg-photo-layer{
+  filter:saturate(.94) contrast(1.10) brightness(1.02)!important;
+}
+.bg-photo-layer.active{opacity:.74!important;}
+html[data-theme="dark"] .bg-photo-layer.active{opacity:.64!important;}
+html[data-style="led"] .bg-photo-layer.active{
+  opacity:.48!important;
+  filter:saturate(.84) contrast(1.13) brightness(.91)!important;
+}
+
+@media(max-width:760px){
+  .team-card-v16 .team-name{font-size:19px!important;}
+  .team-card-v16 .record-pj strong{font-size:27px!important;}
+  .team-card-v16 .record-line strong{font-size:20px!important;}
+  .section-title{font-size:20px!important;}
+  .bg-photo-layer.active{opacity:.48!important;}
+  html[data-theme="dark"] .bg-photo-layer.active{opacity:.44!important;}
+}

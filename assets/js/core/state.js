@@ -87,7 +87,8 @@ const DEFAULT_WEEK_DEFS = [
      ese archivo.
    ========================================================= */
 let matches = [];
-let titleOverrides = {};
+let matchDataSource = 'initializing'; // 'supabase' | 'local-fallback'
+let titleOverrides = {}; // compatibilidad con backups antiguos; no gobierna resultados cuando hay partidos
 let weekDefs = [];
 let activeTeamFilter = 'all';
 const PAGE_SIZE = 15;
@@ -168,11 +169,42 @@ async function loadMatches(){
       }
     }
   }catch(e){ console.warn('No se pudieron cargar datos guardados',e); }
-  const storedMatches=(saved?.matches||[]).filter(validateMatch);
-  const manual=storedMatches.filter(m=>m.userAdded && !seedMap[m.id]).map(m=>normalizedMatch(m,null));
-  matches=SEED_MATCHES.map(m=>normalizedMatch(m,m)).concat(manual);
+
   titleOverrides=saved?.titleOverrides||{};
   weekDefs=(saved?.weekDefs && saved.weekDefs.length) ? saved.weekDefs : DEFAULT_WEEK_DEFS.map(w=>({...w}));
+
+  // Fuente de verdad: PostgreSQL/Supabase. IMPORTANTE: una respuesta válida
+  // de [] significa que la tabla está vacía y se respeta como tal; NO activa
+  // la semilla local. localStorage solo entra cuando Supabase no está
+  // configurado o cuando la consulta falla (respaldo de disponibilidad).
+  if(window.DatabaseService?.isConfigured()){
+    try{
+      const dbMatches=await DatabaseService.listMatches();
+      if(Array.isArray(dbMatches)){
+        matches=dbMatches.filter(validateMatch).map(m=>normalizedMatch(m,null));
+        matchDataSource='supabase';
+        // Guardamos una copia espejo para poder mostrar el último estado
+        // conocido si Supabase no está disponible en una visita posterior.
+        await persist();
+        return;
+      }
+      throw new Error('Supabase devolvió una respuesta de partidos no válida.');
+    }catch(e){
+      console.error('No se pudo leer Supabase; usando el último respaldo local disponible.',e);
+    }
+  }
+
+  matchDataSource='local-fallback';
+  const storedMatches=(saved?.matches||[]).filter(validateMatch);
+  if(storedMatches.length){
+    // El respaldo es una instantánea completa del último estado conocido; no
+    // mezclamos otra vez la semilla porque podría resucitar partidos borrados.
+    matches=storedMatches.map(m=>normalizedMatch(m,seedMap[m.id]||null));
+  }else{
+    // Cold start sin Supabase ni respaldo previo: la semilla permite que el
+    // sitio siga siendo utilizable y coincide con la carga inicial entregada.
+    matches=SEED_MATCHES.map(m=>normalizedMatch(m,m));
+  }
   await persist();
 }
 async function persist(){
@@ -392,4 +424,4 @@ function escapeHtml(value=''){
 }
 function escapeAttr(value=''){ return escapeHtml(value); }
 function setSafeText(element,value){ if(element) element.textContent=String(value??''); }
-window.SportsCore={exportLedger,importLedgerFile,escapeHtml,storageEnvelope,STORAGE_SCHEMA_VERSION};
+window.SportsCore={exportLedger,importLedgerFile,escapeHtml,storageEnvelope,STORAGE_SCHEMA_VERSION,dataSource:()=>matchDataSource};

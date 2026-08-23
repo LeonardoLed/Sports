@@ -314,8 +314,7 @@ function renderRecentTable(){
   }).join('');
   body.querySelectorAll('.del-btn').forEach(btn=>{
     btn.addEventListener('click', async ()=>{
-      matches = matches.filter(m=>m.id!==btn.dataset.id);
-      await persist(); renderAll(); toast('Marcador eliminado');
+      try{await MatchService.remove(btn.dataset.id);renderAll();toast('Marcador eliminado');}catch(e){console.error(e);toast('No se pudo eliminar: '+e.message);}
     });
   });
 }
@@ -329,17 +328,37 @@ async function handleAdd(){
   const fase = document.getElementById('f_fase').value.trim();
   const estadio = document.getElementById('f_estadio').value.trim();
   const ciudad = document.getElementById('f_ciudad').value.trim();
+  const rivalCountry = document.getElementById('f_rivalCountry').value.trim();
+  const internacional = document.getElementById('f_internacional').checked;
+  const venueSide = document.getElementById('f_venueSide').value;
   const gf = document.getElementById('f_gf').value;
   const gc = document.getElementById('f_gc').value;
+  const aggLocal = document.getElementById('f_aggLocal').value;
+  const aggVisit = document.getElementById('f_aggVisit').value;
+  const penLocal = document.getElementById('f_penLocal').value;
+  const penVisit = document.getElementById('f_penVisit').value;
+  const extraTime = document.getElementById('f_extraTime').checked;
 
   if(!rival || gf==='' || gc==='' || !dia){ toast('Falta rival, día o marcador'); return; }
   const resultado = computeResult(Number(gf), Number(gc));
   const id = 'u_' + Date.now() + '_' + Math.random().toString(36).slice(2,7);
   const esTitulo = document.getElementById('f_esTitulo').checked;
   const tituloResultado = document.getElementById('f_tituloResultado').value;
-  matches.push({id, team, dia, mes, rival, torneo, fase, estadio, ciudad, sede:'', gf:Number(gf), gc:Number(gc), resultado, userAdded:true,
-    titleDecision:esTitulo, titleStatus:esTitulo?tituloResultado:null, tournamentId:esTitulo?normalizeKey(torneo):null});
-  await persist();
+  const teamName=TEAMS[team].name;
+  const localName=venueSide==='away'?rival:teamName;
+  const visitName=venueSide==='away'?teamName:rival;
+  const localScore=venueSide==='away'?Number(gc):Number(gf);
+  const visitScore=venueSide==='away'?Number(gf):Number(gc);
+  try{
+    await MatchService.add({id, team, dia, mes, rival, torneo, fase, estadio, ciudad, sede:'', gf:Number(gf), gc:Number(gc), resultado, userAdded:true,
+    localName,visitName,localScore,visitScore,originLocal:'—',originVisit:'—',
+    rivalCountry, internacional, venueSide,
+    aggregateLocal:aggLocal===''?null:Number(aggLocal),aggregateVisit:aggVisit===''?null:Number(aggVisit),
+    penaltyLocal:penLocal===''?null:Number(penLocal),penaltyVisit:penVisit===''?null:Number(penVisit),extraTime,
+    titleDecision:esTitulo, titleStatus:esTitulo?tituloResultado:null, titleWon:esTitulo&&tituloResultado==='ganado', tournamentId:esTitulo?normalizeKey(torneo):null});
+  }catch(e){
+    console.error(e); toast('No se pudo guardar en la base: '+e.message); return;
+  }
 
   if(esTitulo && torneo){
     await setTournamentStatus(team, torneo, tituloResultado);
@@ -349,8 +368,11 @@ async function handleAdd(){
 }
 
 function clearForm(){
-  ['f_rival','f_dia','f_torneo','f_fase','f_estadio','f_ciudad','f_gf','f_gc'].forEach(id=>document.getElementById(id).value='');
+  ['f_rival','f_rivalCountry','f_dia','f_torneo','f_fase','f_estadio','f_ciudad','f_gf','f_gc','f_aggLocal','f_aggVisit','f_penLocal','f_penVisit'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('f_esTitulo').checked = false;
+  document.getElementById('f_internacional').checked = false;
+  document.getElementById('f_extraTime').checked = false;
+  document.getElementById('f_venueSide').value = 'home';
   document.getElementById('f_tituloResultado').classList.add('hidden');
   updateResultPreview();
 }

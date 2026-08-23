@@ -146,6 +146,16 @@
 <input id="f_rival" placeholder="Ej. FC Barcelona" type="text"/>
 </div>
 <div class="field">
+<label>País del rival</label>
+<input id="f_rivalCountry" list="rivalCountryOptions" placeholder="Ej. Estados Unidos" type="text"/>
+<datalist id="rivalCountryOptions"></datalist>
+<span class="muted" style="font-size:10.5px;">De tu equipo ya sabemos el país — este es el del rival</span>
+</div>
+<div class="field">
+<label>Condición del equipo seguido</label>
+<select id="f_venueSide"><option value="home">Local</option><option value="away">Visitante</option></select>
+</div>
+<div class="field">
 <label>Día</label>
 <input id="f_dia" max="31" min="1" placeholder="14" type="number"/>
 </div>
@@ -190,6 +200,12 @@
 </div>
 <div class="preview-badge" style="flex-wrap:wrap;">
 <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-weight:600;">
+<input id="f_internacional" style="width:16px; height:16px;" type="checkbox"/>
+            🌐 Partido internacional (torneo entre países/ligas distintas)
+          </label>
+</div>
+<div class="preview-badge" style="flex-wrap:wrap;">
+<label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-weight:600;">
 <input id="f_esTitulo" style="width:16px; height:16px;" type="checkbox"/>
             🏆 Este partido definió un título (fue una final)
           </label>
@@ -198,6 +214,11 @@
 <option value="perdido">Lo perdimos</option>
 </select>
 </div>
+<div class="field"><label>Global local (opcional)</label><input id="f_aggLocal" min="0" placeholder="Ej. 2" type="number"/></div>
+<div class="field"><label>Global visitante (opcional)</label><input id="f_aggVisit" min="0" placeholder="Ej. 4" type="number"/></div>
+<div class="field"><label>Penales local (opcional)</label><input id="f_penLocal" min="0" placeholder="Ej. 4" type="number"/></div>
+<div class="field"><label>Penales visitante (opcional)</label><input id="f_penVisit" min="0" placeholder="Ej. 2" type="number"/></div>
+<div class="preview-badge"><label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-weight:700"><input id="f_extraTime" style="width:16px;height:16px" type="checkbox"/> Partido definido en tiempo extra</label></div>
 <div class="form-actions">
 <button class="btn btn-ghost" id="clearBtn">Limpiar</button>
 <button class="btn btn-primary" id="addBtn">Agregar marcador</button>
@@ -221,9 +242,13 @@
 
 
 
+<script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script defer src="assets/js/config/database.js"></script>
+<script defer src="assets/js/services/database-service.js"></script>
 <script defer src="assets/js/config/logos.js"></script>
 <script defer src="assets/js/data/sports-data.js"></script>
 <script defer src="assets/js/core/state.js"></script>
+<script defer src="assets/js/services/match-service.js"></script>
 <script defer src="assets/js/core/ui.js"></script>
 <script defer src="assets/js/core/backup.js"></script>
 <script defer src="assets/js/pages/dashboard.js"></script>

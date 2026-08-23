@@ -293,7 +293,7 @@ function renderRecentTable(){
       <td><span class="res-tag ${resClass(m.resultado)}">${resLabel(m.resultado)}</span></td>
       <td><button class="del-btn" data-id="${escapeAttr(m.id)}">Eliminar</button></td></tr>`;
   }).join('');
-  body.querySelectorAll('.del-btn').forEach(btn=>btn.addEventListener('click',async()=>{matches=matches.filter(m=>m.id!==btn.dataset.id);await persist();renderAll();toast('Marcador eliminado');}));
+  body.querySelectorAll('.del-btn').forEach(btn=>btn.addEventListener('click',async()=>{try{await MatchService.remove(btn.dataset.id);renderAll();toast('Marcador eliminado');}catch(e){console.error(e);toast('No se pudo eliminar: '+e.message);}}));
 }
 async function handleAdd(){
   const team = document.getElementById('f_team').value;
@@ -325,13 +325,16 @@ async function handleAdd(){
   const visitName=venueSide==='away'?teamName:rival;
   const localScore=venueSide==='away'?Number(gc):Number(gf);
   const visitScore=venueSide==='away'?Number(gf):Number(gc);
-  matches.push({id, team, dia, mes, rival, torneo, fase, estadio, ciudad, sede:'', gf:Number(gf), gc:Number(gc), resultado, userAdded:true,
+  try{
+    await MatchService.add({id, team, dia, mes, rival, torneo, fase, estadio, ciudad, sede:'', gf:Number(gf), gc:Number(gc), resultado, userAdded:true,
     localName,visitName,localScore,visitScore,originLocal:'—',originVisit:'—',
     rivalCountry, internacional,
     aggregateLocal:aggLocal===''?null:Number(aggLocal),aggregateVisit:aggVisit===''?null:Number(aggVisit),
     penaltyLocal:penLocal===''?null:Number(penLocal),penaltyVisit:penVisit===''?null:Number(penVisit),extraTime,
     titleDecision:esTitulo, titleStatus:esTitulo?tituloResultado:null, titleWon:esTitulo&&tituloResultado==='ganado', tournamentId:esTitulo?normalizeKey(torneo):null, venueSide});
-  await persist();
+  }catch(e){
+    console.error(e); toast('No se pudo guardar en la base: '+e.message); return;
+  }
 
   if(esTitulo && torneo){
     await setTournamentStatus(team, torneo, tituloResultado);

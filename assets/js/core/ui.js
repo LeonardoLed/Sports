@@ -62,11 +62,14 @@ function findTitleMatch(team,tournament){
 }
 
 function effectiveTournamentStatus(team,tournament){
-  const explicit=(titleOverrides[team]||{})[tournament.name];
-  if(explicit) return explicit;
+  // El catálogo solo define nombre/logo/aliases. El estado competitivo es
+  // dinámico y debe salir de matches, nunca de un status hardcodeado.
   const finalMatch=findTitleMatch(team,tournament);
-  if(finalMatch) return finalMatch.resultado==='Ganado'?'ganado':'perdido';
-  return tournament.status || 'en_curso';
+  if(finalMatch){
+    if(finalMatch.titleStatus) return finalMatch.titleStatus;
+    return finalMatch.resultado==='Ganado'?'ganado':'perdido';
+  }
+  return 'en_curso';
 }
 
 function miniLogoHtml(id){
@@ -192,7 +195,7 @@ function applyBackgroundPhoto(){
   const img = new Image();
   img.onload = ()=>{
     const dark=document.documentElement.dataset.theme==='dark';
-    layer.style.backgroundImage = dark ? `linear-gradient(rgba(15,18,16,0.38), rgba(15,18,16,0.52)), url('${BACKGROUND_IMAGE}')` : `linear-gradient(rgba(250,246,238,0.24), rgba(250,246,238,0.38)), url('${BACKGROUND_IMAGE}')`;
+    layer.style.backgroundImage = dark ? `linear-gradient(rgba(15,18,16,0.18), rgba(15,18,16,0.30)), url('${BACKGROUND_IMAGE}')` : `linear-gradient(rgba(250,246,238,0.10), rgba(250,246,238,0.22)), url('${BACKGROUND_IMAGE}')`;
     layer.classList.add('active');
   };
   img.onerror = ()=>{ /* archivo aún no existe: nos quedamos con el fondo claro + balón */ };
