@@ -1,0 +1,15 @@
+const fs=require('fs'), vm=require('vm'), assert=require('assert');
+const code=fs.readFileSync('assets/js/services/database-service.js','utf8');
+const ctx={window:{RATIO_SPORTS_DB:{},supabase:null,TEAMS:{pumas:{name:'Pumas UNAM',country:'México',type:'Club'}}}};
+vm.createContext(ctx); vm.runInContext(code,ctx);
+const D=ctx.window.DatabaseService;
+let r=D.toRow({id:'x',team:'pumas',year:2026,mes:8,dia:4,rival:'Charlotte FC',rivalCountry:'Estados Unidos',torneo:'Leagues Cup 2026',venueSide:'away',gf:0,gc:3,originLocal:'—',originVisit:'—',internacional:true});
+assert.strictEqual(r.local_origin,'Estados Unidos');
+assert.strictEqual(r.visitor_origin,'México');
+r=D.toRow({id:'y',team:'pumas',year:2026,mes:8,dia:4,rival:'Charlotte FC',rivalCountry:'Estados Unidos',torneo:'Leagues Cup 2026',venueSide:'home',gf:2,gc:0,internacional:true});
+assert.strictEqual(r.local_origin,'México');
+assert.strictEqual(r.visitor_origin,'Estados Unidos');
+r=D.toRow({id:'z',team:'pumas',year:2026,mes:8,dia:4,rival:'Pachuca',rivalCountry:'México',torneo:'Liga BBVA MX Apertura 2026',venueSide:'home',gf:1,gc:0,originLocal:'México',originVisit:'México',internacional:false});
+assert.strictEqual(r.local_origin,null);
+assert.strictEqual(r.visitor_origin,null);
+console.log('PASS origins persist only for international matches');

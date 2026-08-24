@@ -1,0 +1,13 @@
+const fs=require('fs'), vm=require('vm'), assert=require('assert');
+const ctx={console,window:{},localStorage:{getItem(){return null},setItem(){},removeItem(){}}};
+ctx.window=ctx;
+ctx.TEAMS={pumas:{name:'Pumas UNAM',country:'México',type:'Club',sport:'futbol'}};
+ctx.SEED_MATCHES=[];ctx.DEFAULT_WEEK_DEFS=[];ctx.MONTHS=[];
+ctx.computeResult=(gf,gc)=>gf>gc?'Ganado':gf<gc?'Perdido':'Empatado';
+vm.createContext(ctx);
+const src=fs.readFileSync(require('path').join(__dirname,'../assets/js/core/state.js'),'utf8');
+vm.runInContext(src,ctx);
+const m=ctx.normalizedMatch({id:'x',team:'pumas',dia:4,mes:8,rival:'Charlotte FC',rivalCountry:'Estados Unidos',torneo:'Leagues Cup 2026',venueSide:'away',gf:0,gc:3,originLocal:'—',originVisit:'—',internacional:true},null);
+assert.strictEqual(m.originLocal,'Estados Unidos');
+assert.strictEqual(m.originVisit,'México');
+console.log('PASS international match derives both countries');

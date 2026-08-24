@@ -1,0 +1,252 @@
+/* V9 responsive management module */
+html,body{max-width:100%;overflow-x:hidden}.wrap,.panel,.form-grid{min-width:0}.panel{background:rgba(255,255,255,.74)!important;backdrop-filter:blur(9px)}html[data-theme="dark"] .panel{background:rgba(23,27,34,.76)!important}.bg-photo-layer.active{opacity:.42!important}.table-wrap{max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}.table-wrap table{min-width:980px}@media(max-width:760px){.wrap{padding:12px!important}.form-grid{grid-template-columns:1fr!important}.masthead{flex-wrap:wrap!important}.header-actions{width:100%!important}.panel{padding:14px!important}}
+ .penalty-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.hint-pen{font-size:11px;color:var(--text-faint)} 
+/* ===== Ratio Sports reconstructed data model ===== */
+.competition-logo-corner{position:absolute!important;right:8px!important;bottom:7px!important;width:34px!important;height:34px!important;object-fit:contain!important;opacity:.72!important;z-index:3!important;filter:drop-shadow(0 2px 3px rgba(0,0,0,.18))}
+.team-honours{display:flex;gap:12px;align-items:center;margin-top:4px;font-size:10px;font-weight:800;color:var(--text-dim)}
+.team-honours b{font-size:14px;color:var(--text)}
+.form-pip{font-weight:900!important;font-size:10px!important}
+.match-name-cell{min-width:145px}.origin-note{display:block;margin-top:3px;color:var(--text-faint);font-size:9px;font-weight:600}
+.score-cell{white-space:nowrap;font-weight:900;font-size:13px}.score-cell small{display:block;font-size:8px;color:var(--text-dim);margin-top:2px}
+#matchesPanel table th:nth-child(9),#matchesPanel table td:nth-child(9){min-width:170px}
+
+
+/* v14 sidebar correction */
+.sidebar-collapsed .nav-icon{display:inline-flex!important;visibility:visible!important;opacity:1!important;color:#fff!important;font-size:17px!important;min-width:24px!important}.sidebar-collapsed .tab-btn{display:flex!important;width:100%!important;min-height:40px!important;justify-content:center!important;overflow:visible!important}.sidebar-collapsed .tabbar{overflow-y:auto!important;overflow-x:visible!important}
+
+
+/* ===== v203-three-final-fixes ===== */
+
+/* 1) Bitácora filters: always remain inside their panel */
+.table-controls-v20{
+  width:100%!important;
+  max-width:100%!important;
+  box-sizing:border-box!important;
+  display:grid!important;
+  grid-template-columns:minmax(230px,1.35fr) repeat(2,minmax(150px,1fr))!important;
+  gap:9px!important;
+  align-items:stretch!important;
+  overflow:visible!important;
+}
+.table-controls-v20>*{min-width:0!important;width:100%!important;box-sizing:border-box!important}
+.table-controls-v20 .btn{min-height:48px!important;white-space:nowrap!important}
+@media(max-width:1050px){.table-controls-v20{grid-template-columns:1fr 1fr!important}.table-controls-v20 .search-box{grid-column:1/-1!important}}
+@media(max-width:650px){.table-controls-v20{grid-template-columns:1fr!important}.table-controls-v20 .search-box{grid-column:auto!important}}
+
+/* 2) Team cards: no horizontal rule; recent form label and last eight results share one row */
+.team-card-v16 .team-v16-core{
+  display:grid!important;
+  grid-template-columns:max-content minmax(0,1fr)!important;
+  align-items:center!important;
+  column-gap:8px!important;
+  row-gap:7px!important;
+}
+.team-card-v16 .team-v16-goals,
+.team-card-v16 .pct-track,
+.team-card-v16 .team-honours,
+.team-card-v16 .team-v16-eff{grid-column:1/-1!important}
+.team-card-v16 .team-v16-goals{
+  position:static!important;
+  inset:auto!important;
+  border:0!important;
+  border-top:0!important;
+  border-bottom:0!important;
+  padding:0!important;
+  margin:0!important;
+  width:100%!important;
+  max-width:100%!important;
+}
+.team-card-v16 .team-v16-form-label{
+  grid-column:1!important;
+  margin:0!important;
+  padding:0!important;
+  white-space:nowrap!important;
+  line-height:20px!important;
+}
+.team-card-v16 .form-strip{
+  grid-column:2!important;
+  margin:0!important;
+  padding:0!important;
+  width:auto!important;
+  max-width:100%!important;
+  min-width:0!important;
+  min-height:20px!important;
+  align-items:center!important;
+  overflow:visible!important;
+}
+.team-card-v16 .team-v16-eff{margin:0!important;padding:0!important}
+.team-card-v16{min-height:252px!important}
+
+/* 3) Collapsed navigation: fixed centered icon buttons, never clipped */
+body.sidebar-collapsed .tabbar{
+  width:var(--sidebar-collapsed)!important;
+  min-width:var(--sidebar-collapsed)!important;
+  max-width:var(--sidebar-collapsed)!important;
+  box-sizing:border-box!important;
+  padding:74px 7px 64px!important;
+  align-items:center!important;
+  overflow-x:hidden!important;
+}
+body.sidebar-collapsed .tabbar .nav-label{display:none!important}
+body.sidebar-collapsed .tab-btn{
+  flex:0 0 46px!important;
+  width:46px!important;
+  min-width:46px!important;
+  max-width:46px!important;
+  height:46px!important;
+  min-height:46px!important;
+  box-sizing:border-box!important;
+  padding:0!important;
+  margin:0 auto!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:0!important;
+  overflow:hidden!important;
+  transform:none!important;
+  border-radius:10px!important;
+}
+body.sidebar-collapsed .tab-btn.active{box-shadow:inset 3px 0 0 rgba(255,255,255,.92)!important}
+body.sidebar-collapsed .nav-icon{
+  flex:0 0 28px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  width:28px!important;
+  min-width:28px!important;
+  max-width:28px!important;
+  height:28px!important;
+  margin:0!important;
+  padding:0!important;
+  overflow:visible!important;
+  text-align:center!important;
+  font-size:18px!important;
+  line-height:28px!important;
+  transform:none!important;
+}
+body.sidebar-collapsed .sidebar-theme-wrap{width:46px!important;margin-left:auto!important;margin-right:auto!important}
+body.sidebar-collapsed .sidebar-theme-toggle{width:46px!important;height:46px!important;padding:0!important;overflow:hidden!important}
+
+
+/* ===== v15-priority-fixes ===== */
+
+/* v15 priority fixes: full-width stats, compact left-aligned team data, intact USA flag, visible collapsed nav icons */
+.general-stats{
+  width:100%!important;
+  display:grid!important;
+  grid-template-columns:repeat(12,minmax(0,1fr))!important;
+  gap:8px!important;
+  overflow:visible!important;
+  padding:0!important;
+  margin:0 0 22px!important;
+}
+.general-stat{
+  min-width:0!important;
+  width:auto!important;
+  flex:none!important;
+  min-height:72px!important;
+  padding:10px 9px!important;
+}
+.general-stat>strong{font-size:20px!important;white-space:nowrap!important}
+.general-stat>small{font-size:8px!important;line-height:1.15!important}
+
+/* Keep all team metrics compact and anchored to the left */
+.team-card{overflow:hidden!important;min-height:236px!important;padding:13px 12px 12px!important}
+.team-card-top,.pj-left,.team-stat-row,.pct-track,.team-honours,.team-card .team-meta,.form-strip,.gf-gc-row{
+  width:calc(100% - 76px)!important;
+  max-width:calc(100% - 76px)!important;
+  margin-left:0!important;
+  margin-right:auto!important;
+  box-sizing:border-box!important;
+}
+.team-card-top{padding-right:0!important}
+.pj-left{justify-content:flex-start!important;gap:4px!important;margin-top:0!important}
+.pj-left b{font-size:20px!important}
+.team-stat-row{justify-content:flex-start!important}
+.team-record{display:flex!important;align-items:baseline!important;justify-content:flex-start!important;gap:4px!important;flex-wrap:nowrap!important;font-size:9px!important}
+.team-record b{font-size:17px!important}
+.team-record .muted{font-size:8px!important;margin-right:3px!important}
+.form-strip{gap:3px!important;flex-wrap:nowrap!important;overflow:visible!important}
+.form-pip{width:18px!important;height:18px!important;flex:0 0 18px!important;font-size:8px!important}
+.team-honours{font-size:9px!important;gap:8px!important;white-space:nowrap!important}
+.gf-gc-row{font-size:8px!important;gap:4px!important;white-space:nowrap!important}
+.team-card .watermark{width:92px!important;height:92px!important;right:-8px!important;bottom:-10px!important;opacity:.16!important}
+
+/* USA flag must be fully visible, never cropped */
+.team-card[data-team="cowboys"] .team-flag{
+  width:40px!important;height:28px!important;padding:0!important;overflow:hidden!important;background:transparent!important;
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+}
+.team-card[data-team="cowboys"] .team-flag svg,
+.team-card[data-team="cowboys"] .team-flag img{
+  width:100%!important;height:100%!important;max-width:100%!important;max-height:100%!important;
+  transform:none!important;object-fit:contain!important;display:block!important;
+}
+
+/* Collapsed sidebar: keep every icon centered and visible */
+body.sidebar-collapsed .tabbar{
+  width:var(--sidebar-collapsed)!important;
+  padding-left:6px!important;padding-right:6px!important;
+  overflow-x:hidden!important;
+}
+body.sidebar-collapsed .tab-btn{
+  width:100%!important;min-width:0!important;box-sizing:border-box!important;
+  display:flex!important;justify-content:center!important;align-items:center!important;
+  padding:10px 0!important;margin:0!important;overflow:visible!important;
+}
+body.sidebar-collapsed .nav-icon{
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  width:32px!important;min-width:32px!important;height:28px!important;
+  margin:0!important;padding:0!important;overflow:visible!important;
+  color:#fff!important;font-size:17px!important;line-height:1!important;
+}
+body.sidebar-collapsed .sidebar-theme-wrap{padding-left:0!important;padding-right:0!important}
+body.sidebar-collapsed .sidebar-theme-toggle{width:100%!important;padding:9px 0!important;justify-content:center!important}
+body.sidebar-collapsed .sidebar-theme-toggle #themeIcon{display:block!important;margin:0!important}
+
+@media(max-width:1350px){.general-stats{grid-template-columns:repeat(6,minmax(0,1fr))!important}}
+@media(max-width:900px){
+  .general-stats{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+  .team-card-top,.pj-left,.team-stat-row,.pct-track,.team-honours,.team-card .team-meta,.form-strip,.gf-gc-row{width:calc(100% - 66px)!important;max-width:calc(100% - 66px)!important}
+}
+@media(max-width:620px){
+  .general-stats{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;overflow:visible!important}
+  .general-stat{min-width:0!important}
+  .team-card-top,.pj-left,.team-stat-row,.pct-track,.team-honours,.team-card .team-meta,.form-strip,.gf-gc-row{width:calc(100% - 58px)!important;max-width:calc(100% - 58px)!important}
+}
+
+
+/* v18 (final, gana por orden de carga): transparencia real para ver el fondo */
+.panel,.team-card,.achievement-card,.masthead,.extra-stat{background:rgba(255,255,255,.55)!important;backdrop-filter:blur(7px) saturate(1.05)!important;}
+html[data-theme="dark"] .panel,html[data-theme="dark"] .team-card,html[data-theme="dark"] .achievement-card,html[data-theme="dark"] .masthead,html[data-theme="dark"] .extra-stat{background:rgba(18,22,19,.58)!important;}
+html[data-style="led"] .panel,html[data-style="led"] .team-card,html[data-style="led"] .achievement-card,html[data-style="led"] .masthead,html[data-style="led"] .extra-stat{background:rgba(10,13,11,.62)!important;border-color:rgba(255,176,32,.18)!important;}
+.bg-photo-layer.active{opacity:.5!important;}
+html[data-theme="dark"] .bg-photo-layer.active{opacity:.4!important;}
+html[data-style="led"] .bg-photo-layer.active{opacity:.28!important;filter:saturate(.7) contrast(1.1) brightness(.8)!important;}
+
+/* v19 (final, gana por orden de carga): más transparencia para ver el fondo */
+.panel,.team-card,.achievement-card,.masthead,.extra-stat{background:rgba(255,255,255,.38)!important;backdrop-filter:blur(6px) saturate(1.05)!important;}
+html[data-theme="dark"] .panel,html[data-theme="dark"] .team-card,html[data-theme="dark"] .achievement-card,html[data-theme="dark"] .masthead,html[data-theme="dark"] .extra-stat{background:rgba(15,18,15,.42)!important;}
+html[data-style="led"] .panel,html[data-style="led"] .team-card,html[data-style="led"] .achievement-card,html[data-style="led"] .masthead,html[data-style="led"] .extra-stat{background:rgba(8,10,9,.48)!important;}
+.bg-photo-layer.active{opacity:.62!important;}
+html[data-theme="dark"] .bg-photo-layer.active{opacity:.52!important;}
+html[data-style="led"] .bg-photo-layer.active{opacity:.36!important;}
+
+/* ===== Acceso de administrador ===== */
+.admin-access-panel{border-style:solid}
+.admin-access-head{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin-bottom:18px}
+.admin-access-head h2{margin-bottom:4px}
+.admin-status-badge{display:inline-flex;align-items:center;gap:7px;padding:7px 11px;border-radius:999px;font-size:12px;font-weight:800;letter-spacing:.02em;background:var(--panel-2);color:var(--text-dim);border:1px solid var(--border)}
+.admin-status-badge.is-admin{color:var(--win);border-color:color-mix(in srgb,var(--win) 40%,var(--border));background:color-mix(in srgb,var(--win) 9%,var(--panel))}
+.admin-status-badge.is-locked{color:var(--loss);border-color:color-mix(in srgb,var(--loss) 35%,var(--border));background:color-mix(in srgb,var(--loss) 7%,var(--panel))}
+.admin-login-form{display:grid;grid-template-columns:minmax(220px,1fr) minmax(220px,1fr) auto;align-items:end;gap:12px}
+.admin-login-actions{padding-bottom:1px}
+.admin-auth-message{grid-column:1/-1;min-height:18px;margin:0;font-size:12px;font-weight:650;color:var(--text-dim)}
+.admin-auth-message.error{color:var(--loss)}
+.admin-auth-message.success{color:var(--win)}
+.admin-session{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 16px;border-radius:12px;background:var(--panel-2);border:1px solid var(--border)}
+.admin-session>div{display:flex;flex-direction:column;gap:3px}
+.admin-session-label{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--text-dim);font-weight:800}
+.admin-write-locked{opacity:.58;filter:saturate(.75)}
+.admin-write-locked button{cursor:not-allowed}
+@media(max-width:760px){.admin-login-form{grid-template-columns:1fr}.admin-login-actions{padding:0}.admin-login-actions .btn{width:100%}.admin-access-head{flex-direction:column}.admin-session{align-items:flex-start;flex-direction:column}}
