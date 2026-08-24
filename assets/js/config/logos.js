@@ -408,8 +408,8 @@ barca: 'logos/rivales/fcbarcelona.png',
 "Al Shabab": "logos/rivales/al_shabab.png",
 "Al-Shabab": "logos/rivales/al_shabab.png",
 
-"Diriyah Club": "logos/rivales/dirayah.png",
-"Diriyah": "logos/rivales/dirayah.png",
+"Diriyah Club": "logos/rivales/diriyah.png",
+"Diriyah": "logos/rivales/diriyah.png",
 
 // ===== Champions League (rivales de Real Madrid) =====
 "AS Monaco": "logos/rivales/as_monaco.png",
