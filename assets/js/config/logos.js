@@ -408,6 +408,10 @@ barca: 'logos/rivales/fcbarcelona.png',
 "Al Shabab": "logos/rivales/al_shabab.png",
 "Al-Shabab": "logos/rivales/al_shabab.png",
 
+"Al Riyadh": "logos/rivales/al_riyadh.png",
+"Al-Riyadh": "logos/rivales/al_riyadh.png",
+
+
 "Diriyah Club": "logos/rivales/diriyah.png",
 "Diriyah": "logos/rivales/diriyah.png",
 
