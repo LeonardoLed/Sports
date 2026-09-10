@@ -367,6 +367,8 @@ barca: 'logos/rivales/fcbarcelona.png',
 "Gamba Osaka": "logos/rivales/gamba_osaka.png",
 
 // ===== Saudi Pro League (rivales de Al Nassr) =====
+"Abha": "logos/rivales/abha.png",
+
 "NEOM": "logos/rivales/NEOM.png",
 "NEOM SC": "logos/rivales/NEOM.png",
 
