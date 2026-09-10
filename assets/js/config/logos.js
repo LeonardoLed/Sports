@@ -503,24 +503,24 @@ barca: 'logos/rivales/fcbarcelona.png',
 "Al Ittihad Jeddah": "logos/rivales/al_ittihad.png",
 
 
-'Inter': 'logos/equipos/inter.png',
-'Inter de Milán': 'logos/equipos/inter.png',
+'Inter': 'logos/rivales/inter.png',
+'Inter de Milán': 'logos/rivales/inter.png',
 
-'RB Leipzig': 'logos/equipos/leipzig.png',
+'RB Leipzig': 'logos/rivales/leipzig.png',
 
-'PSV Eindhoven': 'logos/equipos/psv.png',
+'PSV Eindhoven': 'logos/rivales/psv.png',
 
-'LASK': 'logos/equipos/lask.png',
-'LASK Linz': 'logos/equipos/lask.png',
+'LASK': 'logos/rivales/lask.png',
+'LASK Linz': 'logos/rivales/lask.png',
 
-'AS Roma': 'logos/equipos/roma.png',
-'Roma': 'logos/equipos/roma.png',
+'AS Roma': 'logos/rivales/roma.png',
+'Roma': 'logos/rivales/roma.png',
 
-'Arsenal': 'logos/equipos/arsenal.png',
-'Shakhtar Donetsk': 'logos/equipos/shakhtar.png',
+'Arsenal': 'logos/rivales/arsenal.png',
+'Shakhtar Donetsk': 'logos/rivales/shakhtar.png',
 
-'AEK Athens': 'logos/equipos/atenas.png',
-'AEK Atenas': 'logos/equipos/atenas.png'
+'AEK Athens': 'logos/rivales/atenas.png',
+'AEK Atenas': 'logos/rivales/atenas.png'
 
 };
 
