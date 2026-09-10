@@ -500,7 +500,27 @@ barca: 'logos/rivales/fcbarcelona.png',
 "Al Shabab KSA": "logos/rivales/al_shabab.png",
 "Al Fateh SC": "logos/rivales/al_fateh.png",
 "Al-Ittihad Jeddah": "logos/rivales/al_ittihad.png",
-"Al Ittihad Jeddah": "logos/rivales/al_ittihad.png"
+"Al Ittihad Jeddah": "logos/rivales/al_ittihad.png",
+
+
+'Inter': 'logos/equipos/inter.png',
+'Inter de Milán': 'logos/equipos/inter.png',
+
+'RB Leipzig': 'logos/equipos/leipzig.png',
+
+'PSV Eindhoven': 'logos/equipos/psv.png',
+
+'LASK': 'logos/equipos/lask.png',
+'LASK Linz': 'logos/equipos/lask.png',
+
+'AS Roma': 'logos/equipos/roma.png',
+'Roma': 'logos/equipos/roma.png',
+
+'Arsenal': 'logos/equipos/arsenal.png',
+'Shakhtar Donetsk': 'logos/equipos/shakhtar.png',
+
+'AEK Athens': 'logos/equipos/atenas.png',
+'AEK Atenas': 'logos/equipos/atenas.png'
 
 };
 
