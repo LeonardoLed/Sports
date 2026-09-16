@@ -365,6 +365,12 @@ barca: 'logos/rivales/fcbarcelona.png',
 "Arkadag FK": "logos/rivales/arkadag.png",
 
 "Gamba Osaka": "logos/rivales/gamba_osaka.png",
+"Al Ain FC": "logos/rivales/al_ain.png",
+"Al Ain": "logos/rivales/al_ain.png",
+
+"FK Neftchi Fergana" :  "logos/rivales/neftchi.png",
+
+
 
 // ===== Saudi Pro League (rivales de Al Nassr) =====
 "Abha": "logos/rivales/abha.png",
@@ -413,6 +419,8 @@ barca: 'logos/rivales/fcbarcelona.png',
 "Al Riyadh": "logos/rivales/al_riyadh.png",
 "Al-Riyadh": "logos/rivales/al_riyadh.png",
 
+"Al Faisaly" : "logos/rivales/al_faisaly.png",
+"Al-Faisaly" : "logos/rivales/al_faisaly.png",
 
 "Diriyah Club": "logos/rivales/diriyah.png",
 "Diriyah": "logos/rivales/diriyah.png",
