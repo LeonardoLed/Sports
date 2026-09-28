@@ -452,13 +452,11 @@ barca: 'logos/rivales/fcbarcelona.png',
 "Bolivia": "logos/rivales/bolivia.png",
 
 "Chile": "logos/rivales/chile.png",
-
 "Colombia": "logos/rivales/colombia.png",
-
 "Corea del Sur": "logos/rivales/corea_sur.png",
 "Corea Del Sur": "logos/rivales/corea_sur.png",
-
 "Croacia": "logos/rivales/croacia.png",
+"Dinamarca": "logos/rivales/dinamarca.png",
 
 "Ecuador": "logos/rivales/ecuador.png",
 
@@ -468,13 +466,17 @@ barca: 'logos/rivales/fcbarcelona.png',
 "España": "logos/rivales/espana.png",
 
 "Ghana": "logos/rivales/ghana.png",
+"Gales": "logos/rivales/gales.png",
 
 "Islandia": "logos/rivales/islandia.png",
 
 "Nigeria": "logos/rivales/nigeria.png",
+"Noruega": "logos/rivales/noruega.png",
 
 "Panamá": "logos/rivales/panama.png",
 "Panama": "logos/rivales/panama.png",
+"Peru": "logos/rivales/peru.png",
+"Perú": "logos/rivales/peru.png",
 
 "RD Congo": "logos/rivales/rdcongo.png",
 "República Democrática del Congo": "logos/rivales/rdcongo.png",
