@@ -271,8 +271,10 @@ barca: 'logos/rivales/fcbarcelona.png',
 "Deportivo Toluca": "logos/rivales/toluca.png",
 "Deportivo Toluca FC": "logos/rivales/toluca.png",
 "Toluca FC": "logos/rivales/toluca.png",
+"CF Atlante": "logos/rivales/atlante.png",
+"Atlante": "logos/rivales/atlante.png",
 
-  "Tigres": "logos/rivales/tigres.png",
+"Tigres": "logos/rivales/tigres.png",
 "Tigres UANL": "logos/rivales/tigres.png",
 "UANL": "logos/rivales/tigres.png",
 
