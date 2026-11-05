@@ -406,6 +406,9 @@ barca: 'logos/rivales/fcbarcelona.png',
 "Al Khaleej": "logos/rivales/al_khaleej.png",
 "Al-Khaleej": "logos/rivales/al_khaleej.png",
 
+"Al-Kholood": "logos/rivales/al_khaleej.png",
+"Al Kholood": "logos/rivales/kholood.png",
+
 "Al Najma": "logos/rivales/al_najma.png",
 "Al-Najma": "logos/rivales/al_najma.png",
 
