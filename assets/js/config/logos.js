@@ -371,6 +371,8 @@ barca: 'logos/rivales/fcbarcelona.png',
 "Al Ain": "logos/rivales/al_ain.png",
 
 "FK Neftchi Fergana" :  "logos/rivales/neftchi.png",
+"Pakhtakor Tashkent" : "logos/rivales/pakhtakor.png",
+
 
 
 
@@ -406,7 +408,7 @@ barca: 'logos/rivales/fcbarcelona.png',
 "Al Khaleej": "logos/rivales/al_khaleej.png",
 "Al-Khaleej": "logos/rivales/al_khaleej.png",
 
-"Al-Kholood": "logos/rivales/al_khaleej.png",
+"Al-Kholood": "logos/rivales/kholood.png",
 "Al Kholood": "logos/rivales/kholood.png",
 
 "Al Najma": "logos/rivales/al_najma.png",
