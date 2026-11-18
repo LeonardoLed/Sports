@@ -502,6 +502,9 @@ barca: 'logos/rivales/fcbarcelona.png',
 "Uzbekistán": "logos/rivales/uzbekistan.png",
 "Uzbekistan": "logos/rivales/uzbekistan.png",
 
+"Jamaica": "logos/rivales/jamaica.png",
+
+
 // Selecciones propias usadas también como RIVAL cuando se cruzan entre sí
 // (ej. México vs Portugal en el Mundial)
 "México": "logos/rivales/seleccion_mexico.png",
