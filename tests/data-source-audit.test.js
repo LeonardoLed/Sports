@@ -26,25 +26,25 @@ test('fallback restores complete snapshot without re-merging seed',()=>{
   assert(!state.includes('...SEED_MATCHES,...storedMatches'));
 });
 
-test('tournament dynamic status derives from matches only',()=>{
-  const start=ui.indexOf('function effectiveTournamentStatus');
-  const end=ui.indexOf('\n}',start)+2;
-  const fn=ui.slice(start,end);
-  assert(fn.includes('findTitleMatch'));
+test('tournament status derives from matches only',()=>{
+  const start=state.indexOf('function buildTournamentLedger');
+  const end=state.indexOf('\nfunction ',start+10);
+  const fn=state.slice(start,end);
+  assert(fn.includes('matches.forEach'));
   assert(!fn.includes('titleOverrides'));
-  assert(!fn.includes('tournament.status'));
+  assert(!fn.includes('TOURNAMENTS_CONFIG'));
 });
 
 const dynamicFunctions=[
-  [state,'statsForTeam'],[state,'buildWeeklyData'],[state,'titleCountsForTeam'],
-  [dashboard,'renderGeneralStats'],[dashboard,'renderExtraStats'],[dashboard,'renderScoreboard'],[dashboard,'renderMatchTable'],[dashboard,'renderNflTable'],
-  [partidos,'renderScoreboard'],[partidos,'renderMatchTable'],[partidos,'renderNflTable']
+  [state,'statsForTeam'],[state,'buildWeeklyData'],[state,'buildTournamentLedger'],[state,'overallStats'],
+  [dashboard,'renderHero'],[dashboard,'renderStats'],[dashboard,'renderHonours'],[dashboard,'renderMatchTable'],[dashboard,'renderNflTable'],
+  [partidos,'renderTournamentManager'],[partidos,'renderRecentTable']
 ];
 for(const [src,name] of dynamicFunctions){
   test(`${name} consumes live matches`,()=>{
     const start=src.indexOf(`function ${name}`); assert(start>=0,`${name} not found`);
     const next=src.indexOf('\nfunction ',start+10); const fn=src.slice(start,next<0?src.length:next);
-    assert(fn.includes('matches'),`${name} does not reference matches`);
+    assert(/matches|overallStats|buildTournamentLedger|buildWeeklyData|statsForTeam/.test(fn),`${name} does not consume live data`);
     assert(!fn.includes('SEED_MATCHES'),`${name} references seed directly`);
   });
 }

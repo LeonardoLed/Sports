@@ -5,48 +5,44 @@ Dashboard estático para GitHub Pages que centraliza equipos, torneos y una bit�
 ## Arquitectura
 
 ```text
+assets/css/app.css           # sistema de diseño único con 3 temas: Noche (CR7 oscuro), Gris (claro) y Color
 assets/js/
-├── config/logos.js          # rutas, alias y estado de torneos
-├── data/sports-data.js      # catálogo y partidos semilla
+├── config/logos.js          # rutas, alias de logos y catálogo de torneos
+├── data/sports-data.js      # equipos y partidos semilla
 ├── core/
-│   ├── state.js             # modelo, almacenamiento versionado y estadísticas
-│   ├── ui.js                # tema, logos, banderas y helpers compartidos
-│   └── backup.js            # importar/exportar JSON
+│   ├── state.js             # modelo, estadísticas, torneos y semanas (lógica pura)
+│   ├── ui.js                # tema, logos, tarjeta de equipo, formato de marcador
+│   └── backup.js            # importar/exportar JSON (solo en Gestión)
+├── services/                # Supabase, partidos y estado de torneos
 └── pages/
-    ├── dashboard.js         # controlador exclusivo del resumen
-    └── partidos.js          # controlador exclusivo de la bitácora
+    ├── dashboard.js         # página pública, solo lectura
+    ├── partidos.js          # Gestión: torneos, nuevo marcador, últimos partidos
+    ├── weeks-admin.js       # Gestión: semanas deportivas
+    └── admin-auth.js        # inicio de sesión del administrador
 ```
 
-```mermaid
-flowchart LR
-  D[sports-data.js] --> S[state.js]
-  C[logos.js] --> U[ui.js]
-  S --> A[dashboard.js]
-  S --> B[partidos.js]
-  U --> A
-  U --> B
-  A --> LS[(localStorage v2)]
-  B --> LS
-  LS --> J[Exportar / importar JSON]
-```
+## Reglas de estadísticas
 
-## Mejoras de esta versión
+- **Cuentan todos los deportes** (fútbol y NFL): partidos jugados, ganados, empatados, perdidos, % de victorias, semanas, títulos y torneos.
+- **Solo fútbol**: goles a favor/en contra, diferencia, goles por partido, porterías a cero y partidos sin marcar.
+- El resultado de **cada partido** (G/E/P) sale siempre de su marcador. La serie perdida en un global se refleja en el estado del torneo, no en el partido.
 
-- La lógica compartida ya no está duplicada entre páginas.
-- El seguimiento semanal se calcula desde `matches`; no existe `EXCEL_WEEKS` hardcodeado.
-- Almacenamiento con `schemaVersion: 2` y migración de claves anteriores.
-- Botones de **Exportar JSON** e **Importar JSON** para respaldar la bitácora.
-- Función central `escapeHtml()` para valores dinámicos.
-- CSS común en `base.css`; cada página conserva únicamente sus ajustes específicos.
-- Un solo `<!DOCTYPE html>` por página.
+## Estado de los torneos
 
-## Flujo de datos
+Un torneo es la pareja (equipo, nombre de torneo). Su estado se deduce del partido que lo cerró:
 
-1. `sports-data.js` proporciona los partidos iniciales.
-2. `state.js` carga esos datos y combina altas manuales guardadas.
-3. Las estadísticas generales y semanales se recalculan desde la bitácora actual.
-4. Al agregar o eliminar un partido se actualiza `localStorage`.
-5. Exportar JSON genera un respaldo con partidos, estados de torneos y versión del esquema.
+| Estado | Significado | `title_status` |
+| --- | --- | --- |
+| Campeón | ganó el torneo | `ganado` |
+| Subcampeón | perdió la final | `perdido` |
+| Eliminado / torneo perdido | quedó fuera antes de la final, o liga ya perdida | `eliminado` |
+| En curso | ningún partido lo cerró | — |
+
+No requiere cambios de esquema. Se marca desde **Gestión → Estado de los torneos** (sin necesidad de una final) o al capturar un marcador con "Este partido cerró el torneo".
+
+## Correcciones de datos
+
+Ejecuta `supabase/fix_results_and_week20.sql` una vez en el SQL Editor de Supabase.
 
 ## Respaldo
 

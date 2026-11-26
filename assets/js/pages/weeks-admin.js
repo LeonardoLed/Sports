@@ -27,7 +27,7 @@ function renderWeeksAdmin(){
   if(!body) return;
   const rows = sortedWeekDefs();
   if(!rows.length){
-    body.innerHTML = `<tr class="empty-row"><td colspan="7">Aún no hay semanas dadas de alta.</td></tr>`;
+    body.innerHTML = `<tr><td class="empty" colspan="7">Aún no hay semanas dadas de alta.</td></tr>`;
     return;
   }
   body.innerHTML = rows.map(w=>{
@@ -36,15 +36,15 @@ function renderWeeksAdmin(){
     const e = matches.filter(m=>findWeekDef(m.mes,m.dia)?.id===w.id && m.resultado==='Empatado').length;
     const p = matches.filter(m=>findWeekDef(m.mes,m.dia)?.id===w.id && m.resultado==='Perdido').length;
     return `<tr>
-      <td class="mono">${escapeHtml(w.label)}</td>
+      <td><strong>${escapeHtml(w.label)}</strong></td>
       <td>${escapeHtml(weekRangeLabel(w))}</td>
-      <td class="mono">${count}</td>
-      <td class="mono" style="color:var(--win)">${g}</td>
-      <td class="mono" style="color:var(--draw)">${e}</td>
-      <td class="mono" style="color:var(--loss)">${p}</td>
-      <td style="white-space:nowrap;">
-        <button class="btn btn-ghost week-edit-btn" data-id="${escapeAttr(w.id)}" type="button">Editar</button>
-        <button class="btn btn-ghost week-del-btn" data-id="${escapeAttr(w.id)}" type="button">Borrar</button>
+      <td class="num">${count}</td>
+      <td class="num w-num">${g}</td>
+      <td class="num d-num">${e}</td>
+      <td class="num l-num">${p}</td>
+      <td style="white-space:nowrap;text-align:right">
+        <button class="btn btn-ghost btn-sm week-edit-btn" data-id="${escapeAttr(w.id)}" type="button">Editar</button>
+        <button class="btn btn-ghost btn-sm btn-danger week-del-btn" data-id="${escapeAttr(w.id)}" type="button">Borrar</button>
       </td>
     </tr>`;
   }).join('');
@@ -128,7 +128,7 @@ async function handleSaveWeek(){
 }
 
 async function handleResetWeeks(){
-  if(!confirm('Esto reemplaza TODAS tus semanas actuales por las 22 originales del Excel. ¿Continuar?')) return;
+  if(!confirm('Esto reemplaza TODAS tus semanas actuales por las semanas originales del Excel. ¿Continuar?')) return;
   try{
     await resetWeekDefsToDefault();
     cancelEditWeek();

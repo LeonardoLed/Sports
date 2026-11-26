@@ -1,487 +1,311 @@
+/* Controlador de la página pública (index.html). Solo lectura. */
 
+const HONOURS_PAGE = 8;
+let honoursExpanded = false;
+const weeklySeriesState = {g:true, e:true, p:true, pct:true};
 
-function renderScoreboard(){
-  const s = {pj:0,pg:0,pe:0,pp:0};
-  matches.forEach(m=>{
-    s.pj++;
-    if(m.resultado==='Ganado') s.pg++; else if(m.resultado==='Perdido') s.pp++; else s.pe++;
-  });
-  const scoreboardEl=document.getElementById('scoreboard');
-  if(!scoreboardEl) return;
-  scoreboardEl.innerHTML = `
-    <div><div class="sb-num">${s.pj}</div><div class="sb-label">Jugados</div></div>
-    <div><div class="sb-num">${s.pg}</div><div class="sb-label">Ganados</div><div class="sb-pct">${s.pj?Math.round(s.pg/s.pj*100):0}%</div></div>
-    <div><div class="sb-num draw">${s.pe}</div><div class="sb-label">Empatados</div><div class="sb-pct">${s.pj?Math.round(s.pe/s.pj*100):0}%</div></div>
-    <div><div class="sb-num loss">${s.pp}</div><div class="sb-label">Perdidos</div><div class="sb-pct">${s.pj?Math.round(s.pp/s.pj*100):0}%</div></div>
-  `;
+function pctText(n,total){ return total ? Math.round(n/total*100) : 0; }
+
+/* ---------- hero ---------- */
+function renderHero(){
+  const r = recordOf(matches);
+  const teams = Object.keys(TEAMS).length;
+  document.getElementById('heroEyebrow').textContent = `Temporada 2026 · ${teams} equipos`;
+  document.getElementById('heroRecord').innerHTML = `
+    <div class="rec"><div class="rec__num">${r.pj}</div><div class="rec__label">Jugados</div></div>
+    <div class="rec rec--win"><div class="rec__num">${r.pg}</div><div class="rec__label">Ganados</div><div class="rec__pct">${pctText(r.pg,r.pj)}%</div></div>
+    <div class="rec rec--draw"><div class="rec__num">${r.pe}</div><div class="rec__label">Empatados</div><div class="rec__pct">${pctText(r.pe,r.pj)}%</div></div>
+    <div class="rec rec--loss"><div class="rec__num">${r.pp}</div><div class="rec__label">Perdidos</div><div class="rec__pct">${pctText(r.pp,r.pj)}%</div></div>`;
+  document.getElementById('heroBar').innerHTML = r.pj
+    ? `<span class="w" style="width:${r.pg/r.pj*100}%"></span><span class="d" style="width:${r.pe/r.pj*100}%"></span><span class="l" style="width:${r.pp/r.pj*100}%"></span>` : '';
+  const last = matches.slice().sort((a,b)=>byDateDesc(a,b)||String(b.id).localeCompare(String(a.id))).slice(0,8);
+  document.getElementById('heroTicker').innerHTML = last.map(m=>`
+    <div class="tick tick--${resClass(m.resultado)}" title="${escapeAttr(TEAMS[m.team].name)} vs ${escapeAttr(m.rival)} · ${escapeAttr(m.torneo||'')}">
+      ${teamLogoSlot(m.team)}
+      <div><b>${m.gf} – ${m.gc}</b><small>vs ${escapeHtml(m.rival)} · ${m.dia} ${MONTHS[m.mes]}</small></div>
+    </div>`).join('');
 }
 
-function renderChips(){
-  const el = document.getElementById('chipbar');
-  let html = `<div class="chip ${activeTeamFilter==='all'?'active':''}" data-team="all"><span class="dot" style="background:var(--accent)"></span>Todos (fútbol)</div>`;
-  futbolTeamIds.forEach(id=>{
-    const t = TEAMS[id];
-    html += `<div class="chip ${activeTeamFilter===id?'active':''}" data-team="${id}"><span class="dot" style="background:${escapeAttr(t.color)}"></span>${escapeHtml(t.name)}</div>`;
-  });
-  el.innerHTML = html;
-  el.querySelectorAll('.chip').forEach(chip=>{
-    chip.addEventListener('click', ()=>{ activeTeamFilter = chip.dataset.team; matchTableVisible = PAGE_SIZE; renderChips(); renderMatchTable(); document.getElementById('matchesPanel').scrollIntoView({behavior:'smooth',block:'start'}); });
-  });
-}
-
-
-
-
-
-function rivalLogoOnlyHtml(name){
-  const safeName = escapeHtml(name);
-  const safeInitials = escapeHtml(initials(name));
-  const logo = resolveRivalLogo(name);
-  if(logo){
-    return `<span class="rival-logo"><img src="${escapeAttr(logo)}" alt="${safeName}" onerror="this.hidden=true;this.nextElementSibling.hidden=false"><span class="rival-fallback" hidden>${safeInitials}</span></span>`;
-  }
-  return `<span class="rival-logo"><span class="rival-fallback">${safeInitials}</span></span>`;
-}
-
-
-
-
-
-
-
-
-
-
-
-function renderTeamCards(){
+/* ---------- equipos ---------- */
+function renderTeams(){
   const grid = document.getElementById('teamGrid');
-  grid.innerHTML = Object.keys(TEAMS).map(teamCardHtml).join('');
-  grid.querySelectorAll('.team-card').forEach(card=>{
-    card.addEventListener('click', ()=>{
+  grid.innerHTML = Object.keys(TEAMS).map(id=>teamCardHtml(id, activeTeamFilter===id)).join('');
+  grid.querySelectorAll('.team').forEach(card=>{
+    const go = ()=>{
       const id = card.dataset.team;
-      if(TEAMS[id].sport==='nfl'){
-        document.getElementById('nflTableBody').closest('.panel').scrollIntoView({behavior:'smooth', block:'start'});
-        return;
-      }
-      activeTeamFilter = id; matchTableVisible = PAGE_SIZE; renderChips(); renderMatchTable();
-      document.getElementById('matchTableBody').closest('.panel').scrollIntoView({behavior:'smooth', block:'start'});
-    });
+      if(TEAMS[id].sport==='nfl'){ document.getElementById('nfl').scrollIntoView({behavior:'smooth'}); return; }
+      activeTeamFilter = activeTeamFilter===id ? 'all' : id;
+      matchTableVisible = PAGE_SIZE;
+      renderTeams(); renderChips(); renderMatchTable();
+      if(activeTeamFilter!=='all') document.getElementById('bitacora').scrollIntoView({behavior:'smooth'});
+    };
+    card.addEventListener('click',go);
+    card.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); go(); } });
   });
 }
 
+/* ---------- estadísticas ---------- */
+function statHtml(value,label,{tone='',hint=''}={}){
+  return `<div class="stat ${tone?'stat--'+tone:''}"><div class="stat__value">${value}</div><div class="stat__label">${escapeHtml(label)}</div>${hint?`<div class="stat__hint">${escapeHtml(hint)}</div>`:''}</div>`;
+}
+function renderStats(){
+  const o = overallStats(), a = o.all, f = o.football;
+  const h = honoursFromLedger(buildTournamentLedger());
+  const signed = n => `${n>=0?'+':''}${n}`;
 
+  const general = [
+    statHtml(a.pj,'Partidos jugados',{hint:`${f.pj} fútbol · ${o.nfl.pj} NFL`}),
+    statHtml(a.pg,'Ganados',{tone:'win'}),
+    statHtml(a.pe,'Empatados',{tone:'draw'}),
+    statHtml(a.pp,'Perdidos',{tone:'loss'}),
+    statHtml(`${a.pctExact.toFixed(1)}%`,'Victorias',{hint:'sobre todos los partidos'}),
+    statHtml(h.tournaments,'Torneos disputados',{hint:h.inProgress?`${h.inProgress} en juego`:'ninguno en juego'}),
+    statHtml(h.titles,'Títulos',{tone:'gold'}),
+    statHtml(h.runners,'Subcampeonatos'),
+    statHtml(h.eliminated,'Torneos perdidos',{hint:'eliminado o sin opción'}),
+  ].join('');
 
-function tournamentBg(tt){
-  if(tt.logo) return tt.logo;
-  if(/champions/i.test(tt.name||'')) return 'logos/torneos/champions_league.png';
-  return resolveTournamentLogo(tt.name||'');
+  const football = [
+    statHtml(f.gf,'Goles a favor'),
+    statHtml(f.gc,'Goles en contra'),
+    statHtml(signed(f.diff),'Diferencia de goles'),
+    statHtml(f.gpm.toFixed(2),'Goles por partido'),
+    statHtml(f.cleanSheets,'Porterías a cero',{hint:`${pctText(f.cleanSheets,f.pj)}% de los partidos`}),
+    statHtml(f.blanks,'Partidos sin marcar',{hint:`${pctText(f.blanks,f.pj)}% de los partidos`}),
+  ].join('');
+
+  document.getElementById('statGroups').innerHTML = `
+    <div class="stat-group"><div class="stat-group__head"><span class="stat-group__title">Todos los deportes</span></div><div class="stat-list">${general}</div></div>
+    <div class="stat-group"><div class="stat-group__head"><span class="stat-group__title">Fútbol</span><span class="tag">Solo fútbol</span></div><div class="stat-list">${football}</div></div>`;
 }
 
-function tournamentLogoFor(name){
-  const map=window.TOURNAMENT_LOGOS||{};
-  return map[name] || (/^UEFA Champions League/i.test(name)?'logos/torneos/champions_league.png':resolveTournamentLogo(name));
-}
-function isLeagueTournament(m){ return /la liga|saudi professional league/i.test(m.torneo||'') || /^jornada\s+\d+/i.test(m.fase||''); }
-function titleStatusText(m){
-  if(isWonTitle(m)) return 'TÍTULO';
-  if(isRunnerUp(m)) return 'SUBCAMPEÓN';
-  if(m.resultado==='Perdido' && isLeagueTournament(m)) return 'TORNEO PERDIDO';
-  return 'ELIMINADO';
-}
-function opponentForTitle(m){
-  const followed=TEAMS[m.team]?.name||'';
-  return m.localName===followed ? m.visitName : m.localName;
-}
-function renderTitles(){
-  const grid=document.getElementById('titleGrid');
-  const sorted=matches.filter(isTitleMatchRecord).slice().sort((a,b)=>(b.mes*100+b.dia)-(a.mes*100+a.dia));
-  const shown=titlesExpanded?sorted:sorted.slice(0,4);
-  grid.innerHTML=shown.map(m=>{
-    const t=TEAMS[m.team], teamLogo=TEAM_LOGOS[m.team]||'', comp=tournamentLogoFor(m.torneo);
-    const rival=opponentForTitle(m)||m.rival||'Rival';
-    const outcome=isWonTitle(m)?`Ganó ante ${rival}`:`Perdió ante ${rival}`;
-    return `<article class="achievement-card ${isWonTitle(m)?'won':'lost'}">
-      <span class="achievement-status">${titleStatusText(m)}</span>
-      <div class="achievement-name">${escapeHtml(m.torneo)}</div>
-      <div class="achievement-logo">${teamLogo?`<img src="${teamLogo}" alt="${escapeAttr(t.name)}">`:icon('trophy')}</div>
-      <div class="achievement-team">${escapeHtml(t.name)}</div>
-      <div class="achievement-opponent"><span class="achievement-rival-logo">${rivalLogoHtml(rival)}</span><span>${escapeHtml(outcome)}</span></div>
-      <div class="achievement-final">${escapeHtml(m.fase||'—')}<div class="achievement-score">${formatMatchScore(m)}</div>${m.dia} ${MONTHS[m.mes]}</div>
-      <span class="ball-watermark" aria-hidden="true">⚽</span>
-      ${comp?`<img class="competition-logo-corner" src="${comp}" alt="${escapeAttr(m.torneo)}" onerror="this.style.display='none'">`:''}
+/* ---------- torneos ---------- */
+function renderHonours(){
+  const ledger = buildTournamentLedger();
+  const h = honoursFromLedger(ledger);
+  document.getElementById('ledgerSummary').innerHTML = `
+    <div class="gold"><b>${h.titles}</b><span>Títulos</span></div>
+    <div><b>${h.runners}</b><span>Subcampeonatos</span></div>
+    <div class="loss"><b>${h.eliminated}</b><span>Torneos perdidos</span></div>
+    <div><b>${h.inProgress}</b><span>En juego</span></div>`;
+
+  const shown = honoursExpanded ? ledger : ledger.slice(0,HONOURS_PAGE);
+  const grid = document.getElementById('honourGrid');
+  if(!ledger.length){ grid.innerHTML='<p class="muted">Todavía no hay torneos registrados.</p>'; }
+  else grid.innerHTML = shown.map(t=>{
+    const team = TEAMS[t.team], comp = tournamentLogoFor(t.torneo);
+    const label = outcomeLabel(t);
+    const c = t.closing;
+    const lines = [];
+    if(c){
+      lines.push(`<div class="line vs-line"><span>${escapeHtml(c.fase||'—')} · vs</span>${rivalLogoSlot(c.rival)}<span>${escapeHtml(c.rival)}</span></div>`);
+      lines.push(`<div class="line"><span class="honour__score">${formatMatchScore(c).replace(/<small>.*?<\/small>/g,'')}</span><span class="muted">${c.dia} ${MONTHS[c.mes]}</span></div>`);
+    }else{
+      const l = t.last;
+      lines.push(`<div class="line vs-line"><span>Último: ${escapeHtml(l.fase||'—')} · vs</span>${rivalLogoSlot(l.rival)}<span>${escapeHtml(l.rival)}</span></div>`);
+      lines.push(`<div class="line"><span class="muted">${l.dia} ${MONTHS[l.mes]}</span></div>`);
+    }
+    lines.push(`<div class="line muted">${t.record.pj} PJ · ${t.record.pg} G · ${t.record.pe} E · ${t.record.pp} P</div>`);
+    return `<article class="honour is-${t.outcome}">
+      <div class="honour__top"><span class="badge badge--${t.outcome}">${escapeHtml(label)}</span>${comp?`<img class="honour__comp" src="${escapeAttr(comp)}" alt="" onerror="this.style.display='none'">`:''}</div>
+      <div class="honour__name">${escapeHtml(t.torneo)}</div>
+      <div class="honour__team"><img src="${escapeAttr(resolveTeamLogo(t.team,team.name))}" alt="" onerror="this.style.display='none'">${escapeHtml(team.name)}</div>
+      <div class="honour__foot">${lines.join('')}</div>
     </article>`;
   }).join('');
-  const won=sorted.filter(isWonTitle).length;
-  const runners=sorted.filter(isRunnerUp).length;
-  const btn=document.getElementById('titlesMoreBtn');
-  btn.classList.toggle('hidden',sorted.length<=4);
-  btn.textContent=titlesExpanded?'Ver menos':'Ver más títulos';
-  document.getElementById('titleTotal').innerHTML=`<div><div class="t-num">${won}</div><div class="t-lbl">Títulos ganados</div></div><div><div class="t-num loss">${runners}</div><div class="t-lbl">Subcampeonatos</div></div>`;
+
+  const btn = document.getElementById('honoursMoreBtn');
+  btn.classList.toggle('hidden', ledger.length<=HONOURS_PAGE);
+  btn.textContent = honoursExpanded ? 'Ver menos' : `Ver todos los torneos (${ledger.length})`;
 }
 
-const weeklySeriesState={g:true,e:true,p:true,pct:true};
+/* ---------- semanas ---------- */
 function renderWeekly(){
-  const allWeeks = buildWeeklyData();
-  const chartWeeks = allWeeks;
-  const detailWeeks = allWeeks.slice().reverse().slice(0, weeklyVisible);
+  const weeks = buildWeeklyData();
   const wrap = document.getElementById('weeklyChartWrap');
   const body = document.getElementById('weeklyTableBody');
+  const count = document.getElementById('weeklyCount');
+  const moreBtn = document.getElementById('weeklyMoreBtn');
+  const detail = weeks.slice().reverse().slice(0,weeklyVisible);
 
-  const count=document.getElementById('weeklyCount');
-  const moreBtn=document.getElementById('weeklyMoreBtn');
-  if(!allWeeks.length){
+  if(!weeks.length){
     wrap.innerHTML = '';
-    body.innerHTML = `<tr class="empty-row"><td colspan="7">Aún no hay partidos registrados.</td></tr>`;
+    body.innerHTML = '<tr><td class="empty" colspan="7">Aún no hay partidos registrados.</td></tr>';
     count.textContent=''; moreBtn.classList.add('hidden');
     return;
   }
-  count.textContent=`Detalle: ${detailWeeks.length} de ${allWeeks.length} semanas`;
-  moreBtn.classList.toggle('hidden',detailWeeks.length>=allWeeks.length);
+  count.textContent = `Mostrando ${detail.length} de ${weeks.length} semanas`;
+  moreBtn.classList.toggle('hidden', detail.length>=weeks.length);
 
-  const barW = 30, gap = 12, padL = 42, padR = 24, padT = 22, padB = 30;
-  const maxPj = Math.max(...chartWeeks.map(w=>w.pj), 1);
-  const chartH = Math.max(120, maxPj * 26);
-  const w = padL + chartWeeks.length*(barW+gap) + padR;
-  const h = padT + chartH + padB;
-  const unitH = chartH / maxPj;
+  const colW=44, barW=26, padL=34, padR=44, padT=26, padB=30, chartH=220;
+  const maxPj = Math.max(...weeks.map(w=>w.pj),1);
+  const axisMax = Math.max(4, Math.ceil(maxPj/4)*4);       // 4 divisiones enteras
+  const W = padL + weeks.length*colW + padR, H = padT + chartH + padB;
+  const unit = chartH/axisMax;
+  const yPct = v => padT + chartH - (v/100)*chartH;
 
-  let bars = '';
-  let linePts = [];
-  chartWeeks.forEach((wk,i)=>{
-    const x = padL + i*(barW+gap);
-    let yCursor = padT + chartH;
-    const segs = [
-      {n:weeklySeriesState.g?wk.g:0, color:'var(--win)'},
-      {n:weeklySeriesState.e?wk.e:0, color:'var(--draw)'},
-      {n:weeklySeriesState.p?wk.p:0, color:'var(--loss)'},
-    ];
-    segs.forEach(seg=>{
-      const segH = seg.n * unitH;
-      yCursor -= segH;
-      if(seg.n>0) bars += `<rect x="${x}" y="${yCursor}" width="${barW}" height="${segH}" fill="${seg.color}"/>`;
+  let grid='', bars='', pts=[], labels='', hits='';
+  for(let k=0;k<=4;k++){
+    const y = padT + chartH - (k/4)*chartH;
+    grid += `<line class="${k===0?'axis':'grid'}" x1="${padL}" x2="${W-padR}" y1="${y}" y2="${y}"/>`;
+    grid += `<text class="tick-pj" x="${padL-8}" y="${y+4}" text-anchor="end">${axisMax*k/4}</text>`;
+    if(weeklySeriesState.pct) grid += `<text class="ypct" x="${W-padR+8}" y="${y+4}">${k*25}%</text>`;
+  }
+  weeks.forEach((wk,i)=>{
+    const x = padL + i*colW + (colW-barW)/2;
+    let y = padT + chartH;
+    [['g',wk.g],['e',wk.e],['p',wk.p]].forEach(([key,n])=>{
+      if(!weeklySeriesState[key] || !n) return;
+      const h = n*unit; y -= h;
+      bars += `<rect class="bar-${key}" x="${x}" y="${y}" width="${barW}" height="${h-1}" rx="2"/>`;
     });
-    bars += `<text x="${x+barW/2}" y="${padT+chartH+18}" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#a39a86">${escapeHtml(wk.shortLabel)}</text>`;
-    const lineY = padT + chartH - (wk.pct/100)*chartH;
-    linePts.push([x+barW/2, lineY]);
+    const shown = (weeklySeriesState.g?wk.g:0)+(weeklySeriesState.e?wk.e:0)+(weeklySeriesState.p?wk.p:0);
+    if(shown) labels += `<text class="tick-pj" x="${x+barW/2}" y="${y-6}" text-anchor="middle">${shown}</text>`;
+    labels += `<text x="${x+barW/2}" y="${padT+chartH+19}" text-anchor="middle">${escapeHtml(wk.shortLabel)}</text>`;
+    pts.push([x+barW/2, yPct(wk.pct)]);
+    hits += `<rect class="hit" x="${padL+i*colW}" y="${padT}" width="${colW}" height="${chartH}"><title>${escapeHtml(wk.label)} · ${escapeHtml(wk.rangeLabel)}&#10;${wk.pj} PJ: ${wk.g} G, ${wk.e} E, ${wk.p} P · ${wk.pct}% victorias</title></rect>`;
   });
+  const line = weeklySeriesState.pct && pts.length>1 ? `<path class="pct-line" d="${pts.map((p,i)=>(i?'L':'M')+p[0]+','+p[1]).join(' ')}" stroke-linejoin="round"/>` : '';
+  const dots = weeklySeriesState.pct ? pts.map(p=>`<circle class="pct-dot" cx="${p[0]}" cy="${p[1]}" r="3.5"/>`).join('') : '';
 
-  const gridLines = [0,25,50,75,100].map(v=>{
-    const y = padT + chartH - (v/100)*chartH;
-    return `<line x1="${padL-8}" y1="${y}" x2="${w-padR}" y2="${y}" stroke="#ece6d8" stroke-width="1"/>`;
-  }).join('');
+  wrap.innerHTML = `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="Partidos ganados, empatados y perdidos por semana">${grid}${bars}${line}${dots}${labels}${hits}</svg>`;
 
-  const linePath = weeklySeriesState.pct?smoothPath(linePts):'';
-  const lineDots = weeklySeriesState.pct?linePts.map(p=>`<circle cx="${p[0]}" cy="${p[1]}" r="3.5" fill="var(--accent-3)" stroke="#fff" stroke-width="1.4"/>`).join(''):'';
-
-  wrap.innerHTML = `<svg viewBox="0 0 ${w} ${h}" width="${w}" height="${h}" xmlns="http://www.w3.org/2000/svg">
-    ${gridLines}
-    ${bars}
-    ${weeklySeriesState.pct?`<path d="${linePath}" fill="none" stroke="var(--accent-3)" stroke-width="2.4"/>`:''}
-    ${lineDots}
-  </svg>`;
-
-  body.innerHTML = detailWeeks.map(wk=>`
-    <tr>
-      <td class="mono">${escapeHtml(wk.label)}${wk.isAuto?' <span title="Esta semana aún no está definida manualmente" style="color:var(--loss)">&#9888;</span>':''}</td>
-      <td>${wk.rangeLabel}</td>
-      <td class="mono">${wk.pj}</td>
-      <td class="mono" style="color:var(--win)">${wk.g}</td>
-      <td class="mono" style="color:var(--draw)">${wk.e}</td>
-      <td class="mono" style="color:var(--loss)">${wk.p}</td>
-      <td class="mono">${wk.pct}%</td>
-    </tr>`).join('');
+  body.innerHTML = detail.map(wk=>`<tr>
+    <td><strong>${escapeHtml(wk.label)}</strong>${wk.isAuto?' <span title="Esta semana aún no está definida en Gestión" style="color:var(--loss)">⚠</span>':''}</td>
+    <td>${escapeHtml(wk.rangeLabel)}</td>
+    <td class="num">${wk.pj}</td><td class="num w-num">${wk.g}</td><td class="num d-num">${wk.e}</td><td class="num l-num">${wk.p}</td>
+    <td><span class="pctbar"><i><b style="width:${wk.pct}%"></b></i>${wk.pct}%</span></td></tr>`).join('');
 }
 
+/* ---------- bitácora ---------- */
+const DOMESTIC_TOURNAMENTS=[/la liga/i,/copa del rey/i,/supercopa de españa/i,/liga bbva mx/i,/liga mx/i,/saudi professional league/i,/nfl temporada/i];
+function isDomesticMatch(m){
+  if(m.internacional===true) return false;
+  const scope=String(m.scope||m.alcance||'').toUpperCase();
+  if(scope==='LOCAL') return true;
+  if(scope==='INTERNACIONAL') return false;
+  return DOMESTIC_TOURNAMENTS.some(rx=>rx.test(m.torneo||''));
+}
 function populateCompetitionFilter(){
-  const sel=document.getElementById('competitionFilter');
-  const current=sel.value || 'all';
-  const names=[...new Set(matches.filter(m=>TEAMS[m.team]?.sport==='futbol').map(m=>m.torneo).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'es'));
+  const sel=document.getElementById('competitionFilter'), current=sel.value||'all';
+  const names=[...new Set(matches.filter(isFootballMatch).map(m=>m.torneo).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'es'));
   sel.innerHTML='<option value="all">Todas las competiciones</option>'+names.map(n=>`<option value="${escapeAttr(n)}">${escapeHtml(n)}</option>`).join('');
   sel.value=names.includes(current)?current:'all';
 }
-
-
-
-
-function formatMatchScore(m){
-  const l=Number(m.localScore ?? (m.venueSide==='away'?m.gc:m.gf));
-  const v=Number(m.visitScore ?? (m.venueSide==='away'?m.gf:m.gc));
-  let left=String(l), right=String(v);
-  if(m.aggregateLocal!==null && m.aggregateLocal!==undefined && m.aggregateVisit!==null && m.aggregateVisit!==undefined){
-    left += `(${m.aggregateLocal})`; right += `(${m.aggregateVisit})`;
-  }else if(typeof m.scoreAnnotation==='string' && /^\(\s*\d+\s*-\s*\d+\s*\)$/.test(m.scoreAnnotation.trim())){
-    const nums=m.scoreAnnotation.match(/\d+/g)||[];
-    if(nums.length===2){ left+=`(${nums[0]})`; right+=`(${nums[1]})`; }
-  }
-  let out=`${left} - ${right}`;
-  if(m.penaltyLocal!==null && m.penaltyLocal!==undefined && m.penaltyVisit!==null && m.penaltyVisit!==undefined){
-    out += ` <small>(${m.penaltyLocal}-${m.penaltyVisit} pen.)</small>`;
-  }
-  if(m.extraTime) out += ` <small>(T.E.)</small>`;
-  return out;
+function renderChips(){
+  const el=document.getElementById('chipbar');
+  const chip=(id,label,color)=>`<button type="button" class="chip${activeTeamFilter===id?' is-active':''}" data-team="${escapeAttr(id)}"><i style="--c:${escapeAttr(color)}"></i>${escapeHtml(label)}</button>`;
+  el.innerHTML = chip('all','Todos',  'var(--ink)') + futbolTeamIds.map(id=>chip(id,TEAMS[id].name,teamStripe(TEAMS[id]))).join('');
+  el.querySelectorAll('.chip').forEach(c=>c.addEventListener('click',()=>{
+    activeTeamFilter=c.dataset.team; matchTableVisible=PAGE_SIZE; renderTeams(); renderChips(); renderMatchTable();
+  }));
 }
-function scoreDisplay(m){ return formatMatchScore(m); }
-
-const DOMESTIC_TOURNAMENTS=[
-  /la liga/i,/copa del rey/i,/supercopa de españa/i,/liga bbva mx/i,/liga mx/i,/saudi professional league/i,/nfl temporada/i
-];
-function isDomesticMatch(m){
-  if(m.internacional===true) return false;
-  if(String(m.scope||m.alcance||'').toUpperCase()==='LOCAL') return true;
-  if(String(m.scope||m.alcance||'').toUpperCase()==='INTERNACIONAL') return false;
-  return DOMESTIC_TOURNAMENTS.some(rx=>rx.test(m.torneo||''));
+function ledgerTeamCell(name,origin,m){
+  const followed = name===TEAMS[m.team]?.name;
+  const sub = m.internacional===true && origin && origin!=='—' ? originLabel(origin,m.torneo) : '';
+  return mteamHtml({name, logoHtml: followed?teamLogoSlot(m.team):rivalLogoSlot(name), sub, me:followed});
 }
-function originHtml(origin,m){ return m.internacional===true?`<small>${escapeHtml(origin||'—')}</small>`:''; }
-function teamCellHtml(name,origin,m,teamId){
-  const isFollowed=name===TEAMS[teamId]?.name;
-  const logo=isFollowed?miniLogoHtml(teamId):rivalLogoOnlyHtml(name);
-  return `<div class="ledger-team">${logo}<div><strong>${escapeHtml(name||'—')}</strong>${originHtml(origin,m)}</div></div>`;
-}
-
 function renderMatchTable(){
- const body=document.getElementById('matchTableBody'),search=(document.getElementById('searchInput').value||'').toLowerCase(),sortMode=document.getElementById('sortSelect').value,competition=document.getElementById('competitionFilter').value;
- const scope=document.getElementById('scopeFilter')?.value||'all', titleMode=document.getElementById('titleFilter')?.value||'all';
- let rows=matches.filter(m=>TEAMS[m.team]?.sport==='futbol'&&(activeTeamFilter==='all'||m.team===activeTeamFilter)&&(competition==='all'||m.torneo===competition)&&(scope==='all'||(scope==='domestic'&&isDomesticMatch(m))||(scope==='international'&&!isDomesticMatch(m)))&&(titleMode==='all'||isTitleMatchRecord(m))&&(!search||`${m.localName} ${m.visitName} ${m.originLocal} ${m.originVisit} ${m.estadio||''} ${m.ciudad||''} ${m.torneo} ${m.fase}`.toLowerCase().includes(search))).sort((a,b)=>sortMode==='recent'?(b.mes*100+b.dia)-(a.mes*100+a.dia):(a.mes*100+a.dia)-(b.mes*100+b.dia));
- const ledgerTotal=document.getElementById('ledgerTotal'); if(ledgerTotal) ledgerTotal.textContent=`${matches.filter(m=>TEAMS[m.team]?.sport==='futbol').length} partidos registrados`;
- if(!rows.length){body.innerHTML='<tr class="empty-row"><td colspan="8">No hay partidos con estos filtros.</td></tr>';document.getElementById('matchTableCount').textContent='';document.getElementById('verMasBtn').classList.add('hidden');return;}
- const visible=rows.slice(0,matchTableVisible);document.getElementById('matchTableCount').textContent=`Mostrando ${visible.length} de ${rows.length} partidos`;document.getElementById('verMasBtn').classList.toggle('hidden',visible.length>=rows.length);
- body.innerHTML=visible.map(m=>`<tr class="ledger-row">
- <td><span class="followed-team-dot" style="--team-color:${escapeAttr(TEAMS[m.team]?.color||'#999')}" title="${escapeAttr(TEAMS[m.team]?.name||'')}"></span></td>
- <td class="mono ledger-date">${escapeHtml(m.dia||'—')} ${escapeHtml(MONTHS[m.mes]||'')}</td>
- <td>${teamCellHtml(m.localName,m.originLocal,m,m.team)}</td>
- <td class="score-cell">${scoreDisplay(m)}</td>
- <td>${teamCellHtml(m.visitName,m.originVisit,m,m.team)}</td>
- <td><div class="ledger-stack"><strong>${escapeHtml(m.estadio||'—')}</strong>${m.ciudad?`<small>${escapeHtml(m.ciudad)}</small>`:''}</div></td>
- <td><div class="ledger-stack competition-cell"><strong>${escapeHtml(m.torneo||'—')}</strong><small>${escapeHtml(m.fase||'—')}</small></div></td>
- <td><span class="status-tag ${resClass(m.resultado)}">${resLabel(m.resultado)}</span></td></tr>`).join('');
+  const body=document.getElementById('matchTableBody');
+  const q=(document.getElementById('searchInput').value||'').trim().toLowerCase();
+  const sortMode=document.getElementById('sortSelect').value;
+  const comp=document.getElementById('competitionFilter').value;
+  const scope=document.getElementById('scopeFilter').value;
+  const titleMode=document.getElementById('titleFilter').value;
+
+  const rows=matches.filter(m=>isFootballMatch(m)
+    && (activeTeamFilter==='all'||m.team===activeTeamFilter)
+    && (comp==='all'||m.torneo===comp)
+    && (scope==='all'||(scope==='domestic'?isDomesticMatch(m):!isDomesticMatch(m)))
+    && (titleMode==='all'||isTitleMatchRecord(m))
+    && (!q||`${m.localName} ${m.visitName} ${m.originLocal} ${m.originVisit} ${m.estadio||''} ${m.ciudad||''} ${m.torneo} ${m.fase}`.toLowerCase().includes(q))
+  ).sort(sortMode==='recent'?byDateDesc:byDateAsc);
+
+  const total=matches.filter(isFootballMatch).length;
+  document.getElementById('ledgerTotal').textContent=`${total} partidos de fútbol registrados`;
+  const countEl=document.getElementById('matchTableCount'), moreBtn=document.getElementById('verMasBtn');
+  if(!rows.length){
+    body.innerHTML='<tr><td class="empty" colspan="8">No hay partidos con estos filtros.</td></tr>';
+    countEl.textContent=''; moreBtn.classList.add('hidden'); return;
+  }
+  const visible=rows.slice(0,matchTableVisible);
+  countEl.textContent=`Mostrando ${visible.length} de ${rows.length} partidos`;
+  moreBtn.classList.toggle('hidden',visible.length>=rows.length);
+
+  body.innerHTML=visible.map(m=>`<tr>
+    <td><span class="dot-team" style="--c:${escapeAttr(teamStripe(TEAMS[m.team]||{}))}" title="${escapeAttr(TEAMS[m.team]?.name||'')}"></span></td>
+    <td class="date">${escapeHtml(m.dia)} ${escapeHtml(MONTHS[m.mes]||'')}</td>
+    <td>${ledgerTeamCell(m.localName,m.originLocal,m)}</td>
+    <td class="score">${formatMatchScore(m)}</td>
+    <td>${ledgerTeamCell(m.visitName,m.originVisit,m)}</td>
+    <td><div class="stack"><strong>${escapeHtml(m.estadio||'—')}</strong>${m.ciudad?`<small>${escapeHtml(m.ciudad)}</small>`:''}</div></td>
+    <td><div class="stack"><strong>${escapeHtml(m.torneo||'—')}</strong><small>${escapeHtml(m.fase||'—')}</small></div></td>
+    <td><span class="res res--${resClass(m.resultado)}">${resLabel(m.resultado)}</span></td></tr>`).join('');
 }
 function renderNflTable(){
   const body=document.getElementById('nflTableBody');
-  const rows=matches.filter(m=>TEAMS[m.team]?.sport==='nfl').slice().sort((a,b)=>(b.mes*100+b.dia)-(a.mes*100+a.dia));
-  if(!rows.length){body.innerHTML='<tr class="empty-row"><td colspan="7">No hay partidos de NFL registrados todavía.</td></tr>';return;}
+  const rows=matches.filter(isNflMatch).sort(byDateDesc);
+  if(!rows.length){ body.innerHTML='<tr><td class="empty" colspan="7">No hay partidos de NFL registrados todavía.</td></tr>'; return; }
   body.innerHTML=rows.map(m=>{
-    const isAway=m.venueSide==='away';
-    const rivalOrigin=isAway?(m.originLocal||'—'):(m.originVisit||'—');
-    return `<tr><td>${miniLogoHtml(m.team)}</td><td class="mono">${m.dia} ${MONTHS[m.mes]}</td><td><div class="nfl-rival">${rivalLogoHtml(m.rival)}${m.internacional===true?`<small class="origin-note">${escapeHtml(rivalOrigin)}</small>`:''}</div></td><td class="${venueLabel(m)==='—'?'muted':''}">${escapeHtml(venueLabel(m))}</td><td>${escapeHtml(m.torneo)}${m.fase?' · '+escapeHtml(m.fase):''}</td><td class="mono">${formatMatchScore(m)}</td><td><span class="res-tag ${resClass(m.resultado)}">${resLabel(m.resultado)}</span></td></tr>`;
-  }).join('');
-}
-
-function fillTeamSelect(){
-  const sel = document.getElementById('f_team');
-  sel.innerHTML = Object.entries(TEAMS).map(([id,t])=>`<option value="${escapeAttr(id)}">${escapeHtml(t.name)}${t.sport==='nfl'?' (NFL)':''}</option>`).join('');
-  sel.addEventListener('change', updateFieldLabels);
-  updateFieldLabels();
-}
-function updateFieldLabels(){
-  const team = document.getElementById('f_team').value;
-  const isNfl = TEAMS[team] && TEAMS[team].sport==='nfl';
-  document.getElementById('lbl_gf').textContent = isNfl ? 'Puntos a favor' : 'Goles a favor';
-  document.getElementById('lbl_gc').textContent = isNfl ? 'Puntos en contra' : 'Goles en contra';
-
-  const datalist = document.getElementById('torneoOptions');
-  const known = TOURNAMENTS_CONFIG[team] || [];
-  datalist.innerHTML = known.map(t=>`<option value="${escapeAttr(t.name)}"></option>`).join('');
-}
-
-function updateResultPreview(){
-  const gf = Number(document.getElementById('f_gf').value)||0;
-  const gc = Number(document.getElementById('f_gc').value)||0;
-  const hasInput = document.getElementById('f_gf').value!=='' && document.getElementById('f_gc').value!=='';
-  const pill = document.getElementById('resultPreview');
-  if(!hasInput){ pill.textContent='—'; pill.className='result-pill e'; return; }
-  const r = computeResult(gf,gc);
-  pill.textContent = resLabel(r);
-  pill.className = 'result-pill ' + resClass(r);
-}
-
-function renderRecentTable(){
-  const body = document.getElementById('recentTableBody');
-  const recent = matches.filter(m=>m.userAdded).slice().reverse().slice(0,12);
-  if(!recent.length){
-    body.innerHTML = `<tr class="empty-row"><td colspan="6">Todavía no agregas marcadores nuevos.</td></tr>`;
-    return;
-  }
-  body.innerHTML = recent.map(m=>{
-    const t = TEAMS[m.team];
-    const isAway = m.venueSide === 'away';
+    const away=m.venueSide==='away';
+    const origin=away?m.originLocal:m.originVisit;
     return `<tr>
-      <td class="mono">${m.dia} ${MONTHS[m.mes]}</td>
-      <td><span class="match-team-name"><span class="match-team-dot" style="background:${escapeAttr(t.accent||t.color)}"></span><span>${escapeHtml(t.name)}</span></span></td>
-      <td>${rivalLogoHtml(m.rival)}</td>
-      <td class="mono">${isAway?m.gc:m.gf} - ${isAway?m.gf:m.gc}</td>
-      <td><span class="res-tag ${resClass(m.resultado)}">${resLabel(m.resultado)}</span></td>
-      <td><button class="del-btn" data-id="${escapeAttr(m.id)}">Eliminar</button></td>
-    </tr>`;
+      <td>${teamLogoSlot(m.team)}</td>
+      <td class="date">${m.dia} ${MONTHS[m.mes]}</td>
+      <td>${rivalCellHtml(m.rival, m.internacional===true?originLabel(origin,m.torneo):'')}</td>
+      <td class="${venueLabel(m)==='—'?'muted':''}">${escapeHtml(venueLabel(m))}</td>
+      <td>${escapeHtml(m.torneo)}${m.fase?' · '+escapeHtml(m.fase):''}</td>
+      <td class="score">${formatMatchScore(m)}</td>
+      <td><span class="res res--${resClass(m.resultado)}">${resLabel(m.resultado)}</span></td></tr>`;
   }).join('');
-  body.querySelectorAll('.del-btn').forEach(btn=>{
-    btn.addEventListener('click', async ()=>{
-      try{await MatchService.remove(btn.dataset.id);renderAll();toast('Marcador eliminado');}catch(e){console.error(e);toast('No se pudo eliminar: '+e.message);}
-    });
-  });
 }
 
-async function handleAdd(){
-  const team = document.getElementById('f_team').value;
-  const rival = document.getElementById('f_rival').value.trim();
-  const dia = Number(document.getElementById('f_dia').value);
-  const mes = Number(document.getElementById('f_mes').value);
-  const torneo = document.getElementById('f_torneo').value.trim();
-  const fase = document.getElementById('f_fase').value.trim();
-  const estadio = document.getElementById('f_estadio').value.trim();
-  const ciudad = document.getElementById('f_ciudad').value.trim();
-  const rivalCountry = document.getElementById('f_rivalCountry').value.trim();
-  const internacional = document.getElementById('f_internacional').checked;
-  const venueSide = document.getElementById('f_venueSide').value;
-  const gf = document.getElementById('f_gf').value;
-  const gc = document.getElementById('f_gc').value;
-  const aggLocal = document.getElementById('f_aggLocal').value;
-  const aggVisit = document.getElementById('f_aggVisit').value;
-  const penLocal = document.getElementById('f_penLocal').value;
-  const penVisit = document.getElementById('f_penVisit').value;
-  const extraTime = document.getElementById('f_extraTime').checked;
-
-  if(!rival || gf==='' || gc==='' || !dia){ toast('Falta rival, día o marcador'); return; }
-  const resultado = computeResult(Number(gf), Number(gc));
-  const id = 'u_' + Date.now() + '_' + Math.random().toString(36).slice(2,7);
-  const esTitulo = document.getElementById('f_esTitulo').checked;
-  const tituloResultado = document.getElementById('f_tituloResultado').value;
-  const teamName=TEAMS[team].name;
-  const localName=venueSide==='away'?rival:teamName;
-  const visitName=venueSide==='away'?teamName:rival;
-  const localScore=venueSide==='away'?Number(gc):Number(gf);
-  const visitScore=venueSide==='away'?Number(gf):Number(gc);
-  const followedCountry=TEAMS[team].type==='Selección' ? TEAMS[team].name : (TEAMS[team].country||'');
-  const originLocal=internacional ? (venueSide==='away' ? (rivalCountry||'—') : (followedCountry||'—')) : '—';
-  const originVisit=internacional ? (venueSide==='away' ? (followedCountry||'—') : (rivalCountry||'—')) : '—';
-  try{
-    await MatchService.add({id, team, dia, mes, rival, torneo, fase, estadio, ciudad, sede:'', gf:Number(gf), gc:Number(gc), resultado, userAdded:true,
-    localName,visitName,localScore,visitScore,originLocal,originVisit,
-    rivalCountry, internacional, venueSide,
-    aggregateLocal:aggLocal===''?null:Number(aggLocal),aggregateVisit:aggVisit===''?null:Number(aggVisit),
-    penaltyLocal:penLocal===''?null:Number(penLocal),penaltyVisit:penVisit===''?null:Number(penVisit),extraTime,
-    titleDecision:esTitulo, titleStatus:esTitulo?tituloResultado:null, titleWon:esTitulo&&tituloResultado==='ganado', tournamentId:esTitulo?normalizeKey(torneo):null});
-  }catch(e){
-    console.error(e); toast('No se pudo guardar en la base: '+e.message); return;
-  }
-
-  if(esTitulo && torneo){
-    await setTournamentStatus(team, torneo, tituloResultado);
-  }
-
-  renderAll(); toast('Marcador agregado ✓'); clearForm();
+/* ---------- navegación ---------- */
+function initReveal(){
+  if(!('IntersectionObserver' in window) || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  document.documentElement.classList.add('js-reveal');
+  const io=new IntersectionObserver(entries=>entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('is-in'); io.unobserve(e.target); } }),{rootMargin:'0px 0px -8% 0px',threshold:0.04});
+  document.querySelectorAll('.section').forEach(s=>io.observe(s));
 }
-
-function clearForm(){
-  ['f_rival','f_rivalCountry','f_dia','f_torneo','f_fase','f_estadio','f_ciudad','f_gf','f_gc','f_aggLocal','f_aggVisit','f_penLocal','f_penVisit'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('f_esTitulo').checked = false;
-  document.getElementById('f_internacional').checked = false;
-  document.getElementById('f_extraTime').checked = false;
-  document.getElementById('f_venueSide').value = 'home';
-  document.getElementById('f_tituloResultado').classList.add('hidden');
-  updateResultPreview();
-}
-
-function switchTab(tab){
-  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active', b.dataset.tab===tab));
-  document.getElementById('tab-seguimiento').classList.toggle('hidden', tab!=='seguimiento');
-  document.getElementById('tab-registrar').classList.toggle('hidden', tab!=='registrar');
-}
-
-
-function renderGeneralStats(){
-  const football=matches.filter(m=>TEAMS[m.team]?.sport==='futbol');
-  const pj=football.length, pg=football.filter(m=>m.resultado==='Ganado').length, pe=football.filter(m=>m.resultado==='Empatado').length, pp=football.filter(m=>m.resultado==='Perdido').length;
-  const gf=football.reduce((a,m)=>a+(Number(m.gf)||0),0), gc=football.reduce((a,m)=>a+(Number(m.gc)||0),0);
-  const titleRows=matches.filter(isTitleMatchRecord), titles=titleRows.filter(isWonTitle).length, runners=titleRows.filter(isRunnerUp).length;
-  const tournaments=new Set(titleRows.map(m=>m.tournamentId||normalizeKey(m.torneo))).size;
-  const el=document.getElementById('generalStats'); if(!el)return;
-  const items=[
-    [icon('trophy'),titles,'Títulos ganados'],[icon('medal'),runners,'Subcampeonatos'],[icon('flag'),tournaments,'Torneos competidos'],[icon('ball'),pj,'Partidos jugados'],
-    ['●',pg,'Partidos ganados','win'],['●',pe,'Partidos empatados','draw'],['●',pp,'Partidos perdidos','loss'],
-    ['GF',gf,'Goles a favor'],['GC',gc,'Goles en contra'],['DG',`${gf-gc>=0?'+':''}${gf-gc}`,'Diferencia de goles'],
-    ['%',`${pj?(pg/pj*100).toFixed(1):'0.0'}%`,'Porcentaje de victorias'],['G/P',pj?(gf/pj).toFixed(2):'0.00','Goles por partido']
-  ];
-  el.innerHTML=items.map(([i,v,label,tone=''])=>`<button class="general-stat ${tone}" type="button" aria-label="${escapeAttr(label)}: ${escapeAttr(v)}" data-tooltip="${escapeAttr(label)}"><span>${i}</span><strong>${v}</strong></button>`).join('');
-}
-function renderExtraStats(){
-  const football=matches.filter(m=>TEAMS[m.team]?.sport==='futbol');
-  const gf=football.reduce((a,m)=>a+(Number(m.gf)||0),0), gc=football.reduce((a,m)=>a+(Number(m.gc)||0),0);
-  const clean=football.filter(m=>Number(m.gc)===0).length;
-  const avg=football.length?(gf/football.length).toFixed(2):'0.00';
-  const extraStatsEl=document.getElementById('extraStats'); if(!extraStatsEl)return;
-  extraStatsEl.innerHTML=`
-    <div class="extra-stat"><strong>${avg}</strong><span>Goles por partido</span></div>
-    <div class="extra-stat"><strong>${clean}</strong><span>Porterías en cero</span></div>
-    <div class="extra-stat"><strong>${gf-gc>=0?'+':''}${gf-gc}</strong><span>Diferencia de goles</span></div>
-    <div class="extra-stat"><strong>${football.length?Math.round(football.filter(m=>m.resultado==='Ganado').length/football.length*100):0}%</strong><span>Win rate fútbol</span></div>`;
+function initScrollSpy(){
+  const links=[...document.querySelectorAll('#mainNav a[href^="#"]')];
+  const map=new Map(links.map(a=>[a.getAttribute('href').slice(1),a]));
+  const io=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{ if(e.isIntersecting){ links.forEach(l=>l.classList.remove('is-active')); map.get(e.target.id)?.classList.add('is-active'); } });
+  },{rootMargin:'-45% 0px -50% 0px'});
+  map.forEach((_,id)=>{ const s=document.getElementById(id); if(s) io.observe(s); });
 }
 
 function renderAll(){
   populateCompetitionFilter();
-  renderScoreboard();
-  renderGeneralStats();
-  renderExtraStats();
-  renderChips();
-  renderTeamCards();
-  renderTitles();
-  renderWeekly();
-  renderMatchTable();
-  renderNflTable();
-  renderRecentTable();
+  renderHero(); renderTeams(); renderStats(); renderHonours(); renderWeekly(); renderChips(); renderMatchTable(); renderNflTable();
+  const src=document.getElementById('dataSource');
+  if(src) src.textContent = matchDataSource==='supabase' ? 'Datos en vivo desde la base de datos' : 'Mostrando copia local (sin conexión a la base de datos)';
 }
 
-
-
 async function init(){
-  applyTheme(localStorage.getItem('ratiosports_theme') || (matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'));
-  applyStyle(localStorage.getItem('ratiosports_style') || 'ticket');
-  document.getElementById('styleToggle')?.addEventListener('click', toggleStyle);
-  fillTeamSelect();
-  applyBackgroundPhoto();
+  initTheme();
   await loadMatches();
-  await loadTitleOverrides();
   renderAll();
-  document.querySelectorAll('.tab-btn[data-tab]').forEach(b=>b.addEventListener('click', ()=>switchTab(b.dataset.tab)));
-  document.getElementById('searchInput').addEventListener('input', ()=>{ matchTableVisible = PAGE_SIZE; renderMatchTable(); });
-  document.getElementById('sortSelect').addEventListener('change', ()=>{ matchTableVisible = PAGE_SIZE; renderMatchTable(); });
-  document.getElementById('competitionFilter').addEventListener('change', ()=>{ matchTableVisible = PAGE_SIZE; renderMatchTable(); });
-  document.getElementById('scopeFilter').addEventListener('change', ()=>{ matchTableVisible = PAGE_SIZE; renderMatchTable(); });
-  document.getElementById('titleFilter').addEventListener('change', ()=>{ matchTableVisible = PAGE_SIZE; renderMatchTable(); });
-  document.getElementById('clearFiltersBtn').addEventListener('click', ()=>{ document.getElementById('searchInput').value=''; document.getElementById('competitionFilter').value='all'; document.getElementById('scopeFilter').value='all'; document.getElementById('titleFilter').value='all'; activeTeamFilter='all'; matchTableVisible=PAGE_SIZE; renderAll(); });
-  document.getElementById('themeToggle').addEventListener('click', toggleTheme);
-  const sidebarToggle=document.getElementById('sidebarToggle');
-  if(sidebarToggle){
-    const collapsed=localStorage.getItem('ratiosports_sidebar_collapsed')==='1';
-    document.body.classList.toggle('sidebar-collapsed',collapsed);
-    sidebarToggle.addEventListener('click',()=>{const next=!document.body.classList.contains('sidebar-collapsed');document.body.classList.toggle('sidebar-collapsed',next);localStorage.setItem('ratiosports_sidebar_collapsed',next?'1':'0');});
-  }
-  document.querySelectorAll('.tabbar a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const target=document.querySelector(a.getAttribute('href'));if(target) target.scrollIntoView({behavior:'smooth',block:'start'});}));
-  document.querySelectorAll('.tabbar a').forEach(a=>a.addEventListener('click',()=>{document.querySelectorAll('.tabbar a').forEach(x=>x.classList.remove('active'));a.classList.add('active');}));
-  document.getElementById('verMasBtn').addEventListener('click', ()=>{ matchTableVisible += PAGE_SIZE; renderMatchTable(); });
-  
-  document.querySelectorAll('.tabbar a[href^="#"]').forEach(link=>{
-    link.addEventListener('click',ev=>{
-      const target=document.querySelector(link.getAttribute('href'));
-      if(!target)return;
-      ev.preventDefault();
-      target.scrollIntoView({behavior:'smooth',block:'start'});
-      document.querySelectorAll('.tabbar .tab-btn').forEach(x=>x.classList.remove('active'));
-      link.classList.add('active');
+  const rerender=()=>{ matchTableVisible=PAGE_SIZE; renderMatchTable(); };
+  ['searchInput'].forEach(id=>document.getElementById(id).addEventListener('input',rerender));
+  ['sortSelect','competitionFilter','scopeFilter','titleFilter'].forEach(id=>document.getElementById(id).addEventListener('change',rerender));
+  document.getElementById('clearFiltersBtn').addEventListener('click',()=>{
+    document.getElementById('searchInput').value='';
+    ['competitionFilter','scopeFilter','titleFilter'].forEach(id=>document.getElementById(id).value='all');
+    document.getElementById('sortSelect').value='recent';
+    activeTeamFilter='all'; matchTableVisible=PAGE_SIZE; renderTeams(); renderChips(); renderMatchTable();
+  });
+  document.getElementById('verMasBtn').addEventListener('click',()=>{ matchTableVisible+=PAGE_SIZE; renderMatchTable(); });
+  document.getElementById('weeklyMoreBtn').addEventListener('click',()=>{ weeklyVisible+=WEEK_PAGE_SIZE; renderWeekly(); });
+  document.getElementById('honoursMoreBtn').addEventListener('click',()=>{ honoursExpanded=!honoursExpanded; renderHonours(); });
+  document.querySelectorAll('#weeklyToggles [data-series]').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const k=btn.dataset.series; weeklySeriesState[k]=!weeklySeriesState[k];
+      btn.classList.toggle('is-off',!weeklySeriesState[k]); renderWeekly();
     });
   });
-
-  document.getElementById('weeklyMoreBtn').addEventListener('click', ()=>{ weeklyVisible += WEEK_PAGE_SIZE; renderWeekly(); });
-  document.querySelectorAll('#weeklyToggles [data-series]').forEach(btn=>btn.addEventListener('click',()=>{
-    const key=btn.dataset.series; weeklySeriesState[key]=!weeklySeriesState[key];
-    btn.classList.toggle('active',weeklySeriesState[key]); renderWeekly();
-  }));
-  document.getElementById('titlesMoreBtn').addEventListener('click',()=>{titlesExpanded=!titlesExpanded;renderTitles();});
-  document.getElementById('f_gf').addEventListener('input', updateResultPreview);
-  document.getElementById('f_gc').addEventListener('input', updateResultPreview);
-  document.getElementById('addBtn').addEventListener('click', handleAdd);
-  document.getElementById('clearBtn').addEventListener('click', clearForm);
-  document.getElementById('f_esTitulo').addEventListener('change', (e)=>{
-    document.getElementById('f_tituloResultado').classList.toggle('hidden', !e.target.checked);
-  });
+  initScrollSpy();
+  initReveal();
 }
 init();

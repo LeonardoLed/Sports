@@ -12,6 +12,7 @@ node tests/international-country.test.js
 node tests/origin-persistence.test.js
 node tests/domestic-origin-visibility.test.js
 node tests/tournament-logo.test.js
+node tests/stats-logic.test.js
 python tests/seed-integrity.py
 node --check assets/js/services/database-service.js
 node --check assets/js/services/match-service.js
@@ -19,4 +20,5 @@ node --check assets/js/core/state.js
 node --check assets/js/core/ui.js
 node --check assets/js/pages/dashboard.js
 node --check assets/js/pages/partidos.js
+node --check assets/js/pages/weeks-admin.js
 echo "PASS all tests"

@@ -15,9 +15,8 @@
     ['addBtn','weekSaveBtn','weekResetBtn'].forEach(id=>{
       const node=el(id); if(node) node.disabled=!canWrite;
     });
-    document.querySelectorAll('.del-btn,.week-edit-btn,.week-del-btn').forEach(node=>node.disabled=!canWrite);
-    document.querySelectorAll('#tab-registrar > .panel').forEach(panel=>{
-      if(panel.id==='adminAccessPanel') return;
+    document.querySelectorAll('.del-btn,.week-edit-btn,.week-del-btn,.tstatus-save,.tstatus-select').forEach(node=>node.disabled=!canWrite);
+    document.querySelectorAll('[data-admin-panel]').forEach(panel=>{
       panel.classList.toggle('admin-write-locked',!canWrite);
     });
     // Keep forms readable/usable for inspection; only write actions are actually disabled.

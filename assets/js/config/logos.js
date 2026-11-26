@@ -57,14 +57,17 @@ window.TOURNAMENTS = {
   al_nassr: [
     {name:'Saudi Pro League',           logo:'logos/torneos/saudi_pro_league.png',        status:'ganado'},
     {name:'AFC Champions League Two',   logo:'logos/torneos/afc_champions_league_2.png',  status:'en_curso'},
+    {name:'AFC Champions League Elite', logo:'logos/torneos/afc_champions_league_elite.png', status:'en_curso'},
 	{name: 'King\'s Cup',               logo: 'logos/torneos/king_cup.png', status: 'en_curso', matchTerms: ['King\'s Cup', 'King Cup']
 },
   ],
   sel_mex: [
     {name:'Fecha FIFA',           logo:'logos/torneos/fecha_fifa.png',          status:'en_curso'},
+    {name:'CONCACAF Nations League', logo:'logos/torneos/concacaf_nations_league.png', status:'en_curso'},
   ],
   sel_por: [
     {name:'Copa Mundial 2026',    logo:'logos/torneos/copa_mundial_2026.png',   status:'en_curso'},
+    {name:'UEFA Nations League',  logo:'logos/torneos/uefa_nations_league.png', status:'en_curso'},
   ],
   cowboys: [],
 };
@@ -80,6 +83,9 @@ window.TOURNAMENT_LOGOS = {
   'UEFA Champions League 2025-2026': 'logos/torneos/champions_league.png',
   'La Liga': 'logos/torneos/la_liga.png',
   'AFC Champions League Two': 'logos/torneos/afc_champions_league_2.png',
+  'AFC Champions League Elite': 'logos/torneos/afc_champions_league_elite.png',
+  'CONCACAF Nations League': 'logos/torneos/concacaf_nations_league.png',
+  'UEFA Nations League': 'logos/torneos/uefa_nations_league.png',
   'Saudi Professional League': 'logos/torneos/saudi_pro_league.png',
   'Liga BBVA MX Clausura 2026': 'logos/torneos/liga_mx.png',
   'Copa Mundial FIFA USA-MEX-CAN 2026': 'logos/torneos/copa_mundial_2026.png',

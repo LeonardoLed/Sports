@@ -1,8 +1,6 @@
 const fs=require('fs'), assert=require('assert');
-const pages=[
-  ['index.html','assets/js/pages/dashboard.js'],
-  ['partidos.html','assets/js/pages/partidos.js']
-];
+// El formulario de captura vive solo en Gestión; la página pública es de solo lectura.
+const pages=[['partidos.html','assets/js/pages/partidos.js']];
 const required=['f_team','f_rival','f_rivalCountry','f_venueSide','f_dia','f_mes','f_torneo','f_fase','f_estadio','f_ciudad','f_gf','f_gc','f_internacional','f_esTitulo','f_tituloResultado','f_aggLocal','f_aggVisit','f_penLocal','f_penVisit','f_extraTime'];
 let failed=false;
 for(const [htmlFile,jsFile] of pages){

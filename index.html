@@ -1,246 +1,162 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-theme="noche">
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Ratio Sports · Centro de Seguimiento</title>
-<link href="https://fonts.googleapis.com" rel="preconnect"/>
-<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&amp;family=Inter:wght@400;500;600;700;800&amp;family=Space+Mono:wght@400;700&amp;family=Rajdhani:wght@500;600;700&amp;family=Share+Tech+Mono&amp;display=swap" rel="stylesheet"/>
-
-
-<link href="assets/css/base.css" rel="stylesheet"/>
-<link href="assets/css/dashboard.css" rel="stylesheet"/></head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ratio Sports · Centro de seguimiento</title>
+<meta name="description" content="Resultados, torneos y estadísticas de los equipos que sigo.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Ccircle cx=%2716%27 cy=%2716%27 r=%2714%27 fill=%27%2307070a%27 stroke=%27%23e5283b%27 stroke-width=%272.4%27/%3E%3Cpath d=%27M16 10.5l5 3.6-1.9 5.8h-6.2L11 14.1z%27 fill=%27%23f3f1ec%27/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&amp;display=swap" rel="stylesheet">
+<link href="assets/css/app.css" rel="stylesheet">
+<script>
+  // Aplica el tema guardado antes de pintar, para evitar parpadeos.
+  (function(){try{var m={dark:'noche',light:'gris'},t=localStorage.getItem('ratiosports_theme');t=m[t]||t;if(['noche','gris','color'].indexOf(t)<0)t='noche';document.documentElement.dataset.theme=t;}catch(e){}})();
+</script>
+</head>
 <body>
-<div class="bg-photo-layer" id="bgPhotoLayer"></div>
-<svg class="ball-decor" viewbox="0 0 100 100"><use href="#ballShape"></use></svg>
-<svg class="ball-decor b2" viewbox="0 0 100 100"><use href="#ballShape"></use></svg>
-<svg height="0" style="position:absolute" width="0">
-<defs>
-<g id="ballShape">
-<circle cx="50" cy="50" fill="none" r="48" stroke="#21201c" stroke-width="2"></circle>
-<polygon fill="#21201c" points="50,20 62,30 58,44 42,44 38,30"></polygon>
-<polygon fill="none" points="50,20 62,30 78,26 76,12" stroke="#21201c" stroke-width="1.6"></polygon>
-<polygon fill="none" points="50,20 38,30 22,26 24,12" stroke="#21201c" stroke-width="1.6"></polygon>
-<polygon fill="none" points="62,30 58,44 74,54 84,42 78,26" stroke="#21201c" stroke-width="1.6"></polygon>
-<polygon fill="none" points="38,30 42,44 26,54 16,42 22,26" stroke="#21201c" stroke-width="1.6"></polygon>
-<polygon fill="none" points="58,44 42,44 38,60 50,70 62,60" stroke="#21201c" stroke-width="1.6"></polygon>
-</g>
-</defs>
-</svg>
-<div class="wrap">
-<div class="masthead">
-<div class="brand">
-<div class="brand-mark"><svg viewbox="0 0 100 100"><use href="#ballShape"></use></svg></div>
-<div>
-<h1>Ratio Sports</h1>
-<p>Vista general de tu rendimiento · datos reales del Excel</p>
-</div>
-</div>
-<div class="header-actions"></div>
-</div>
-<button class="sidebar-toggle" id="sidebarToggle" title="Colapsar menú" type="button">‹</button>
-<div class="tabbar">
-<a class="tab-btn active module-link" href="index.html"><span class="nav-icon">⌂</span><span class="nav-label">Resumen</span></a>
-<a class="tab-btn module-link" href="#teamGrid"><span class="nav-icon">♟</span><span class="nav-label">Mis equipos</span></a>
-<a class="tab-btn module-link" href="#titlesPanel"><span class="nav-icon">♜</span><span class="nav-label">Títulos</span></a>
-<a class="tab-btn module-link" href="#weeklyPanel"><span class="nav-icon">⌁</span><span class="nav-label">Seguimiento</span></a>
-<a class="tab-btn module-link" href="#matchesPanel"><span class="nav-icon">▤</span><span class="nav-label">Bitácora</span></a>
-<a class="tab-btn module-link" href="#generalStats"><span class="nav-icon">▥</span><span class="nav-label">Estadísticas</span></a>
-<a class="tab-btn module-link" href="partidos.html"><span class="nav-icon">⚙</span><span class="nav-label">Gestión</span></a>
-<div class="sidebar-theme-wrap">
-<button aria-label="Cambiar tema" class="theme-toggle sidebar-theme-toggle" id="themeToggle" type="button">
-<span id="themeIcon">🌙</span><span class="nav-label" id="themeLabel">Modo oscuro</span>
-</button>
-<button aria-label="Cambiar estilo visual" class="theme-toggle sidebar-theme-toggle" id="styleToggle" type="button">
-<span id="styleIcon">📺</span><span class="nav-label" id="styleLabel">Marcador LED</span>
-</button>
-</div>
-</div>
-<!-- ============ TAB: SEGUIMIENTO ============ -->
-<section id="tab-seguimiento">
-<div class="chipbar" id="chipbar"></div>
-<div class="section-title" id="equiposTitle">Mis equipos</div>
-<div class="team-grid" id="teamGrid"></div>
-<div class="section-title">Estadísticas generales</div>
-<div class="general-stats" id="generalStats"></div>
-<div class="extra-stats" id="extraStats"></div>
-<div class="section-title">Tus títulos</div>
-<div class="panel" id="titlesPanel">
-<h2>Títulos y finales</h2>
-<p class="sub">Torneos ganados, perdidos y vinculados con sus finales</p>
-<div class="title-grid" id="titleGrid"></div>
-<div class="titles-more-row"><button class="btn btn-ghost" id="titlesMoreBtn" type="button">Ver más títulos</button></div>
-<div class="title-total" id="titleTotal"></div>
-</div>
-<div class="section-title">Seguimiento semanal</div>
-<div class="panel" id="weeklyPanel">
-<h2>Seguimiento semanal</h2>
-<p class="sub">La gráfica muestra todas las semanas. El detalle inferior se despliega de cinco en cinco.</p>
-<div class="legend-row weekly-toggles" id="weeklyToggles">
-<button class="legend-item active" data-series="g" type="button"><span class="legend-swatch" style="background:var(--win)"></span>Ganados</button>
-<button class="legend-item active" data-series="e" type="button"><span class="legend-swatch" style="background:var(--draw)"></span>Empatados</button>
-<button class="legend-item active" data-series="p" type="button"><span class="legend-swatch" style="background:var(--loss)"></span>Perdidos</button>
-<button class="legend-item active" data-series="pct" type="button"><span class="legend-line"></span>% Efectividad</button>
-</div>
-<div class="chart-scroll"><div class="chart-wrap" id="weeklyChartWrap"></div></div>
-<div class="table-wrap"><table style="margin-top:18px;">
-<thead><tr><th>Semana</th><th>Rango</th><th>PJ</th><th>G</th><th>E</th><th>P</th><th>Efectividad</th></tr></thead>
-<tbody id="weeklyTableBody"></tbody>
-</table></div>
-<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:16px;">
-<span class="muted" id="weeklyCount" style="font-size:12px;"></span>
-<button class="btn btn-ghost" id="weeklyMoreBtn" type="button">Ver 5 semanas más</button>
-</div>
-</div>
-<div class="section-title">Bitácora de fútbol</div>
-<div class="panel" id="matchesPanel">
-<h2>Bitácora de partidos</h2>
-<p class="sub">Historial de fútbol, filtrable por equipo</p>
-<div class="ledger-heading">
-<div><strong id="ledgerTotal">0 partidos registrados</strong><span>Fuente central del dashboard</span></div>
-</div>
-<div class="table-controls table-controls-v20">
-<label class="search-box"><span aria-hidden="true">⌕</span><input aria-label="Buscar partidos" id="searchInput" placeholder="Buscar equipo, sede, torneo o fase…" type="text"/></label>
-<select aria-label="Filtrar por competición" id="competitionFilter"><option value="all">Todas las competiciones</option></select>
-<select aria-label="Filtrar por alcance" id="scopeFilter"><option value="all">Todos los torneos</option><option value="domestic">Domésticos</option><option value="international">Internacionales</option></select>
-<select aria-label="Filtrar partidos de título" id="titleFilter"><option value="all">Todos los partidos</option><option value="titles">Solo títulos</option></select>
-<select aria-label="Ordenar partidos" id="sortSelect">
-<option value="recent">Más recientes primero</option>
-<option value="oldest">Más antiguos primero</option>
-</select>
-<button class="btn btn-ghost" id="clearFiltersBtn" type="button">Limpiar</button>
-</div>
-<div class="table-wrap ledger-wrap"><table class="ledger-table">
-<thead><tr><th aria-label="Equipo seguido"></th><th>Fecha</th><th>Local</th><th>Marcador</th><th>Visitante</th><th>Sede</th><th>Competición</th><th>Estado</th></tr></thead>
-<tbody id="matchTableBody"></tbody>
-</table></div>
-<div style="display:flex; align-items:center; justify-content:space-between; margin-top:16px;">
-<span class="muted" id="matchTableCount" style="font-size:12px;"></span>
-<button class="btn btn-ghost" id="verMasBtn">Ver más</button>
-</div>
-</div>
-<div class="section-title">🏈 NFL</div>
-<div class="panel" id="nflPanel">
-<h2>Dallas Cowboys<span class="nfl-flag">NFL</span></h2>
-<p class="sub">Resultados de fútbol americano, separados del resto</p>
-<div class="table-wrap"><table>
-<thead><tr><th></th><th>Fecha</th><th>Rival</th><th>Estadio / Ciudad</th><th>Temporada / Semana</th><th>Marcador (puntos)</th><th>Resultado</th></tr></thead>
-<tbody id="nflTableBody"></tbody>
-</table></div>
-</div>
-</section>
-<!-- ============ TAB: REGISTRAR ============ -->
-<section class="hidden" id="tab-registrar">
-<div class="panel">
-<h2>Nuevo marcador</h2>
-<p class="sub">Llena los datos del partido y agrégalo a tu bitácora</p>
-<div class="title-association-help"><strong>Asociación con títulos:</strong> usa el mismo nombre de torneo, escribe una fase que contenga “Final” y activa “Este partido definió un título”. El registro guarda un <code>tournamentId</code> y la tarjeta toma automáticamente rival, fecha, marcador y estado ganado/perdido.</div>
-<div class="form-grid">
-<div class="field">
-<label>Equipo</label>
-<select id="f_team"></select>
-</div>
-<div class="field">
-<label>Rival</label>
-<input id="f_rival" placeholder="Ej. FC Barcelona" type="text"/>
-</div>
-<div class="field">
-<label>País del rival</label>
-<input id="f_rivalCountry" list="rivalCountryOptions" placeholder="Ej. Estados Unidos" type="text"/>
-<datalist id="rivalCountryOptions"></datalist>
-<span class="muted" style="font-size:10.5px;">De tu equipo ya sabemos el país — este es el del rival</span>
-</div>
-<div class="field">
-<label>Condición del equipo seguido</label>
-<select id="f_venueSide"><option value="home">Local</option><option value="away">Visitante</option></select>
-</div>
-<div class="field">
-<label>Día</label>
-<input id="f_dia" max="31" min="1" placeholder="14" type="number"/>
-</div>
-<div class="field">
-<label>Mes</label>
-<select id="f_mes">
-<option value="1">Enero</option><option value="2">Febrero</option><option value="3">Marzo</option>
-<option value="4">Abril</option><option value="5">Mayo</option><option value="6">Junio</option>
-<option value="7">Julio</option><option value="8">Agosto</option><option value="9">Septiembre</option>
-<option value="10">Octubre</option><option value="11">Noviembre</option><option value="12">Diciembre</option>
-</select>
-</div>
-<div class="field span2">
-<label>Torneo / Competición</label>
-<input id="f_torneo" list="torneoOptions" placeholder="Ej. La Liga" type="text"/>
-<datalist id="torneoOptions"></datalist>
-<span class="muted" style="font-size:10.5px;">Elige uno de la lista para que quede ligado a su logo de torneo</span>
-</div>
-<div class="field span2">
-<label>Fase / Jornada</label>
-<input id="f_fase" placeholder="Ej. Jornada 20" type="text"/>
-</div>
-<div class="field">
-<label>Estadio</label>
-<input id="f_estadio" placeholder="Ej. Santiago Bernabéu" type="text"/>
-</div>
-<div class="field">
-<label>Ciudad</label>
-<input id="f_ciudad" placeholder="Ej. Madrid" type="text"/>
-</div>
-<div class="field">
-<label id="lbl_gf">Goles a favor</label>
-<input id="f_gf" min="0" placeholder="0" type="number"/>
-</div>
-<div class="field">
-<label id="lbl_gc">Goles en contra</label>
-<input id="f_gc" min="0" placeholder="0" type="number"/>
-</div>
-<div class="preview-badge">
-<span>Resultado (se calcula solo):</span>
-<span class="result-pill e" id="resultPreview">—</span>
-</div>
-<div class="preview-badge" style="flex-wrap:wrap;">
-<label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-weight:600;">
-<input id="f_internacional" style="width:16px; height:16px;" type="checkbox"/>
-            🌐 Partido internacional (torneo entre países/ligas distintas)
-          </label>
-</div>
-<div class="preview-badge" style="flex-wrap:wrap;">
-<label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-weight:600;">
-<input id="f_esTitulo" style="width:16px; height:16px;" type="checkbox"/>
-            🏆 Este partido definió un título (fue una final)
-          </label>
-<select class="hidden" id="f_tituloResultado" style="margin-left:auto;">
-<option value="ganado">Lo ganamos 🏆</option>
-<option value="perdido">Lo perdimos</option>
-</select>
-</div>
-<div class="field"><label>Global local (opcional)</label><input id="f_aggLocal" min="0" placeholder="Ej. 2" type="number"/></div>
-<div class="field"><label>Global visitante (opcional)</label><input id="f_aggVisit" min="0" placeholder="Ej. 4" type="number"/></div>
-<div class="field"><label>Penales local (opcional)</label><input id="f_penLocal" min="0" placeholder="Ej. 4" type="number"/></div>
-<div class="field"><label>Penales visitante (opcional)</label><input id="f_penVisit" min="0" placeholder="Ej. 2" type="number"/></div>
-<div class="preview-badge"><label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-weight:700"><input id="f_extraTime" style="width:16px;height:16px" type="checkbox"/> Partido definido en tiempo extra</label></div>
-<div class="form-actions">
-<button class="btn btn-ghost" id="clearBtn">Limpiar</button>
-<button class="btn btn-primary" id="addBtn">Agregar marcador</button>
-</div>
-</div>
-</div>
-<div class="panel">
-<h2>Agregados recientemente</h2>
-<p class="sub">Últimos partidos capturados en esta bitácora</p>
-<table>
-<thead><tr><th>Fecha</th><th>Equipo</th><th>Rival</th><th>Marcador</th><th>Resultado</th><th></th></tr></thead>
-<tbody id="recentTableBody"></tbody>
-</table>
-</div>
-</section>
-</div>
-<div class="toast" id="toast"></div>
-<!-- Rutas de logos y foto de fondo: ver logos-config.js (archivo aparte) -->
 
+<header class="topbar">
+  <div class="topbar__inner">
+    <a class="brand" href="index.html" aria-label="Ratio Sports, inicio">
+      <svg class="brand__mark" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="16" cy="16" r="13.5"/>
+        <path d="M16 10.5l5 3.6-1.9 5.8h-6.2L11 14.1z" fill="currentColor"/>
+        <path d="M16 10.5V2.8M21 14.1l7-2.3M19.1 19.9l4.4 6M12.9 19.9l-4.4 6M11 14.1l-7-2.3"/>
+      </svg>
+      <span class="brand__name">Ratio Sports</span>
+    </a>
+    <nav class="nav" id="mainNav" aria-label="Secciones">
+      <a class="nav__link" href="#equipos">Equipos</a>
+      <a class="nav__link" href="#estadisticas">Estadísticas</a>
+      <a class="nav__link" href="#titulos">Torneos</a>
+      <a class="nav__link" href="#semanas">Semanas</a>
+      <a class="nav__link" href="#bitacora">Bitácora</a>
+      <a class="nav__link" href="#nfl">NFL</a>
+      <a class="nav__link nav__link--admin" href="partidos.html">Gestión</a>
+    </nav>
+    <div class="topbar__tools">
+      <div class="theme-switch" role="group" aria-label="Tema de color">
+        <button type="button" data-theme-btn="noche">Noche</button>
+        <button type="button" data-theme-btn="gris">Gris</button>
+        <button type="button" data-theme-btn="color">Color</button>
+      </div>
+    </div>
+  </div>
+</header>
 
+<main class="page">
 
+  <section class="hero" aria-label="Resumen general">
+    <div class="hero__bg"></div>
+    <div class="hero__body">
+      <div>
+        <div class="hero__eyebrow" id="heroEyebrow">Temporada 2026</div>
+        <h1 class="hero__title">Ratio<br>Sports</h1>
+        <p class="hero__lede">Todos los partidos de los equipos que sigo: fútbol y NFL en un solo registro.</p>
+      </div>
+      <div class="hero__record" id="heroRecord"></div>
+      <div class="recbar" id="heroBar" aria-hidden="true"></div>
+      <div><span class="ticker__label">Últimos resultados</span><div class="ticker" id="heroTicker"></div></div>
+    </div>
+  </section>
 
+  <section class="section" id="equipos">
+    <div class="section__head">
+      <h2 class="section__title">Mis equipos</h2>
+      <p class="section__note">Toca un equipo para filtrar la bitácora.</p>
+    </div>
+    <div class="teams" id="teamGrid"></div>
+  </section>
+
+  <section class="section" id="estadisticas">
+    <div class="section__head">
+      <h2 class="section__title">Estadísticas</h2>
+      <p class="section__note">Los partidos, victorias y títulos cuentan todos los deportes. Goles y porterías a cero son solo de fútbol.</p>
+    </div>
+    <div class="stat-groups" id="statGroups"></div>
+  </section>
+
+  <section class="section" id="titulos">
+    <div class="section__head">
+      <h2 class="section__title">Torneos</h2>
+      <p class="section__note">Campeonatos, finales perdidas, eliminaciones y torneos que siguen en juego.</p>
+    </div>
+    <div class="ledger-sum" id="ledgerSummary"></div>
+    <div class="honours" id="honourGrid"></div>
+    <div class="more-row"><button class="btn btn-ghost hidden" id="honoursMoreBtn" type="button">Ver todos los torneos</button></div>
+  </section>
+
+  <section class="section" id="semanas">
+    <div class="section__head">
+      <h2 class="section__title">Seguimiento semanal</h2>
+      <p class="section__note">Todas las semanas deportivas, con todos los deportes. El detalle se despliega de cinco en cinco.</p>
+    </div>
+    <div class="card chart-card">
+      <div class="legend" id="weeklyToggles">
+        <button class="legend__btn" data-series="g" type="button"><i style="background:var(--win)"></i>Ganados</button>
+        <button class="legend__btn" data-series="e" type="button"><i style="background:var(--draw)"></i>Empatados</button>
+        <button class="legend__btn" data-series="p" type="button"><i style="background:var(--loss)"></i>Perdidos</button>
+        <button class="legend__btn" data-series="pct" type="button"><i class="line" style="background:var(--ink)"></i>% de victorias</button>
+      </div>
+      <div class="chart-scroll"><div class="chart" id="weeklyChartWrap"></div></div>
+    </div>
+    <div class="table-wrap" style="margin-top:16px">
+      <table class="tbl">
+        <thead><tr><th>Semana</th><th>Rango</th><th class="num">PJ</th><th class="num">G</th><th class="num">E</th><th class="num">P</th><th>% victorias</th></tr></thead>
+        <tbody id="weeklyTableBody"></tbody>
+      </table>
+    </div>
+    <div class="table-foot"><span id="weeklyCount"></span><button class="btn btn-ghost btn-sm" id="weeklyMoreBtn" type="button">Ver 5 semanas más</button></div>
+  </section>
+
+  <section class="section" id="bitacora">
+    <div class="section__head">
+      <h2 class="section__title">Bitácora de fútbol</h2>
+      <p class="section__note" id="ledgerTotal">0 partidos registrados</p>
+    </div>
+    <div class="chips" id="chipbar" role="group" aria-label="Filtrar por equipo"></div>
+    <div class="toolbar">
+      <label class="search">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5"/><path d="M13 13l4 4"/></svg>
+        <input id="searchInput" type="text" placeholder="Buscar equipo, sede, torneo o fase" aria-label="Buscar partidos">
+      </label>
+      <select class="select" id="competitionFilter" aria-label="Competición"><option value="all">Todas las competiciones</option></select>
+      <select class="select" id="scopeFilter" aria-label="Alcance"><option value="all">Nacionales e internacionales</option><option value="domestic">Solo nacionales</option><option value="international">Solo internacionales</option></select>
+      <select class="select" id="titleFilter" aria-label="Tipo de partido"><option value="all">Todos los partidos</option><option value="titles">Que cerraron un torneo</option></select>
+      <select class="select" id="sortSelect" aria-label="Orden"><option value="recent">Más recientes primero</option><option value="oldest">Más antiguos primero</option></select>
+      <button class="btn btn-ghost" id="clearFiltersBtn" type="button">Limpiar</button>
+    </div>
+    <div class="table-wrap">
+      <table class="tbl ledger">
+        <thead><tr><th aria-label="Equipo seguido"></th><th>Fecha</th><th>Local</th><th style="text-align:center">Marcador</th><th>Visitante</th><th>Sede</th><th>Competición</th><th>Resultado</th></tr></thead>
+        <tbody id="matchTableBody"></tbody>
+      </table>
+    </div>
+    <div class="table-foot"><span id="matchTableCount"></span><button class="btn btn-ghost btn-sm" id="verMasBtn" type="button">Ver más</button></div>
+  </section>
+
+  <section class="section" id="nfl">
+    <div class="section__head">
+      <h2 class="section__title">NFL <span class="tag flag-nfl">Dallas Cowboys</span></h2>
+      <p class="section__note">Fútbol americano. Suma a partidos, victorias y semanas; los marcadores son puntos, no goles.</p>
+    </div>
+    <div class="table-wrap">
+      <table class="tbl">
+        <thead><tr><th></th><th>Fecha</th><th>Rival</th><th>Sede</th><th>Temporada / semana</th><th style="text-align:center">Marcador</th><th>Resultado</th></tr></thead>
+        <tbody id="nflTableBody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <span>Ratio Sports</span>
+    <span id="dataSource"></span>
+  </footer>
+</main>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script defer src="assets/js/config/database.js"></script>
@@ -250,9 +166,6 @@
 <script defer src="assets/js/core/state.js"></script>
 <script defer src="assets/js/services/match-service.js"></script>
 <script defer src="assets/js/core/ui.js"></script>
-<script defer src="assets/js/core/backup.js"></script>
 <script defer src="assets/js/pages/dashboard.js"></script>
 </body>
 </html>
-
-

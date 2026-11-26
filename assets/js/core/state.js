@@ -67,7 +67,7 @@ const DEFAULT_WEEK_DEFS = [
   {id:"w17", label:"Semana 17", startDay:18, startMonth:5, endDay:31, endMonth:5},
   {id:"w18", label:"Semana 18", startDay:1, startMonth:6, endDay:14, endMonth:6},
   {id:"w19", label:"Semana 19", startDay:15, startMonth:6, endDay:21, endMonth:6},
-  {id:"w20", label:"Semana 20", startDay:22, startMonth:6, endDay:31, endMonth:6},
+  {id:"w20", label:"Semana 20", startDay:22, startMonth:6, endDay:30, endMonth:6},
   {id:"w21", label:"Semana 21", startDay:1, startMonth:7, endDay:19, endMonth:7},
   {id:"w22", label:"Semana 22", startDay:20, startMonth:7, endDay:31, endMonth:7},
 ];
@@ -127,7 +127,10 @@ function normalizedMatch(raw, seed){
   m.gc=Number.isFinite(Number(m.gc))?Number(m.gc):0;
   m.localScore=away?m.gc:m.gf;
   m.visitScore=away?m.gf:m.gc;
-  m.resultado=m.resultado||computeResult(m.gf,m.gc);
+  // El resultado del partido (G/E/P) SIEMPRE sale del marcador de ese partido.
+  // Quien pasa o pierde una eliminatoria se registra en el estado del torneo,
+  // no aquí: un 1-0 a favor es una victoria aunque la serie se pierda en el global.
+  m.resultado=computeResult(m.gf,m.gc);
   // Origins belong exclusively to fixtures explicitly marked international.
   // Domestic matches must never display inferred countries, even if the team
   // catalogue or an older seed row contains that information.
@@ -152,6 +155,43 @@ function normalizedMatch(raw, seed){
   m.estadio=m.estadio||'';
   m.ciudad=m.ciudad||'';
   return m;
+}
+
+/* =========================================================
+   UBICACIÓN / ORIGEN DE EQUIPOS Y RIVALES (solo presentación)
+
+   Los datos guardan lo que se capturó (un país, una región o una
+   federación). Al mostrarlo se unifica con esta regla:
+     - Mundial: prevalece la FEDERACIÓN (UEFA, CONCACAF, CAF, AFC, CONMEBOL, OFC).
+     - Cualquier otro torneo: se muestra la REGIÓN
+       (México y Estados Unidos -> "América del Norte", España -> "Europa", etc.).
+   Un origen que no se reconoce (p. ej. "NFC Este") se muestra tal cual.
+   Para sumar países nuevos basta agregarlos a la lista de su región.
+   ========================================================= */
+const ORIGIN_GROUPS = [
+  {region:'América del Norte', federation:'CONCACAF', names:['México','Estados Unidos','USA','EE.UU.','Canadá','Norteamérica','América del Norte','CONCACAF']},
+  {region:'América Central',   federation:'CONCACAF', names:['Panamá','Costa Rica','Honduras','Guatemala','El Salvador','Jamaica','Haití','Curazao','América Central']},
+  {region:'América del Sur',   federation:'CONMEBOL', names:['Colombia','Ecuador','Chile','Brasil','Argentina','Uruguay','Paraguay','Perú','Bolivia','Venezuela','América del Sur','Sudamérica','CONMEBOL']},
+  {region:'Europa',            federation:'UEFA',     names:['España','Portugal','Inglaterra','Francia','Alemania','Aleamania','Italia','Bélgica','Croacia','República Checa','Países Bajos','Suiza','Turquía','Escocia','Gales','Austria','Dinamarca','Serbia','Polonia','Ucrania','Suecia','Noruega','Europa','UEFA']},
+  {region:'Asia',              federation:'AFC',      names:['Arabia Saudita','Japón','Corea del Sur','Qatar','Emiratos Árabes Unidos','Turkmenistán','Turkemenistán','Uzbekistán','Irán','Irak','China','Jordania','Asia','AFC']},
+  {region:'África',            federation:'CAF',      names:['Sudáfrica','Nigeria','RD Congo','Marruecos','Egipto','Senegal','Argelia','Túnez','Ghana','Camerún','Costa de Marfil','África','CAF']},
+  {region:'Oceanía',           federation:'AFC',      names:['Australia','Oceanía']},   // Australia compite en la AFC
+  {region:'Oceanía',           federation:'OFC',      names:['Nueva Zelanda','OFC']},
+];
+let _originIndex=null;
+function originIndex(){
+  if(_originIndex) return _originIndex;
+  _originIndex={};
+  ORIGIN_GROUPS.forEach(g=>g.names.forEach(n=>{ _originIndex[normalizeKey(n)]=g; }));
+  return _originIndex;
+}
+function isWorldCup(torneo){ return /mundial|world cup/i.test(String(torneo||'')); }
+function originLabel(origin,torneo){
+  const raw=String(origin||'').trim();
+  if(!raw || raw==='—') return '';
+  const g=originIndex()[normalizeKey(raw)];
+  if(!g) return raw;
+  return isWorldCup(torneo) ? g.federation : g.region;
 }
 
 function storageEnvelope(){
@@ -263,24 +303,15 @@ async function importLedgerFile(file){
   weekDefs=(parsed.weekDefs && parsed.weekDefs.length) ? parsed.weekDefs : DEFAULT_WEEK_DEFS.map(w=>({...w}));
   await persist();
 }
-// Junta el status por default (logos-config.js) con lo que el usuario
-// haya capturado desde el formulario (titleOverrides), y agrega
-// cualquier torneo nuevo que el usuario haya escrito y no estuviera
-// en la config original.
+// Nombres de torneo conocidos para un equipo: el catálogo de logos.js más
+// cualquier torneo que ya aparezca en la bitácora. Solo alimenta el
+// autocompletado del formulario; el estado competitivo sale de buildTournamentLedger().
 function getTeamTournaments(team){
   const base = (TOURNAMENTS_CONFIG[team] || []).map(t=>({...t}));
   const seen = new Set(base.map(t=>normalizeKey(t.name)));
-  matches.filter(m=>m.team===team && m.torneo && !/amistoso|preparación|fecha fifa/i.test(m.torneo)).forEach(m=>{
+  matches.filter(m=>m.team===team && isCompetitiveTournament(m.torneo)).forEach(m=>{
     const key=normalizeKey(m.torneo);
-    if(!seen.has(key)){
-      base.push({name:m.torneo, logo:'', status:'en_curso', matchTerms:[m.torneo]});
-      seen.add(key);
-    }
-  });
-  const overrides = titleOverrides[team] || {};
-  base.forEach(t=>{ if(overrides[t.name]) t.status = overrides[t.name]; });
-  Object.keys(overrides).forEach(name=>{
-    if(!base.find(t=>t.name===name)) base.push({name,logo:'',status:overrides[name],matchTerms:[name]});
+    if(!seen.has(key)){ base.push({name:m.torneo, logo:'', matchTerms:[m.torneo]}); seen.add(key); }
   });
   return base;
 }
@@ -305,7 +336,12 @@ function getTeamTournaments(team){
 function resClass(r){ return r==='Ganado' ? 'g' : r==='Perdido' ? 'p' : 'e'; }
 function resLabel(r){ return r==='Ganado' ? 'Ganó' : r==='Perdido' ? 'Perdió' : 'Empató'; }
 function computeResult(gf,gc){ return gf>gc ? 'Ganado' : gf<gc ? 'Perdido' : 'Empatado'; }
-function dayOfYear(mes,dia){ return (CUM_DAYS[mes-1]||0) + Number(dia||1); }
+const MONTH_LENGTHS = [31,28,31,30,31,30,31,31,30,31,30,31];
+function dayOfYear(mes,dia){
+  const m = Math.min(12, Math.max(1, Number(mes)||1));
+  const d = Math.min(MONTH_LENGTHS[m-1], Math.max(1, Number(dia)||1));
+  return (CUM_DAYS[m-1]||0) + d;
+}
 function weekOfYear(mes,dia){ return Math.floor((dayOfYear(mes,dia)-1)/7)+1; }
 function venueLabel(m){
   if(m.estadio && m.ciudad) return `${m.estadio} · ${m.ciudad}`;
@@ -315,12 +351,95 @@ function venueLabel(m){
   return '—';
 }
 
-function isTitleMatchRecord(m){ return Boolean(m.titleDecision); }
-function isRunnerUp(m){ return m.resultado==='Perdido' && /gran final/i.test(m.fase||''); }
-function isWonTitle(m){ return m.resultado==='Ganado' && (m.titleWon || m.titleStatus==='ganado'); }
+/* =========================================================
+   TORNEOS Y TÍTULOS
+
+   Un torneo es la pareja (equipo, nombre de torneo). Su estado NO se
+   guarda aparte: se deduce del partido que lo "cerró", es decir, el
+   partido marcado con titleDecision. Estados posibles:
+
+     campeon     -> ganó el torneo            (titleStatus 'ganado')
+     subcampeon  -> perdió la final           (titleStatus 'perdido')
+     eliminado   -> quedó fuera sin llegar a la final, o ya no puede
+                    ganar la liga             (titleStatus 'eliminado')
+     en_curso    -> ningún partido lo cerró todavía
+
+   Así no hace falta ninguna columna nueva en la base de datos y un
+   torneo perdido sin final tiene su propio estado.
+   ========================================================= */
+const NON_COMPETITIVE_RX = /amistoso|preparaci[oó]n|fecha fifa|friendly/i;
+function isCompetitiveTournament(name){
+  const n=String(name||'').trim();
+  return Boolean(n) && n!=='Sin competición' && !NON_COMPETITIVE_RX.test(n);
+}
+function matchDateKey(m){ return Number(m.mes)*100+Number(m.dia); }
+function byDateAsc(a,b){ return matchDateKey(a)-matchDateKey(b); }
+function byDateDesc(a,b){ return matchDateKey(b)-matchDateKey(a); }
+
+function matchOutcome(m){
+  if(!m || !m.titleDecision) return null;
+  const st=m.titleStatus;
+  if(st==='en_curso') return null;
+  if(st==='ganado' || m.titleWon===true) return 'campeon';
+  if(st==='perdido') return 'subcampeon';
+  if(st==='eliminado') return 'eliminado';
+  // Registros antiguos sin titleStatus
+  if(/final/i.test(m.fase||'')) return m.resultado==='Ganado' ? 'campeon' : 'subcampeon';
+  return 'eliminado';
+}
+function isTitleMatchRecord(m){ return matchOutcome(m)!==null; }
+function isWonTitle(m){ return matchOutcome(m)==='campeon'; }
+function isRunnerUp(m){ return matchOutcome(m)==='subcampeon'; }
+
+const OUTCOME_FIELDS = {
+  campeon:    {titleDecision:true,  titleStatus:'ganado',    titleWon:true},
+  subcampeon: {titleDecision:true,  titleStatus:'perdido',   titleWon:false},
+  eliminado:  {titleDecision:true,  titleStatus:'eliminado', titleWon:false},
+  en_curso:   {titleDecision:false, titleStatus:null,        titleWon:false},
+};
+function outcomeFields(outcome){ return {...(OUTCOME_FIELDS[outcome]||OUTCOME_FIELDS.en_curso)}; }
+
+function tournamentKey(team,torneo){ return `${team}::${normalizeKey(torneo)}`; }
+
+// Un registro por (equipo, torneo), del más reciente al más antiguo.
+function buildTournamentLedger(){
+  const map=new Map();
+  matches.forEach(m=>{
+    if(!isCompetitiveTournament(m.torneo)) return;
+    const key=tournamentKey(m.team,m.torneo);
+    if(!map.has(key)) map.set(key,{key,team:m.team,torneo:m.torneo,matches:[]});
+    map.get(key).matches.push(m);
+  });
+  const out=[];
+  map.forEach(t=>{
+    t.matches.sort(byDateAsc);
+    const closers=t.matches.filter(isTitleMatchRecord);
+    t.closing=closers.length?closers[closers.length-1]:null; // si hubiera varios, manda el más reciente
+    t.outcome=t.closing?matchOutcome(t.closing):'en_curso';
+    t.last=t.matches[t.matches.length-1];
+    t.record=recordOf(t.matches);
+    t.sortDate=matchDateKey(t.closing||t.last);
+    out.push(t);
+  });
+  return out.sort((a,b)=>b.sortDate-a.sortDate);
+}
+function outcomeLabel(t){
+  if(t.outcome==='campeon') return 'Campeón';
+  if(t.outcome==='subcampeon') return 'Subcampeón';
+  if(t.outcome==='eliminado') return /jornada/i.test(t.closing?.fase||'') ? 'Torneo perdido' : 'Eliminado';
+  return 'En curso';
+}
+function honoursFromLedger(ledger){
+  return {
+    titles:ledger.filter(t=>t.outcome==='campeon').length,
+    runners:ledger.filter(t=>t.outcome==='subcampeon').length,
+    eliminated:ledger.filter(t=>t.outcome==='eliminado').length,
+    inProgress:ledger.filter(t=>t.outcome==='en_curso').length,
+    tournaments:ledger.length,
+  };
+}
 function titleCountsForTeam(teamId){
-  const rows=matches.filter(m=>m.team===teamId && isTitleMatchRecord(m));
-  return {titles:rows.filter(isWonTitle).length,runners:rows.filter(isRunnerUp).length};
+  return honoursFromLedger(buildTournamentLedger().filter(t=>t.team===teamId));
 }
 
 /* =========================================================
@@ -387,18 +506,59 @@ async function resetWeekDefsToDefault(){
 function weekRangeLabel(w){ const r=weekDefRange(w); return fmtDayRange(r.start,r.end); }
 function shortWeekLabel(label){ const m=/(\d+)/.exec(label||''); return m ? 'S'+m[1] : String(label||'?').slice(0,3).toUpperCase(); }
 
+/* =========================================================
+   ESTADÍSTICAS
+
+   Regla: todo cuenta para todos los deportes (PJ, G, E, P y % de
+   victorias incluyen NFL) EXCEPTO lo que solo existe en el fútbol:
+   goles, diferencia de goles, porterías a cero y partidos sin marcar.
+   ========================================================= */
+function sportOf(m){ return TEAMS[m.team]?.sport || 'futbol'; }
+function isFootballMatch(m){ return sportOf(m)==='futbol'; }
+function isNflMatch(m){ return sportOf(m)==='nfl'; }
+
+function recordOf(rows){
+  const r={pj:0,pg:0,pe:0,pp:0};
+  rows.forEach(m=>{
+    r.pj++;
+    if(m.resultado==='Ganado') r.pg++;
+    else if(m.resultado==='Perdido') r.pp++;
+    else r.pe++;
+  });
+  r.pct = r.pj ? Math.round((r.pg/r.pj)*100) : 0;
+  r.pctExact = r.pj ? (r.pg/r.pj)*100 : 0;
+  return r;
+}
+function sumField(rows,field){ return rows.reduce((a,m)=>a+(Number(m[field])||0),0); }
+
+// Solo fútbol: goles, porterías a cero, partidos sin marcar.
+function footballStats(rows){
+  const fb=rows.filter(isFootballMatch);
+  const gf=sumField(fb,'gf'), gc=sumField(fb,'gc');
+  return {
+    ...recordOf(fb), gf, gc, diff:gf-gc,
+    cleanSheets: fb.filter(m=>Number(m.gc)===0).length,
+    blanks: fb.filter(m=>Number(m.gf)===0).length,
+    gpm: fb.length ? gf/fb.length : 0,
+    gcpm: fb.length ? gc/fb.length : 0,
+  };
+}
+function overallStats(){
+  return {
+    all: recordOf(matches),
+    football: footballStats(matches),
+    nfl: recordOf(matches.filter(isNflMatch)),
+  };
+}
+
 function statsForTeam(teamId){
   const rows = matches.filter(m=>m.team===teamId);
-  const s = {pj:0,pg:0,pe:0,pp:0,gf:0,gc:0};
-  rows.forEach(m=>{
-    s.pj++; s.gf+=Number(m.gf); s.gc+=Number(m.gc);
-    if(m.resultado==='Ganado') s.pg++;
-    else if(m.resultado==='Perdido') s.pp++;
-    else s.pe++;
-  });
-  s.pct = s.pj ? Math.round((s.pg/s.pj)*100) : 0;
+  const s = recordOf(rows);
+  s.gf = sumField(rows,'gf'); s.gc = sumField(rows,'gc');   // goles (fútbol) o puntos (NFL)
   s.diff = s.gf - s.gc;
-  s.rows = rows.slice().sort((a,b)=>(a.mes*100+a.dia)-(b.mes*100+b.dia));
+  s.isFootball = TEAMS[teamId]?.sport==='futbol';
+  s.cleanSheets = s.isFootball ? rows.filter(m=>Number(m.gc)===0).length : null;
+  s.rows = rows.slice().sort(byDateAsc);
   return s;
 }
 
@@ -463,4 +623,4 @@ function escapeHtml(value=''){
 }
 function escapeAttr(value=''){ return escapeHtml(value); }
 function setSafeText(element,value){ if(element) element.textContent=String(value??''); }
-window.SportsCore={exportLedger,importLedgerFile,escapeHtml,storageEnvelope,STORAGE_SCHEMA_VERSION,dataSource:()=>matchDataSource};
+window.SportsCore={exportLedger,importLedgerFile,overallStats,buildTournamentLedger,escapeHtml,storageEnvelope,STORAGE_SCHEMA_VERSION,dataSource:()=>matchDataSource};

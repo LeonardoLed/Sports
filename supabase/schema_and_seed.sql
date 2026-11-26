@@ -140,7 +140,7 @@ insert into public.sports_weeks (id,label,start_month,start_day,end_month,end_da
   ('w17','Semana 17',5,18,5,31),
   ('w18','Semana 18',6,1,6,14),
   ('w19','Semana 19',6,15,6,21),
-  ('w20','Semana 20',6,22,6,31),
+  ('w20','Semana 20',6,22,6,30),
   ('w21','Semana 21',7,1,7,19),
   ('w22','Semana 22',7,20,7,31)
 on conflict (id) do update set
@@ -179,7 +179,7 @@ insert into public.matches (id,tracked_team_id,match_date,rival,rival_country,co
   ('m26_al_nassr','al_nassr','2026-02-06','Al-Ittihad Jeddah',NULL,'Saudi Professional League','Jornada 20','','','home',2,0,'Ganado','Al Nassr','Al-Ittihad Jeddah','Arabia Saudita','Arabia Saudita',2,0,'-',NULL,NULL,NULL,NULL,FALSE,FALSE,FALSE,NULL,FALSE,NULL,FALSE),
   ('m27_pumas','pumas','2026-02-07','Atlas',NULL,'Liga BBVA MX Clausura 2026','Jornada 5','','','away',2,2,'Empatado','Atlas','Pumas UNAM','México','México',2,2,'-',NULL,NULL,NULL,NULL,FALSE,FALSE,FALSE,NULL,FALSE,NULL,FALSE),
   ('m28_real_madrid','real_madrid','2026-02-08','Valencia',NULL,'La Liga','Jornada 23','','','away',2,0,'Ganado','Valencia','Real Madrid','España','España',0,2,'-',NULL,NULL,NULL,NULL,FALSE,FALSE,FALSE,NULL,FALSE,NULL,FALSE),
-  ('m29_pumas','pumas','2026-02-28','San Diego',NULL,'CONCACAF Champions Cup','Primera Ronda','','','home',1,0,'Perdido','Pumas UNAM','San Diego FC','México','Estados Unidos',1,0,'(2-4)',2,4,NULL,NULL,FALSE,FALSE,TRUE,'eliminado',FALSE,'concacaf_champions_cup',FALSE),
+  ('m29_pumas','pumas','2026-02-28','San Diego',NULL,'CONCACAF Champions Cup','Primera Ronda','','','home',1,0,'Ganado','Pumas UNAM','San Diego FC','México','Estados Unidos',1,0,'(2-4)',2,4,NULL,NULL,FALSE,FALSE,TRUE,'eliminado',FALSE,'concacaf_champions_cup',FALSE),
   ('m30_al_nassr','al_nassr','2026-02-11','Arkadag',NULL,'AFC Champions League Two','Octavos de Final Ida','','','away',1,0,'Ganado','Arkadag','Al Nassr','Turkemenistán','Arabia Saudita',0,1,'-',NULL,NULL,NULL,NULL,FALSE,FALSE,FALSE,NULL,FALSE,NULL,FALSE),
   ('m31_pumas','pumas','2026-02-13','Puebla',NULL,'Liga BBVA MX Clausura 2026','Jornada 6','','','away',3,2,'Ganado','Puebla','Pumas UNAM','México','México',2,3,'-',NULL,NULL,NULL,NULL,FALSE,FALSE,FALSE,NULL,FALSE,NULL,FALSE),
   ('m32_al_nassr','al_nassr','2026-02-14','Al Fateh SC',NULL,'Saudi Professional League','Jornada 21','','','away',2,0,'Ganado','Al Fateh SC','Al Nassr','Arabia Saudita','Arabia Saudita',0,2,'-',NULL,NULL,NULL,NULL,FALSE,FALSE,FALSE,NULL,FALSE,NULL,FALSE),

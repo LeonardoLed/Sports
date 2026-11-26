@@ -7,5 +7,5 @@ assert.strictEqual(d.originLocal,'—'); assert.strictEqual(d.originVisit,'—')
 let i=ctx.normalizedMatch({team:'pumas',venueSide:'away',rival:'Charlotte FC',rivalCountry:'Estados Unidos',originLocal:'—',originVisit:'—',internacional:true,gf:0,gc:3},null);
 assert.strictEqual(i.originLocal,'Estados Unidos'); assert.strictEqual(i.originVisit,'México');
 const dash=fs.readFileSync('assets/js/pages/dashboard.js','utf8');
-assert(dash.includes("m.internacional===true?`<small>${escapeHtml(origin||'—')}</small>`:''"));
+assert(dash.includes("const sub = m.internacional===true && origin && origin!=='—' ? originLabel(origin,m.torneo) : '';"));
 console.log('PASS origins render only for explicitly international matches');
