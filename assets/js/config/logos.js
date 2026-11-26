@@ -387,6 +387,8 @@ barca: 'logos/rivales/fcbarcelona.png',
 
 "NEOM": "logos/rivales/NEOM.png",
 "NEOM SC": "logos/rivales/NEOM.png",
+"Al-Sadd SC " :  "logos/rivales/al_saad.png",
+"Al Sadd" :  "logos/rivales/al_saad.png",
 
 "Al Ahli": "logos/rivales/al_ahli_saudi.png",
 "Al Ahli Saudi": "logos/rivales/al_ahli_saudi.png",
